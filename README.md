@@ -2,9 +2,9 @@
 ```
 @author 鲁伟林
 向开源致敬，向优秀前辈代码致敬。
-Netty中大量使用NIO技术，满足高性能、高并发要求。最近工作中，进行初步研究，特作此项目。
-更新时间：不定期，等我的另一个rocketmq-learning项目初步完成，动工Netty研究
-源码地址：https://github.com/apache/rocketmq
+Netty中大量使用NIO技术，满足高性能、高并发要求。进行初步研究，特作此项目。
+更新时间：未派上档期，等我的另一个rocketmq-learning项目初步完成，动工Netty源码研究
+源码地址：https://github.com/thinkingfioa/netty-learning
 ```
 
 ## 1.为什么要读Netty？

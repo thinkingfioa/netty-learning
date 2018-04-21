@@ -1,4 +1,4 @@
-package org.lwl.netty;
+package org.lwl.netty.server;
 
 /**
  * @author thinking_fioa
@@ -7,5 +7,5 @@ package org.lwl.netty;
  */
 
 
-public class Test {
+public class ProtocolDataReceiveHandler {
 }
