@@ -13,8 +13,19 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 
 ## 1. 私有协议开发
 
+### 1.1 消息结构
+
+### 1.2 Client端
+
+### 1.3 Server端
+
+### 1.4 编码
+编码请看第2节(Marshalling编码)和第3节(Kryo编码)
+
 ## 2. Marshalling 编码
 
-## 2. Kryo 编码
+## 3. Kryo 编码
+
+## 4. 两种编码性能比较
 
 # 参考文档
