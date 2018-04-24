@@ -13,22 +13,21 @@ public final class ProtocolConfig {
         throw new IllegalAccessError("static class, can not use constructor.");
     }
 
-    private static String Ip = "127.0.0.1";
-    private static int port = 9876;
+    private static final String IP = "127.0.0.1";
+
+    private static final int PORT = 9876;
+
+    private static final String CODEC_TYPE = MessageCodecTypeEnum.KRYO.getCodecType();
 
     public static String getIp() {
-        return Ip;
-    }
-
-    public static void setIp(String ip) {
-        Ip = ip;
+        return IP;
     }
 
     public static int getPort() {
-        return port;
+        return PORT;
     }
 
-    public static void setPort(int port) {
-        ProtocolConfig.port = port;
+    public static String getIP() {
+        return IP;
     }
 }

@@ -24,12 +24,17 @@ public enum MessageTypeEnum {
     HEARTBEAT_RESP("heartbeat_resp")
     ;
 
-    private MessageTypeEnum(final String msgType) {
+    MessageTypeEnum(final String msgType) {
         this.msgType = msgType;
     }
 
     private final String msgType;
 
+    /**
+     * 根据msgType类型，获取{@code MessageTypeEnum}
+     * @param msgType
+     * @return
+     */
     public static MessageTypeEnum getMsgTypeEnum(final String msgType) {
         if(null == msgType || msgType.isEmpty()) {
             return null;

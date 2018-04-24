@@ -38,8 +38,4 @@ public class NettyClient {
             // TODO:: 线程池
         }
     }
-
-    public static void main(String [] args) {
-        new NettyClient().connect(ProtocolConfig.getIp(), ProtocolConfig.getPort());
-    }
 }

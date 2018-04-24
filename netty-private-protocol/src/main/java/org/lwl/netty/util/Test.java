@@ -1,8 +1,8 @@
-package org.lwl.netty.codec.marshalling;
+package org.lwl.netty.util;
 
 /**
  * @author thinking_fioa
- * @createTime 2018/4/21
+ * @createTime 2018/4/24
  * @description
  */
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="OFF">
     <properties>
-        <!--  -->
         <property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %l - %msg%n</property>
         <property name="log_home">~/logs/netty-learning</property>
         <property name="file_name">netty-private-protocol</property>

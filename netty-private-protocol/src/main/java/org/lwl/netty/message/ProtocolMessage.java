@@ -11,7 +11,7 @@ public class ProtocolMessage {
 
     private Header header;
 
-    private Object object;
+    private Body body;
 
     private Tail tail;
 
@@ -23,12 +23,12 @@ public class ProtocolMessage {
         this.header = header;
     }
 
-    public Object getObject() {
-        return object;
+    public Body getBody() {
+        return body;
     }
 
-    public void setObject(Object object) {
-        this.object = object;
+    public void setBody(Body body) {
+        this.body = body;
     }
 
     public Tail getTail() {
@@ -43,7 +43,7 @@ public class ProtocolMessage {
     public String toString() {
         return "ProtocolMessage{" +
                 "header=" + header +
-                ", object=" + object +
+                ", body=" + body +
                 ", tail=" + tail +
                 '}';
     }
