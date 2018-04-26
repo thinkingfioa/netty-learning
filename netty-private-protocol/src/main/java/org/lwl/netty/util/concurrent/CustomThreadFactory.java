@@ -1,6 +1,7 @@
 package org.lwl.netty.util.concurrent;
 
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author thinking_fioa
@@ -9,9 +10,29 @@ import java.util.concurrent.ThreadFactory;
  */
 
 public class CustomThreadFactory implements ThreadFactory{
+    private final AtomicInteger threadNum = new AtomicInteger(0);
+    private final String prefix;
+    private final boolean daemon;
+    private final ThreadGroup group;
+
+    public CustomThreadFactory(final String prefix) {
+        this(prefix, true);
+    }
+
+    public CustomThreadFactory(final String prefix, final boolean daemon){
+        this.prefix = prefix;
+        this.daemon = daemon;
+        // 防止运行未知Java程序存在恶意代码。启用Java安全管理器
+        SecurityManager s = System.getSecurityManager();
+        group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+    }
 
     @Override
     public Thread newThread(Runnable r) {
-        //TODO::
+        String threadName = prefix + "_" + threadNum.getAndIncrement();
+        Thread t = new Thread(group, r, threadName);
+        t.setDaemon(daemon);
+
+        return t;
     }
 }

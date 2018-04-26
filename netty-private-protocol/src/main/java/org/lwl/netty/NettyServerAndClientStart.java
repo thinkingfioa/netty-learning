@@ -1,5 +1,4 @@
-package org.lwl.netty.server;
-
+package org.lwl.netty;
 /**
  * @author thinking_fioa
  * @createTime 2018/4/22
@@ -8,4 +7,5 @@ package org.lwl.netty.server;
 
 
 public class NettyServerAndClientStart {
+
 }

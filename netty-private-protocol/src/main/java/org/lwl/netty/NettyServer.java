@@ -9,9 +9,17 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwl.netty.codec.ProtocolDataDecoder;
+import org.lwl.netty.codec.ProtocolDataEncoder;
 import org.lwl.netty.constant.ProtocolConfig;
+import org.lwl.netty.server.HeartBeatRespHandler;
+import org.lwl.netty.server.LoginRespHandler;
 
 /**
  * @author thinking_fioa
@@ -35,7 +43,7 @@ public class NettyServer {
                     .childHandler(new ChildChannelHandler());
 
             ChannelFuture future = bootstrap.bind(port).sync();
-            LOGGER.info("Netty Server started at port", port);
+            LOGGER.info("Netty Server started at port:{}", port);
             future.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
@@ -47,9 +55,11 @@ public class NettyServer {
 
         @Override
         protected void initChannel(SocketChannel socketChannel) throws Exception {
-//            socketChannel.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
-            //TODO:: 注册Handler
-            socketChannel.pipeline().addLast();
+            socketChannel.pipeline().addLast(new ProtocolDataDecoder());
+            socketChannel.pipeline().addLast(new ProtocolDataEncoder());
+            socketChannel.pipeline().addLast(new ReadTimeoutHandler());
+            socketChannel.pipeline().addLast(new LoginRespHandler());
+            socketChannel.pipeline().addLast(new HeartBeatRespHandler());
         }
     }
 
