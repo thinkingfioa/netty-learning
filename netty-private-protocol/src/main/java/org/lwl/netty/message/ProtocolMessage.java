@@ -41,10 +41,6 @@ public class ProtocolMessage {
 
     @Override
     public String toString() {
-        return "ProtocolMessage{" +
-                "header=" + header +
-                ", body=" + body +
-                ", tail=" + tail +
-                '}';
+        return "ProtocolMessage: " + header.toString() + body.toString() + tail.toString();
     }
 }

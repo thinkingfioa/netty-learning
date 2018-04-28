@@ -17,9 +17,13 @@ public class Header {
 
     private long sessionID;
 
-    private byte type;
+    private String msgType;
 
     private String senderName;
+
+    private short flag;
+
+    private byte oneByte;
 
     private Map<String, Object> attachment = new HashMap<String, Object>();
 
@@ -33,10 +37,6 @@ public class Header {
 
     public long getSessionID() {
         return sessionID;
-    }
-
-    public byte getType() {
-        return type;
     }
 
     public String getSenderName() {
@@ -59,10 +59,6 @@ public class Header {
         this.sessionID = sessionID;
     }
 
-    public void setType(byte type) {
-        this.type = type;
-    }
-
     public void setSenderName(String senderName) {
         this.senderName = senderName;
     }
@@ -71,15 +67,43 @@ public class Header {
         this.attachment = attachment;
     }
 
+    public short getFlag() {
+        return flag;
+    }
+
+    public void setFlag(short flag) {
+        this.flag = flag;
+    }
+
+    public String getMsgType() {
+        return msgType;
+    }
+
+    public void setMsgType(String msgType) {
+        this.msgType = msgType;
+    }
+
+    public byte getOneByte() {
+        return oneByte;
+    }
+
+    public void setOneByte(byte oneByte) {
+        this.oneByte = oneByte;
+    }
+
     @Override
     public String toString() {
-        return "Header{" +
-                "crcCode=" + crcCode +
-                ", length=" + length +
-                ", sessionID=" + sessionID +
-                ", type=" + type +
-                ", senderName='" + senderName + '\'' +
-                ", attachment=" + attachment +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Header [ ")
+                .append("crcCode=").append(crcCode)
+                .append(", length=").append(length)
+                .append(", sessionID=").append(sessionID)
+                .append(", msgType=").append(msgType)
+                .append(", senderName=").append(senderName)
+                .append(", flag=").append(flag)
+                .append(", oneByte=").append(oneByte)
+                .append(", attachment").append(attachment).append(" ]");
+
+        return sb.toString();
     }
 }

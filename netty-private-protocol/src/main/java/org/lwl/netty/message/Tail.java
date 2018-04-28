@@ -29,9 +29,11 @@ public class Tail {
 
     @Override
     public String toString() {
-        return "Tail{" +
-                "copyRightId=" + copyRightId +
-                ", copyRight='" + copyRight + '\'' +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Tail [ ")
+                .append("copyRightId=").append(copyRightId)
+                .append(", copyRight=").append(copyRight).append(" ]");
+
+        return sb.toString();
     }
 }

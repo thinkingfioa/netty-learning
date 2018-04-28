@@ -20,6 +20,7 @@ import org.lwl.netty.codec.ProtocolDataEncoder;
 import org.lwl.netty.constant.ProtocolConfig;
 import org.lwl.netty.server.HeartBeatRespHandler;
 import org.lwl.netty.server.LoginRespHandler;
+import org.lwl.netty.util.concurrent.CustomThreadFactory;
 
 /**
  * @author thinking_fioa
@@ -31,10 +32,10 @@ import org.lwl.netty.server.LoginRespHandler;
 public class NettyServer {
     private static final Logger LOGGER = LogManager.getLogger(NettyServer.class);
 
-    public void bind(int port) throws InterruptedException {
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+    private EventLoopGroup bossGroup = new NioEventLoopGroup();
+    private EventLoopGroup workerGroup = new NioEventLoopGroup(2, new CustomThreadFactory("ServerWorkerThread", true));
 
+    public void bind(int port) throws InterruptedException {
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
@@ -43,7 +44,9 @@ public class NettyServer {
                     .childHandler(new ChildChannelHandler());
 
             ChannelFuture future = bootstrap.bind(port).sync();
+            LOGGER.info("***********************************************");
             LOGGER.info("Netty Server started at port:{}", port);
+            LOGGER.info("***********************************************");
             future.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
@@ -57,7 +60,7 @@ public class NettyServer {
         protected void initChannel(SocketChannel socketChannel) throws Exception {
             socketChannel.pipeline().addLast(new ProtocolDataDecoder());
             socketChannel.pipeline().addLast(new ProtocolDataEncoder());
-            socketChannel.pipeline().addLast(new ReadTimeoutHandler());
+            socketChannel.pipeline().addLast(new ReadTimeoutHandler(50));
             socketChannel.pipeline().addLast(new LoginRespHandler());
             socketChannel.pipeline().addLast(new HeartBeatRespHandler());
         }
