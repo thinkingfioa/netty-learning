@@ -19,7 +19,10 @@ Netty中大量使用NIO技术，满足高性能、高并发要求。进行初步
 - 3.代码中实现了Marshalling和Kryo的编码
 - 4.[子项目文档地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)
 
-## 3. Netty 源码学习
+## 3. Netty实战
+《Netty实战》比《Netty权威指南2》好很多，最近在读第二遍。推荐此书，讲的非常透彻
+
+## 4. Netty 源码学习
 Netty源码较复杂，本人等学习研究完RocketMQ项目(rocketmq-learning)后，开始此项目源码分析。
 
 # 参考文档
