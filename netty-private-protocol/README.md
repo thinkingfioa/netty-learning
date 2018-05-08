@@ -12,6 +12,9 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 本人博客地址: http://blog.csdn.net/thinking_fioa/article/details/78265745
 ```
 
+## 提醒
+- 1.netty4.1以上版本中将channelRead(...)等方法从ChannelHandlerAdapter类中移除。添加到子类: ChannelInboundHandlerAdapter中。
+
 # 1. 私有协议开发
 
 ## 1.1 消息结构
