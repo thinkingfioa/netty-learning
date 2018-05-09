@@ -11,7 +11,7 @@ public class ProtocolMessage {
 
     private Header header;
 
-    private Body body;
+    private AbstractBody body;
 
     private Tail tail;
 
@@ -23,11 +23,11 @@ public class ProtocolMessage {
         this.header = header;
     }
 
-    public Body getBody() {
+    public AbstractBody getBody() {
         return body;
     }
 
-    public void setBody(Body body) {
+    public void setBody(AbstractBody body) {
         this.body = body;
     }
 

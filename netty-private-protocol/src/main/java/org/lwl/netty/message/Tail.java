@@ -8,8 +8,20 @@ package org.lwl.netty.message;
 
 
 public class Tail {
+
+    private int checkSum;
+
     private int copyRightId;
+
     private String copyRight;
+
+    public int getCheckSum() {
+        return checkSum;
+    }
+
+    public void setCheckSum(int checkSum) {
+        this.checkSum = checkSum;
+    }
 
     public int getCopyRightId() {
         return copyRightId;

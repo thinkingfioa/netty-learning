@@ -11,9 +11,7 @@ import java.util.Map;
 
 
 public class Header {
-    private int crcCode = 0xabef0101;
-
-    private int length;
+    private int msgLen;
 
     private long sessionID;
 
@@ -27,12 +25,8 @@ public class Header {
 
     private Map<String, Object> attachment = new HashMap<String, Object>();
 
-    public int getCrcCode() {
-        return crcCode;
-    }
-
-    public int getLength() {
-        return length;
+    public int getMsgLen() {
+        return msgLen;
     }
 
     public long getSessionID() {
@@ -45,14 +39,6 @@ public class Header {
 
     public Map<String, Object> getAttachment() {
         return attachment;
-    }
-
-    public void setCrcCode(int crcCode) {
-        this.crcCode = crcCode;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
     }
 
     public void setSessionID(long sessionID) {
@@ -94,15 +80,14 @@ public class Header {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Header [ ")
-                .append("crcCode=").append(crcCode)
-                .append(", length=").append(length)
-                .append(", sessionID=").append(sessionID)
-                .append(", msgType=").append(msgType)
-                .append(", senderName=").append(senderName)
-                .append(", flag=").append(flag)
-                .append(", oneByte=").append(oneByte)
-                .append(", attachment").append(attachment).append(" ]");
+        sb.append("Header [");
+        sb.append(", msgLen=").append(msgLen);
+        sb.append(", sessionID=").append(sessionID);
+        sb.append(", msgType=").append(msgType);
+        sb.append(", senderName=").append(senderName);
+        sb.append(", flag=").append(flag);
+        sb.append(", oneByte=").append(oneByte);
+        sb.append(", attachment").append(attachment).append("]");
 
         return sb.toString();
     }

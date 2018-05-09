@@ -2,6 +2,7 @@ package org.lwl.netty.client;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,18 +16,14 @@ import org.apache.logging.log4j.Logger;
 public class HeartBeatReqHandler extends ChannelInboundHandlerAdapter {
     private static final Logger LOGGER = LogManager.getLogger(HeartBeatReqHandler.class);
 
-    @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception{
-
-    }
+    private int lossConnectTime = 0;
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        return;
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        LOGGER.error(cause);
+    public void userEventTriggered(ChannelHandlerContext ctx, Object event)  throws Exception{
+        if(event instanceof IdleStateEvent) {
+            //TODO:: write, read, all
+        } else {
+            super.userEventTriggered(ctx, event);
+        }
     }
 }
