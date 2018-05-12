@@ -13,6 +13,9 @@ import org.lwl.netty.message.ProtocolMessage;
 
 public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> {
 
+    private static final MarshallingEncoder ENCODER = MarshallingEncoder.getInstance();
+    private static final MarshallingDecoder DECODER = MarshallingDecoder.getInstance();
+
     @Override
     public void encode(ByteBuf outByteBuf, ProtocolMessage object) {
 

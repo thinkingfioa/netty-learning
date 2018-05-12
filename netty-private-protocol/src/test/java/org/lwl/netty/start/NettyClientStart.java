@@ -1,6 +1,6 @@
 package org.lwl.netty.start;
 
-import org.lwl.netty.NettyClient;
+import org.lwl.netty.client.NettyClient;
 import org.lwl.netty.constant.ProtocolConfig;
 
 /**

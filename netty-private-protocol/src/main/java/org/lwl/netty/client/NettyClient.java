@@ -1,4 +1,4 @@
-package org.lwl.netty;
+package org.lwl.netty.client;
 
 
 import io.netty.bootstrap.Bootstrap;
@@ -11,8 +11,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwl.netty.client.HeartBeatReqHandler;
-import org.lwl.netty.client.LoginReqHandler;
 import org.lwl.netty.codec.ProtocolDataDecoder;
 import org.lwl.netty.codec.ProtocolDataEncoder;
 
@@ -48,8 +46,8 @@ public class NettyClient {
             ch.pipeline().addLast(new ProtocolDataDecoder());
             ch.pipeline().addLast(new ProtocolDataEncoder());
             ch.pipeline().addLast(new ReadTimeoutHandler(50));
-            ch.pipeline().addLast(new LoginReqHandler());
-            ch.pipeline().addLast(new HeartBeatReqHandler());
+            ch.pipeline().addLast(new handler.LoginReqHandler());
+            ch.pipeline().addLast(new handler.HeartBeatReqHandler());
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.lwl.netty;
+package org.lwl.netty.server;
 
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -9,17 +9,14 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwl.netty.codec.ProtocolDataDecoder;
 import org.lwl.netty.codec.ProtocolDataEncoder;
 import org.lwl.netty.constant.ProtocolConfig;
-import org.lwl.netty.server.HeartBeatRespHandler;
-import org.lwl.netty.server.LoginRespHandler;
+import org.lwl.netty.server.handler.HeartBeatRespHandler;
+import org.lwl.netty.server.handler.LoginRespHandler;
 import org.lwl.netty.util.concurrent.CustomThreadFactory;
 
 /**

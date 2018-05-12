@@ -25,6 +25,10 @@ public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage>{
         this.codecUtil = codecUtil;
     }
 
+    public ProtocolDataEncoder() {
+        this.codecUtil = null;
+    }
+
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, ProtocolMessage protocolMessage, ByteBuf byteBuf) throws Exception {
         if(null == protocolMessage || null == protocolMessage.getBody()) {

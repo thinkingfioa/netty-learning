@@ -1,4 +1,4 @@
-package org.lwl.netty.server;
+package org.lwl.netty.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
