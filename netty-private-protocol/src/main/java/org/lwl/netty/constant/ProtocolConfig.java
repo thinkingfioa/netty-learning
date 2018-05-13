@@ -18,6 +18,11 @@ public final class ProtocolConfig {
     private static final int PORT = 9876;
 
     /**
+     * 最大消息字节数。4K = 4 * 1024
+     */
+    private static final int messageMaxSize = 1024 << 2;
+
+    /**
      * @link LengthFieldBasedFrameDecoder} 使用的参数
      */
     private static final int MAX_FRAMELENGTH =  0;
@@ -70,5 +75,9 @@ public final class ProtocolConfig {
 
     public static String getCharsetFormat() {
         return CHARSET_FORMAT;
+    }
+
+    public static int getMessageMaxSize() {
+        return messageMaxSize;
     }
 }

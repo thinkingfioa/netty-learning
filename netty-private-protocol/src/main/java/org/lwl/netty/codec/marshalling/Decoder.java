@@ -7,17 +7,17 @@ package org.lwl.netty.codec.marshalling;
  */
 
 
-public class MarshallingDecoder {
+class Decoder {
 
-    private static final MarshallingDecoder INSTANCE = new MarshallingDecoder();
+    private static final Decoder INSTANCE = new Decoder();
 
-    public static MarshallingDecoder getInstance() {
+    public static Decoder getInstance() {
         return INSTANCE;
     }
 
     private String name;
 
-    private MarshallingDecoder() {
+    private Decoder() {
         this.name = "";
     }
 

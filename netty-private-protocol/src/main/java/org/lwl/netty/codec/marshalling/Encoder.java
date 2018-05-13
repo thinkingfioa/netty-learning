@@ -1,10 +1,13 @@
 package org.lwl.netty.codec.marshalling;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.constant.ProtocolConfig;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author thinking_fioa
@@ -13,33 +16,57 @@ import java.util.List;
  */
 
 
-public class MarshallingEncoder {
+class Encoder {
 
-    private static final MarshallingEncoder INSTANCE = new MarshallingEncoder();
+    private static final MarshallingEncoderAdapter encoderAdapter = MarshallingAdapterFactory.buildEncoderAdapter();
 
-    public static MarshallingEncoder getInstance() {
+    private static final Encoder INSTANCE = new Encoder();
+
+    public static Encoder getInstance() {
         return INSTANCE;
     }
 
-    public void writeObject(ByteBuf outByteBuf, Object value) {
-        if(null == value) {
-            outByteBuf.writeInt(-1);
-
-            return;
-        }
-        //todo::
-    }
-
-    public <T> void writeList(ByteBuf outByteBuf, List<T> valueList) {
+    public <T> void writeList(ChannelHandlerContext ctx, ByteBuf outByteBuf, List<T> valueList) throws Exception {
         if(null == valueList) {
             outByteBuf.writeInt(-1);
 
             return;
         }
-        // todo::
+
+        if(valueList.isEmpty()) {
+            outByteBuf.writeInt(0);
+
+            return;
+        }
+
+        outByteBuf.writeInt(valueList.size());
+
+        for(T value: valueList) {
+            writeObject(ctx, outByteBuf, value);
+        }
     }
 
-    public
+    public <T> void writeMap(ChannelHandlerContext ctx, ByteBuf outByteBuf, Map<String, T> valueMap) throws Exception {
+        if(null == valueMap) {
+            outByteBuf.writeInt(-1);
+
+            return;
+        }
+
+        if(valueMap.isEmpty()) {
+            outByteBuf.writeInt(0);
+
+            return;
+        }
+        Set<Map.Entry<String, T>> entrySet = valueMap.entrySet();
+        for(Map.Entry<String, T> entry: entrySet) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            // 写入key和value
+            writeString(outByteBuf, key);
+            writeObject(ctx, outByteBuf, value);
+        }
+    }
 
     /**
      * 序列化{@see String}对象. 1> value == null, 写入-1. 2> value == "", 写入0.
@@ -62,6 +89,17 @@ public class MarshallingEncoder {
         outByteBuf.writeInt(valueBytes.length);
         outByteBuf.writeBytes(valueBytes);
     }
+
+    public void writeObject(ChannelHandlerContext ctx, ByteBuf outByteBuf, Object valueObject) throws Exception {
+        if(null == valueObject) {
+            outByteBuf.writeInt(-1);
+
+            return;
+        }
+
+        encoderAdapter.encode(ctx, valueObject, outByteBuf);
+    }
+
 
     public void writeBytes(ByteBuf outByteBuf, byte[] bytes) {
         outByteBuf.writeInt(bytes.length);

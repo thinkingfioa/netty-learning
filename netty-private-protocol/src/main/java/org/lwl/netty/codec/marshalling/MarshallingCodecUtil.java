@@ -13,8 +13,8 @@ import org.lwl.netty.message.ProtocolMessage;
 
 public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> {
 
-    private static final MarshallingEncoder ENCODER = MarshallingEncoder.getInstance();
-    private static final MarshallingDecoder DECODER = MarshallingDecoder.getInstance();
+    private static final Encoder ENCODER = Encoder.getInstance();
+    private static final Decoder DECODER = Decoder.getInstance();
 
     @Override
     public void encode(ByteBuf outByteBuf, ProtocolMessage object) {
