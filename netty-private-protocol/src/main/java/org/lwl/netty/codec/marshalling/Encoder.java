@@ -16,9 +16,9 @@ import java.util.Set;
  */
 
 
-class Encoder {
+public class Encoder {
 
-    private static final MarshallingEncoderAdapter encoderAdapter = MarshallingAdapterFactory.buildEncoderAdapter();
+    private static final MarshallingEncoderAdapter ENCODER_ADAPTER = MarshallingAdapterFactory.buildEncoderAdapter();
 
     private static final Encoder INSTANCE = new Encoder();
 
@@ -58,6 +58,7 @@ class Encoder {
 
             return;
         }
+
         Set<Map.Entry<String, T>> entrySet = valueMap.entrySet();
         for(Map.Entry<String, T> entry: entrySet) {
             String key = entry.getKey();
@@ -92,17 +93,13 @@ class Encoder {
 
     public void writeObject(ChannelHandlerContext ctx, ByteBuf outByteBuf, Object valueObject) throws Exception {
         if(null == valueObject) {
-            outByteBuf.writeInt(-1);
-
-            return;
+            throw new NullPointerException("valueObject is null.");
         }
 
-        encoderAdapter.encode(ctx, valueObject, outByteBuf);
+        ENCODER_ADAPTER.encode(ctx, valueObject, outByteBuf);
     }
 
-
     public void writeBytes(ByteBuf outByteBuf, byte[] bytes) {
-        outByteBuf.writeInt(bytes.length);
         outByteBuf.writeBytes(bytes);
     }
 

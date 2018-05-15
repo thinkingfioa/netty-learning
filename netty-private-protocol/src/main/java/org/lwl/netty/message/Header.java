@@ -41,6 +41,10 @@ public class Header {
         return attachment;
     }
 
+    public void setMsgLen(int msgLen) {
+        this.msgLen = msgLen;
+    }
+
     public void setSessionID(long sessionID) {
         this.sessionID = sessionID;
     }
