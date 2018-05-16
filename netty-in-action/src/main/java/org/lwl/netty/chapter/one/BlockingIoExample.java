@@ -10,7 +10,7 @@ import java.net.Socket;
 /**
  * @author thinking_fioa
  * @createTime 2018/5/14
- * @description BIO 服务端例子
+ * @description BIO 服务端例子, 代码清单 1-1 阻塞I/O示例
  */
 
 
