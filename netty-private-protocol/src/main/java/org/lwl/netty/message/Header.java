@@ -11,18 +11,39 @@ import java.util.Map;
 
 
 public class Header {
+    /**
+     * 发送pkg长度
+     */
     private int msgLen;
 
+    /**
+     * 发送方的sessionId
+     */
     private long sessionID;
 
+    /**
+     * 消息类型，{@code MessageTypeEnum}
+     */
     private String msgType;
 
+    /**
+     * 发送方姓名
+     */
     private String senderName;
 
+    /**
+     * short类型占位符
+     */
     private short flag;
 
+    /**
+     * Byte类型占位符
+     */
     private byte oneByte;
 
+    /**
+     * 扩展字段，允许动态添加
+     */
     private Map<String, Object> attachment = new HashMap<String, Object>();
 
     public int getMsgLen() {

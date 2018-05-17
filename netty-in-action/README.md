@@ -2,7 +2,7 @@
 ```
 @author 鲁伟林
 记录《Netty 实战》中各章节学习过程，写下一些自己的思考和总结，帮助使用Netty框架的开发技术人员们，能够有所得，避免踩坑。
-本博客目录结构将严格按照书本《Netty 实战》，可能出现跳小章节，省略与Netty无关的内容。
+本博客目录结构将严格按照书本《Netty 实战》，省略与Netty无关的内容，可能出现跳小章节。
 GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action
 本人博客地址: https://blog.csdn.net/thinking_fioa
 ```
