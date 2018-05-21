@@ -3,7 +3,7 @@
 @author 鲁伟林
 记录《Netty 实战》中各章节学习过程，写下一些自己的思考和总结，帮助使用Netty框架的开发技术人员们，能够有所得，避免踩坑。
 本博客目录结构将严格按照书本《Netty 实战》，省略与Netty无关的内容，可能出现跳小章节。
-GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action
+本博客中涉及的完整代码，GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action。
 本人博客地址: https://blog.csdn.net/thinking_fioa
 ```
 
@@ -112,8 +112,143 @@ Channel和EventLoop都是Netty核心概念，而且有一些约定俗成的规�
 Netty服务端至少需要两个部分: 一个ChannelHandler + 引导(Bootstrap)
 
 ### 2.3.1 ChannelHandler和业务逻辑
+继承ChannelInboundHandlerAdapter类，感兴趣的入站方法:
 
+- 1.channelRead() - 对于每个传入的消息都要调用
+- 2.channelReadComplete() - 当前批量读取中的最后一条数据
+- 3.exceptionCaught() - 读取操作期间，有异常抛出时调用
 
+##### 代码:
+```java
+@ChannelHandler.Sharable
+public class EchoServerHandler extends ChannelInboundHandlerAdapter{
+
+    /**
+     * 每次传入的消息都要调用
+     */
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        ByteBuf in = (ByteBuf) msg;
+        System.out.println(
+                "Server received: " + in.toString(CharsetUtil.UTF_8));
+        ctx.write(in);
+    }
+
+    /**
+     * 读完当前批量中的最后一条数据后，触发channelReadComplete(...)方法
+     */
+    @Override
+    public void channelReadComplete(ChannelHandlerContext ctx)
+            throws Exception {
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
+                .addListener(ChannelFutureListener.CLOSE);
+    }
+
+    /**
+     * 异常捕获
+     */
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx,
+                                Throwable cause) {
+        cause.printStackTrace();
+        ctx.close();
+    }
+}
+```
+解释:
+
+- 1.channelRead和channelReadComplete理解：当批量消息后最后一条数据被channelRead(...)后触发channelReadComplete事件。
+- 2.ctx.write(...)只是将消息暂时存放在ChannelOutboundBuffer中，等待flush(...)操作
+- 3.@Sharable注解：本质是声明该ChannelHandler全局单例。可被多个Channel安全的共享。标注了@Sharable注解的ChannelHandler请注意不能有对应的状态
+- 4.[完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
+
+### 2.3.2 引导服务器
+- 1.引导服务器主要打开Netty的Channel。并分配对应的EventLoop和ChannelPipeline。
+- 2.一个Channel只有一个ChannelPipeline。ChannelPipeline是由一组ChannelHandler组成的责任链。
+
+##### 代码:
+```java
+EventLoopGroup group = new NioEventLoopGroup();
+try {
+    ServerBootstrap b = new ServerBootstrap();
+    b.group(group)
+            .channel(NioServerSocketChannel.class)
+            .localAddress(new InetSocketAddress(port))
+            .childHandler(new ChannelInitializer<SocketChannel>() {
+                @Override
+                public void initChannel(SocketChannel ch) throws Exception {
+                    ch.pipeline().addLast(new EchoServerHandler());
+                }
+            });
+} finally {
+    group.shutdownGracefully().sync();
+}
+```
+
+## 2.4 编写Echo客户端
+客户端将会:
+
+- 1.建立连接
+- 2.发送消息
+- 3.关闭连接
+
+### 2.4.1 ChannelHandler客户端逻辑
+- 1.Java是通过GC可达性分析来实现垃圾回收。对于Netty传输中的ByteBuf，使用的是引用计数算法。也就是说：如果你使用了Netty，需要你亲自考虑是否需要手动释放对象。判断方法，后文将会给出
+- 2.扩展SimpleChannelInboundHandler类处理任务的Handler，无需手动释放对象。SimpleChannelInboundHandler.java中方法channelRead()中会负责释放引用。
+- 3.客户端发送消息条数和服务端接收的消息条数是不对应的。除非处理了TCP的粘包黏包。
+
+##### 代码:
+```java
+// SimpleChannelInboundHandler<T>中channelRead方法负责释放对象msg引用
+public abstract class SimpleChannelInboundHandler<I> ...{
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        boolean release = true;
+        try {
+        // ...
+        } finally {
+            if (autoRelease && release) {
+            	  // 减少对象msg引用计数
+                ReferenceCountUtil.release(msg);
+            }
+        }
+    }
+}    
+```
+
+##### 问：ChannelHandler中何时需要主动释放引用?
+- 1.扩展的类不是: SimpleChannelInboundHandler，且该对象msg不会传给下一个ChannelHandler
+- 2.扩展的类不是: SimpleChannelInboundHandler，且该对象msg不会被ctx.write(...)
+
+### 2.4.2 引导客户端
+给出引导客户端关键代码，完整代码请参考[地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
+
+##### 代码:
+```java
+EventLoopGroup group = new NioEventLoopGroup();
+try {
+    Bootstrap b = new Bootstrap();
+    b.group(group)
+            .channel(NioSocketChannel.class)
+            .remoteAddress(new InetSocketAddress(host, port))
+            .handler(new ChannelInitializer<SocketChannel>() {
+                @Override
+                public void initChannel(SocketChannel ch)
+                        throws Exception {
+                    ch.pipeline().addLast(
+                            new EchoClientHandler());
+                }
+            });
+    // 下面两行代码可以删除
+    ChannelFuture f = b.connect().sync();
+    f.channel().closeFuture().sync();
+} finally {
+    group.shutdownGracefully().sync();
+}
+```
+
+# 附录
+- 1.[完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
+- 2.[netty-in-action下载地址]()
 
 
 
