@@ -246,9 +246,57 @@ try {
 }
 ```
 
+# 3. Netty的组件和设计
+Netty源码设计非常优秀。主要体现在技术方面和体系结构方面。
+
+- 1. Netty基于Java NIO的异步和事件驱动的实现，保证了高负载下应用程序性能的最大化和可伸缩性。
+- 2. Netty使用众多设计模式，将应用程序从网络层解耦。
+
+## 3.1 Channel、EventLoop和ChannelFuture
+Channel、EventLoop和ChannelFuture是Netty用于对网络进行的抽象:
+
+- 1.Channel - Socket
+- 2.EventLoop - 控制流、多线程和并发
+- 3.ChannelFuture - 异步通知
+
+### 3.1.1 Channel 接口
+- 1.EmbeddedChannel - 
+- 2.LocalServerChannel - 
+- 3.NioDatagramChannel - 
+- 4.NioSctpChannel - 
+- 5.NioSocketChannel - 
+
+### 3.1.2 EventLoop 接口
+EventLoop是Netty中非常重要的组件，EventLoop用于处理生命周期中发生的所有事件。与EventLoop绑定的Thread称为I/O线程，用于处理整个Channel生命周期中的I/O事件。下图说明Channel、EventLoop、Thread以及EventLoopGroup之间的关系
+
+![](./docs/pics/3-1.png)
+
+##### 约定俗成的关系(**非常重要**):
+- 1. 一个EventLoopGroup包含一个或多个EventLoop
+- 2. 一个EventLoop在其生命周期内只能和一个Thread绑定
+- 3. 由EventLoop处理的I/O事件都由它绑定的Thread处理
+- 4. 一个Channel在其生命周期内，只能注册于一个EventLoop
+- 5. 一个EventLoop可能被分配处理多个Channel。也就是EventLoop与Channel是1:n的关系
+- 6. 一个Channel上的所有ChannelHandler的事件由绑定的EventLoop中的I/O线程处理
+- 7. 不要阻塞Channel的I/O线程，可能会影响该EventLoop中其他Channel事件处理
+
+### 3.1.3 ChannelFuture 接口
+Netty中所有的I/O操作都是异步的，该异步操作可能无法立即得到返回。Netty提供addListener()方法注册回调函数。
+
+- 1. 可以将ChannelFuture看作是将来要执行的操作的结果占位符，什么时候被执行，不知道。但肯定会被执行
+- 2. 属于同一个Channel的操作(回调函数)都被保证将按照注册的顺序执行。
+
+## 3.2 ChannelHandler 和 ChannelPipeline
+
+### 3.2.1 ChannelHandler 接口
+- 1. Netty提供了很多扩展的ChannelHandler。如ChannelInboundHandler处理入站事件。
+- 2. ChannelHandler的方法，就是常说的事件。如:channelActive - 链路激活事件等。所以，ChannelHandler可以说是处理事件的具体业务代码集合。
+
+### 3.2.2 ChannelPipeline 接口
+
 # 附录
 - 1.[完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
-- 2.[netty-in-action下载地址]()
+- 2.[netty-in-action下载地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action/docs)
 
 
 
