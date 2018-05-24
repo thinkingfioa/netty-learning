@@ -1,5 +1,6 @@
 package org.lwl.netty.config;
 
+import com.sun.xml.internal.rngom.parse.host.Base;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +30,16 @@ public class ProtocolConfig {
      */
     private static int pkgMaxLen = 1024 << 2;
 
+    /**
+     * Client 连接的Ip
+     */
+    private static String ip = "127.0.0.1";
+
+    /**
+     * Server 监听端口
+     */
+    private static int port= 9080;
+
     public static void init() throws IOException {
         LOGGER.error("Reading configuration: {}", PROTOCOL_PROPERTIES);
         InputStream inputStream = ProtocolConfig.class.getClassLoader().getResourceAsStream(PROTOCOL_PROPERTIES);
@@ -44,6 +55,8 @@ public class ProtocolConfig {
         Map<String, String> propertiesMap = BaseConfig.getConfigSettings(props);
         charsetFormat = BaseConfig.getStringProperty(propertiesMap, "charset.format", charsetFormat);
         pkgMaxLen = BaseConfig.getIntProperty(propertiesMap, "pkg.max.len", pkgMaxLen);
+        port = BaseConfig.getIntProperty(propertiesMap, "port", port);
+        ip = BaseConfig.getStringProperty(propertiesMap, "ip", ip);
     }
 
     public static String getCharsetFormat() {
@@ -52,5 +65,13 @@ public class ProtocolConfig {
 
     public static int getPkgMaxLen() {
         return pkgMaxLen;
+    }
+
+    public static int getPort() {
+        return port;
+    }
+
+    public static String getIp() {
+        return ip;
     }
 }

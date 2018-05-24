@@ -1,7 +1,7 @@
 package org.lwl.netty.start;
 
 import org.lwl.netty.client.NettyClient;
-import org.lwl.netty.constant.ProtocolConfig;
+import org.lwl.netty.constant.ProtocolConstant;
 
 /**
  * @author thinking_fioa
@@ -12,8 +12,8 @@ import org.lwl.netty.constant.ProtocolConfig;
 
 public class NettyClientStart {
 
-    private final static String IP = ProtocolConfig.getIP();
-    private final static int PORT = ProtocolConfig.getPort();
+    private final static String IP = ProtocolConstant.getIP();
+    private final static int PORT = ProtocolConstant.getPort();
 
     public static void main(String [] args) {
         try {

@@ -2,7 +2,7 @@ package org.lwl.netty.codec.marshalling;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import org.lwl.netty.constant.ProtocolConfig;
+import org.lwl.netty.constant.ProtocolConstant;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -86,7 +86,7 @@ public class Encoder {
 
             return;
         }
-        byte[] valueBytes = value.getBytes(ProtocolConfig.getCharsetFormat());
+        byte[] valueBytes = value.getBytes(ProtocolConstant.getCharsetFormat());
         outByteBuf.writeInt(valueBytes.length);
         outByteBuf.writeBytes(valueBytes);
     }

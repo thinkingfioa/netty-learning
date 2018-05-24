@@ -7,7 +7,7 @@ import io.netty.handler.codec.marshalling.UnmarshallerProvider;
 import org.jboss.marshalling.MarshallerFactory;
 import org.jboss.marshalling.Marshalling;
 import org.jboss.marshalling.MarshallingConfiguration;
-import org.lwl.netty.constant.ProtocolConfig;
+import org.lwl.netty.constant.ProtocolConstant;
 
 /**
  * @author thinking_fioa
@@ -28,7 +28,7 @@ public final class MarshallingAdapterFactory {
         configuration.setVersion(5);
         UnmarshallerProvider provider = new DefaultUnmarshallerProvider(marshallerFactory, configuration);
 
-        return new MarshallingDecoderAdapter(provider, ProtocolConfig.getMessageMaxSize());
+        return new MarshallingDecoderAdapter(provider, ProtocolConstant.getMessageMaxSize());
     }
 
     public static MarshallingEncoderAdapter buildEncoderAdapter() {

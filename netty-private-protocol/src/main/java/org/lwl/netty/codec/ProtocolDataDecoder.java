@@ -6,7 +6,8 @@ import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwl.netty.constant.ProtocolConfig;
+import org.lwl.netty.codec.marshalling.MarshallingCodecUtil;
+import org.lwl.netty.constant.ProtocolConstant;
 
 /**
  * @author thinking_fioa
@@ -18,17 +19,17 @@ import org.lwl.netty.constant.ProtocolConfig;
 public class ProtocolDataDecoder extends LengthFieldBasedFrameDecoder {
     private static final Logger LOGGER = LogManager.getLogger(ProtocolDataDecoder.class);
 
-    private static final int MAX_FRAMELENGTH = ProtocolConfig.getMaxFramelength();
-    private static final int LENGTH_FIELD_OFFSET = ProtocolConfig.getLengthFieldOffset();
-    private static final int LENGTHFIELD_LENGTH = ProtocolConfig.getLengthfieldLength();
-    private static final int LENGTH_ADJUSTMENT = ProtocolConfig.getLengthAdjustment();
-    private static final int INITIAL_BYTES_TO_STRIP = ProtocolConfig.getInitialBytesToStrip();
+    private static final int MAX_FRAMELENGTH = ProtocolConstant.getMaxFramelength();
+    private static final int LENGTH_FIELD_OFFSET = ProtocolConstant.getLengthFieldOffset();
+    private static final int LENGTHFIELD_LENGTH = ProtocolConstant.getLengthfieldLength();
+    private static final int LENGTH_ADJUSTMENT = ProtocolConstant.getLengthAdjustment();
+    private static final int INITIAL_BYTES_TO_STRIP = ProtocolConstant.getInitialBytesToStrip();
 
     private IMessageCodecUtil codecUtil;
 
-    public ProtocolDataDecoder(IMessageCodecUtil codecUtil) {
+    public ProtocolDataDecoder() {
         super(MAX_FRAMELENGTH, LENGTH_FIELD_OFFSET, LENGTHFIELD_LENGTH, LENGTH_ADJUSTMENT, INITIAL_BYTES_TO_STRIP);
-        this.codecUtil = codecUtil;
+        this.codecUtil = new MarshallingCodecUtil();
     }
 
     @Override
