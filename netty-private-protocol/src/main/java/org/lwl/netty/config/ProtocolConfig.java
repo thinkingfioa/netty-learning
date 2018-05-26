@@ -40,6 +40,14 @@ public class ProtocolConfig {
      */
     private static int port= 9080;
 
+    /**
+     * 心跳间隔时间，包括读写空闲，unit: s
+     */
+    private static int heartbeatInterval = 5;
+
+    private static String userName = "thinkingfioa";
+    private static String password = "123456";
+
     public static void init() throws IOException {
         LOGGER.error("Reading configuration: {}", PROTOCOL_PROPERTIES);
         InputStream inputStream = ProtocolConfig.class.getClassLoader().getResourceAsStream(PROTOCOL_PROPERTIES);
@@ -54,6 +62,9 @@ public class ProtocolConfig {
 
         Map<String, String> propertiesMap = BaseConfig.getConfigSettings(props);
         charsetFormat = BaseConfig.getStringProperty(propertiesMap, "charset.format", charsetFormat);
+        heartbeatInterval = BaseConfig.getIntProperty(propertiesMap, "heartbeat.interval", heartbeatInterval);
+        userName = BaseConfig.getStringProperty(propertiesMap, "username", userName);
+        password = BaseConfig.getStringProperty(propertiesMap, "password", password);
         pkgMaxLen = BaseConfig.getIntProperty(propertiesMap, "pkg.max.len", pkgMaxLen);
         port = BaseConfig.getIntProperty(propertiesMap, "port", port);
         ip = BaseConfig.getStringProperty(propertiesMap, "ip", ip);
@@ -61,6 +72,18 @@ public class ProtocolConfig {
 
     public static String getCharsetFormat() {
         return charsetFormat;
+    }
+
+    public static int getHeartbeatInterval() {
+        return heartbeatInterval;
+    }
+
+    public static String getUserName() {
+        return userName;
+    }
+
+    public static String getPassword() {
+        return password;
     }
 
     public static int getPkgMaxLen() {

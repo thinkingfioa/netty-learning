@@ -14,10 +14,15 @@ import org.lwl.netty.message.Tail;
 
 public class TailSerializer {
 
+    private static final TailSerializer INSTANCE = new TailSerializer();
+    private TailSerializer(){}
+
+    public static TailSerializer getInstance() {
+        return INSTANCE;
+    }
+
     public void serialize(ByteBuf outByteBuf, Tail msg) throws Exception {
         Encoder.getInstance().writeInt(outByteBuf, msg.getCheckSum());
-        Encoder.getInstance().writeInt(outByteBuf, msg.getCopyRightId());
-        Encoder.getInstance().writeString(outByteBuf, msg.getCopyRight());
     }
 
     public Tail deserialize(ByteBuf inByteBuf) throws Exception {
@@ -27,8 +32,6 @@ public class TailSerializer {
 
         Tail tail = new Tail();
         tail.setCheckSum(checkSum);
-        tail.setCopyRightId(copyRightId);
-        tail.setCopyRight(copyRight);
 
         return tail;
     }

@@ -17,9 +17,9 @@ public class Header {
     private int msgLen;
 
     /**
-     * 发送方的sessionId
+     * 发送消息数目
      */
-    private long sessionID;
+    private long msgNum;
 
     /**
      * 消息类型，{@code MessageTypeEnum}
@@ -27,9 +27,9 @@ public class Header {
     private String msgType;
 
     /**
-     * 发送方姓名
+     * 消息时间，格式:
      */
-    private String senderName;
+    private String msgTime;
 
     /**
      * short类型占位符
@@ -50,12 +50,12 @@ public class Header {
         return msgLen;
     }
 
-    public long getSessionID() {
-        return sessionID;
+    public long getMsgNum() {
+        return msgNum;
     }
 
-    public String getSenderName() {
-        return senderName;
+    public void setMsgNum(long msgNum) {
+        this.msgNum = msgNum;
     }
 
     public Map<String, Object> getAttachment() {
@@ -64,14 +64,6 @@ public class Header {
 
     public void setMsgLen(int msgLen) {
         this.msgLen = msgLen;
-    }
-
-    public void setSessionID(long sessionID) {
-        this.sessionID = sessionID;
-    }
-
-    public void setSenderName(String senderName) {
-        this.senderName = senderName;
     }
 
     public void setAttachment(Map<String, Object> attachment) {
@@ -94,6 +86,14 @@ public class Header {
         this.msgType = msgType;
     }
 
+    public String getMsgTime() {
+        return msgTime;
+    }
+
+    public void setMsgTime(String msgTime) {
+        this.msgTime = msgTime;
+    }
+
     public byte getOneByte() {
         return oneByte;
     }
@@ -107,9 +107,8 @@ public class Header {
         StringBuilder sb = new StringBuilder();
         sb.append("Header [");
         sb.append(", msgLen=").append(msgLen);
-        sb.append(", sessionID=").append(sessionID);
+        sb.append(", msgNum=").append(msgNum);
         sb.append(", msgType=").append(msgType);
-        sb.append(", senderName=").append(senderName);
         sb.append(", flag=").append(flag);
         sb.append(", oneByte=").append(oneByte);
         sb.append(", attachment").append(attachment).append("]");

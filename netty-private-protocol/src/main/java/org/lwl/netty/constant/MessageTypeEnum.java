@@ -9,19 +9,45 @@ package org.lwl.netty.constant;
 
 public enum MessageTypeEnum {
 
-    SERVICE_REFUSE("service_refuse"),
+    /**
+     * Unknown 消息类型
+     */
+    UNKNOWN("unknown"),
 
-    SERVICE_OK("service_ok"),
-
-    SERVICE_RESP("service_resp"),
-
+    /**
+     * 登陆消息
+     */
     LOGIN_REQ("login_req"),
 
+    /**
+     * 登陆响应
+     */
     LOGIN_RESP("login_resp"),
 
+    /**
+     * 注销
+     */
+    LOGOUT("logout"),
+
+    /**
+     * 心跳请求
+     */
     HEARTBEAT_REQ("heartbeat_req"),
 
-    HEARTBEAT_RESP("heartbeat_resp")
+    /**
+     * 心跳响应
+     */
+    HEARTBEAT_RESP("heartbeat_resp"),
+
+    /**
+     * 协议请求
+     */
+    PORTOCOL_SUB("protocol_sub"),
+
+    /**
+     * 协议数据消息
+     */
+    PORTOCOL_DATA("protocol_data")
     ;
 
     MessageTypeEnum(final String msgType) {

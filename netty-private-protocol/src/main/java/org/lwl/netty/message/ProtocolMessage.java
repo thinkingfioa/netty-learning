@@ -3,7 +3,7 @@ package org.lwl.netty.message;
 /**
  * @author thinking_fioa
  * @createTime 2018/4/21
- * @description 私有消息
+ * @description 自定义消息格式消息
  */
 
 
@@ -11,9 +11,29 @@ public class ProtocolMessage {
 
     private Header header;
 
-    private AbstractBody body;
+    private IBody body;
 
     private Tail tail;
+
+    private ProtocolMessage(Header header, IBody body, Tail tail) {
+        this.header = header;
+        this.body = body;
+        this.tail = tail;
+    }
+
+    private ProtocolMessage(IBody body) {
+        this.header = new Header();
+        this.body = body;
+        this.tail = new Tail();
+    }
+
+    public static ProtocolMessage createMsgOfEncode(IBody body) {
+        return new ProtocolMessage(body);
+    }
+
+    public static ProtocolMessage createMsgOfDecode(Header header, IBody body, Tail tail) {
+        return new ProtocolMessage(header, body, tail);
+    }
 
     public Header getHeader() {
         return header;
@@ -23,11 +43,11 @@ public class ProtocolMessage {
         this.header = header;
     }
 
-    public AbstractBody getBody() {
+    public IBody getBody() {
         return body;
     }
 
-    public void setBody(AbstractBody body) {
+    public void setBody(IBody body) {
         this.body = body;
     }
 

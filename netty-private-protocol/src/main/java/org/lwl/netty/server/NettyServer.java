@@ -6,15 +6,20 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwl.netty.codec.ProtocolDataDecoder;
 import org.lwl.netty.codec.ProtocolDataEncoder;
 import org.lwl.netty.config.ProtocolConfig;
-import org.lwl.netty.server.handler.HeartBeatRespHandler;
+import org.lwl.netty.server.handler.HeartbeatServerHandler;
 import org.lwl.netty.server.handler.LoginRespHandler;
+import org.lwl.netty.server.handler.ProtocolMsgSendHandler;
+import org.lwl.netty.server.handler.ServerExceptionHandler;
 import org.lwl.netty.util.concurrent.CustomThreadFactory;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author thinking_fioa
@@ -72,13 +77,14 @@ public class NettyServer {
     public static class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
 
         @Override
-        protected void initChannel(SocketChannel socketChannel) throws Exception {
-            // TODO:: 动态事件编排
-            socketChannel.pipeline().addLast(new ProtocolDataDecoder());
-            socketChannel.pipeline().addLast(new ProtocolDataEncoder());
-            socketChannel.pipeline().addLast(new ReadTimeoutHandler(50));
-            socketChannel.pipeline().addLast(new HeartBeatRespHandler());
-            socketChannel.pipeline().addLast(new LoginRespHandler());
+        protected void initChannel(SocketChannel ch) throws Exception {
+            ch.pipeline().addLast(new ProtocolDataDecoder());
+            ch.pipeline().addLast(new ProtocolDataEncoder());
+            ch.pipeline().addLast(new IdleStateHandler(0L, ProtocolConfig.getHeartbeatInterval(), 0, TimeUnit.SECONDS));
+            ch.pipeline().addLast(new HeartbeatServerHandler());
+            ch.pipeline().addLast(new LoginRespHandler());
+            ch.pipeline().addLast(new ProtocolMsgSendHandler());
+            ch.pipeline().addLast(new ServerExceptionHandler());
         }
     }
 }

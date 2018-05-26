@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import org.lwl.netty.message.Header;
 import org.lwl.netty.message.IBody;
 import org.lwl.netty.message.Tail;
+import org.lwl.netty.message.body.DefaultBody;
 
 /**
  * @author thinking_fioa
@@ -12,13 +13,9 @@ import org.lwl.netty.message.Tail;
  */
 
 
-public class IBodySerializer {
+public interface IBodySerializer<T> {
 
-    public void serialize(ByteBuf outByteBuf, IBody msg) {
+    public void serialize(ByteBuf outByteBuf, T body);
 
-    }
-
-    public IBody deserialize(ByteBuf inByteBuf) {
-
-    }
+    public T deserialize(ByteBuf inByteBuf);
 }

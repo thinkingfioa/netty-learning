@@ -12,8 +12,6 @@ import org.lwl.netty.server.NettyServer;
 
 public class NettyServerAndClientStart {
 
-
-
     public static void main(String [] args) {
         // 用线程启动
         // 启动 Server
