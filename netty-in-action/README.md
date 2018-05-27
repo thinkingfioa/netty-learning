@@ -294,9 +294,83 @@ Netty中所有的I/O操作都是异步的，该异步操作可能无法立即得
 
 ### 3.2.2 ChannelPipeline 接口
 
+- 1. ChannelPipeline本质上是ChannelHandler链的容器
+- 2. ChannelHandler是处理Channel上的入站和出站事件的代码。
+- 3. ChannelHandler对象接收事件、执行所实现的处理逻辑，并传递给链中的下一个ChannelHandler处理
+- 4. 请注意下图中头部-尾端，Netty的头部-尾端是规定的，需要记住。
+
+
+![](./docs/pics/3-3.png)
+##### 上图解释:
+
+- 1. 一个入站事件被读取，从ChannelPipeline头部开始流动，传递给第一个ChannelInBoundHandler
+- 2. 一个出站事件触发，从链路尾端的ChannelOutboundHandler开始流动，直到它到达链的头部为止。
+
+### 3.2.3 channel.write(...)和channelHandlerContext.write(...)区别
+- 1. channel.write(...) - 消息从ChannelPipeline总的下一个ChannelHandler开始流转
+- 2. channelHandlerContext.write(...) - 消息直接从ChannelPipeline的尾端开始流转
+- 3. ctx.write(...)的性能**优于**channel.write(...)
+
+### 3.2.4 编码器和解码器
+- 1. Netty提供多种编码器和解码器，比如:ProtobufDecoder或ProtobufEncoder。
+- 2. 编码器／解码器中覆写了channelRead()方法，在方法里调用encode()/decode()方法。再传递给下一个ChannelHandler处理.
+- 3. 解码器添加在入站事件的头部，编码器添加在出站事件的头部。天然的解决了网络数据的编解码，非常优秀的设计。
+
+## 3.3 引导
+Netty有两种类型的引导: 客户端(Bootstrap)和服务端(ServerBootstrap)
+
+- 1. Bootstrap(客户端) - 连接远程的主机和端口
+- 2. ServerBootstrap(服务端) - 两个端口。第一个是本地监听端口，第二个是与tcp连接端口。
+- 3. 客户端需要一个EventLoopGroup；服务端需要两个EventLoopGroup
+
+### 3.3.1 服务端需要两个EventLoopGroup
+Netty的服务端坐两项任务: 1. 监听本地端口，等待客户端连接。2. 与客户端通信的临时分配的端口。所以服务端有两个EventLoopGroup，通常称为: bossEventLoopGroup + workerEventLoopGroup.
+
+![](./docs/pics/3-4.png)
+##### 上图解释:
+- 1. 上图左边的是ServerChannel，用于监听本地端口的通道。对应于bossEventLoopGroup
+- 2. 右边的是与具体客户端连接的channel，用于数据通信。对应于workerEventLoopGroup
+
+##### 代码:
+```java
+private EventLoopGroup bossGroup = new NioEventLoopGroup();
+private EventLoopGroup workerGroup = new NioEventLoopGroup(2,...);
+
+public void bind(int port) throws InterruptedException {
+    ServerBootstrap bootstrap = new ServerBootstrap();
+    bootstrap.group(bossGroup, workerGroup)
+            .channel(NioServerSocketChannel.class)
+            .option(ChannelOption.SO_BACKLOG, 1024)
+            .childHandler(new ChildChannelHandler());
+
+    ChannelFuture cf = bootstrap.bind(port);
+    cf.addListener(new ChannelFutureListener() {
+        @Override
+        public void operationComplete(ChannelFuture future) throws Exception {
+            if(future.isSuccess()) {
+                LOGGER.info("netty server bind success.");
+            } else {
+                LOGGER.error("netty server bind fail.", future.cause());
+            }
+        }
+    });
+}
+```
+
+# 第4章 传输
+- 1. 网络中传输的数据总是：字节。所有经过网络传播的对象，最终都要通过序列化／反序列化变成字节流。
+- 2. Netty支持多种序列化／反序列化。比如:ProtoBuf、Marshalling或Kryo。关于Netty序列化内容和多种序列化方式的性能比较，可参考我的另一个博客[Netty私有化协议](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)
+
+## 4.1 案例研究: 传输迁徙
+- 1. Java提供的阻塞(OIO)和异步(NIO)的代码完全不同。如果一个项目想从Java原始的OIO迁移到NIO。
+- 2. Netty提供的阻塞(OIO)和异步(NIO)的代码只有一行不同。体现了Netty高度的抽象能力和水平
+- 3. 具体代码地址请参考[chapter4代码]()
+
+## 4.2 传输API
+
 # 附录
-- 1.[完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
-- 2.[netty-in-action下载地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action/docs)
+- 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
+- 2. [netty-in-action下载地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action/docs)
 
 
 
