@@ -1,7 +1,10 @@
 package org.lwl.netty.message.body;
 
 import org.lwl.netty.constant.MessageTypeEnum;
+import org.lwl.netty.constant.ProtocolDataType;
 import org.lwl.netty.message.IBody;
+
+import java.util.List;
 
 /**
  * @author thinking_fioa
@@ -12,6 +15,27 @@ import org.lwl.netty.message.IBody;
 
 public class ProtocolSubBody implements IBody{
 
+    /**
+     * 订阅的频道类型
+     */
+    private List<ProtocolDataType> dataTypeList;
+
+    public List<ProtocolDataType> getDataTypeList() {
+        return dataTypeList;
+    }
+
+    public void setDataTypeList(List<ProtocolDataType> dataTypeList) {
+        this.dataTypeList = dataTypeList;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ProtocolSubBody [");
+        sb.append("dataTypeList=").append(dataTypeList).append("]");
+
+        return sb.toString();
+    }
 
     @Override
     public MessageTypeEnum msgType() {

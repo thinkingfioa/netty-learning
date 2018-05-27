@@ -27,8 +27,6 @@ public class TailSerializer {
 
     public Tail deserialize(ByteBuf inByteBuf) throws Exception {
         int checkSum = Decoder.getInstance().readInt(inByteBuf);
-        int copyRightId = Decoder.getInstance().readInt(inByteBuf);
-        String copyRight = Decoder.getInstance().readString(inByteBuf);
 
         Tail tail = new Tail();
         tail.setCheckSum(checkSum);

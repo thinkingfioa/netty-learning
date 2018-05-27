@@ -1,6 +1,7 @@
 package org.lwl.netty.codec.marshalling.serialize.body;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
 import org.lwl.netty.message.body.HeartbeatRespBody;
 
@@ -22,12 +23,12 @@ public final class HeartbeatRespBodySerializer implements IBodySerializer<Heartb
 
 
     @Override
-    public void serialize(ByteBuf outByteBuf, HeartbeatRespBody body) {
+    public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, HeartbeatRespBody body) {
 
     }
 
     @Override
-    public HeartbeatRespBody deserialize(ByteBuf inByteBuf) {
+    public HeartbeatRespBody deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) {
         return new HeartbeatRespBody();
     }
 }

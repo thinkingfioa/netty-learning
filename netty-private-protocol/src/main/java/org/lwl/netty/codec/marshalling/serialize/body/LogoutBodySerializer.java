@@ -1,6 +1,7 @@
 package org.lwl.netty.codec.marshalling.serialize.body;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
 import org.lwl.netty.message.body.LogoutBody;
 
@@ -22,12 +23,12 @@ public final class LogoutBodySerializer implements IBodySerializer<LogoutBody>{
 
 
     @Override
-    public void serialize(ByteBuf outByteBuf, LogoutBody body) {
+    public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, LogoutBody body) {
 
     }
 
     @Override
-    public LogoutBody deserialize(ByteBuf inByteBuf) {
+    public LogoutBody deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) {
         return new LogoutBody();
     }
 }

@@ -1,6 +1,8 @@
 package org.lwl.netty.codec.marshalling.serialize.body;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import org.lwl.netty.codec.marshalling.Encoder;
 import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
 import org.lwl.netty.message.body.ProtocolDataBody;
 
@@ -20,14 +22,13 @@ public final class ProtocolDataBodySerializer implements IBodySerializer<Protoco
         return INSTANCE;
     }
 
-
     @Override
-    public void serialize(ByteBuf outByteBuf, ProtocolDataBody body) {
+    public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, ProtocolDataBody body) {
 
     }
 
     @Override
-    public ProtocolDataBody deserialize(ByteBuf inByteBuf) {
+    public ProtocolDataBody deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) {
         return new ProtocolDataBody();
     }
 }

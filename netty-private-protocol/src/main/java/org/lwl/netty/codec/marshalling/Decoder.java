@@ -32,7 +32,7 @@ public class Decoder {
             return null;
         }
         if( 0 == size) {
-            return new ArrayList<Object>();
+            return new ArrayList<>();
         }
 
         List<Object> list = new ArrayList<Object>(size);
