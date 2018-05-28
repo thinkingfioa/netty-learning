@@ -6,6 +6,7 @@ import com.esotericsoftware.kryo.io.Output;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
+import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.IMessageCodecUtil;
 import org.lwl.netty.config.ProtocolConfig;
 import org.lwl.netty.message.ProtocolMessage;
@@ -24,7 +25,7 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
     private static final int PKG_MAX_LEN = ProtocolConfig.getPkgMaxLen();
 
     @Override
-    public void encode(ByteBuf outByteBuf, Object object) throws Exception {
+    public void encode(ChannelHandlerContext ctx, ByteBuf outByteBuf, Object object) throws Exception {
         Kryo kryo = KryoHolder.get();
         ByteBufOutputStream byteBufOutputStream = null;
         try {
@@ -43,7 +44,7 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
     }
 
     @Override
-    public Object decode(ByteBuf inByteBuf) {
+    public Object decode(ChannelHandlerContext ctx, ByteBuf inByteBuf) {
         if(null == inByteBuf) {
             return null;
         }

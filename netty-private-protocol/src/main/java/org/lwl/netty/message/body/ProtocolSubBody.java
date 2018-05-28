@@ -2,7 +2,7 @@ package org.lwl.netty.message.body;
 
 import org.lwl.netty.constant.MessageTypeEnum;
 import org.lwl.netty.constant.ProtocolDataType;
-import org.lwl.netty.message.IBody;
+import org.lwl.netty.message.Body;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 
-public class ProtocolSubBody implements IBody{
+public class ProtocolSubBody extends Body{
 
     /**
      * 订阅的频道类型
@@ -39,7 +39,7 @@ public class ProtocolSubBody implements IBody{
 
     @Override
     public MessageTypeEnum msgType() {
-        return MessageTypeEnum.PORTOCOL_SUB;
+        return MessageTypeEnum.PROTOCOL_SUB;
     }
 
 }

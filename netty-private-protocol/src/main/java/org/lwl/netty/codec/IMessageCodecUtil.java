@@ -1,6 +1,7 @@
 package org.lwl.netty.codec;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ import java.io.IOException;
 
 public interface IMessageCodecUtil<T> {
 
-    void encode(ByteBuf outByteBuf, T object) throws Exception;
+    void encode(ChannelHandlerContext ctx, ByteBuf outByteBuf, T object) throws Exception;
 
-    T decode(ByteBuf inByteBuf);
+    T decode(ChannelHandlerContext ctx, ByteBuf inByteBuf);
 }

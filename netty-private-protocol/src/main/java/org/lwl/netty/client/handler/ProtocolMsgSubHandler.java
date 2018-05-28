@@ -4,9 +4,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwl.netty.constant.ProtocolDataType;
 import org.lwl.netty.message.ProtocolMessage;
 import org.lwl.netty.message.body.LoginReqBody;
 import org.lwl.netty.message.body.ProtocolSubBody;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author thinking_fioa
@@ -26,7 +30,10 @@ public class ProtocolMsgSubHandler extends ChannelInboundHandlerAdapter {
 
     private ProtocolMessage buildPtclSubMsg() {
         ProtocolSubBody subBody = new ProtocolSubBody();
-        // TODO:: 补充字段属性
+        List<ProtocolDataType> dataTypeList = new ArrayList<ProtocolDataType>();
+        dataTypeList.add(ProtocolDataType.NEWS);
+        dataTypeList.add(ProtocolDataType.SPORTS);
+        dataTypeList.add(ProtocolDataType.ENTERTAINMENT);
 
         return ProtocolMessage.createMsgOfEncode(subBody);
     }

@@ -3,6 +3,7 @@ package org.lwl.netty.codec.marshalling.serialize.body;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
+import org.lwl.netty.message.Body;
 import org.lwl.netty.message.body.LoginRespBody;
 
 /**
@@ -23,7 +24,7 @@ public final class LoginRespBodySerializer implements IBodySerializer<LoginRespB
 
 
     @Override
-    public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, LoginRespBody body) {
+    public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, Body body) {
 
     }
 

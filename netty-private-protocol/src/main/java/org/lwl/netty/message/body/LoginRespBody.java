@@ -1,7 +1,7 @@
 package org.lwl.netty.message.body;
 
 import org.lwl.netty.constant.MessageTypeEnum;
-import org.lwl.netty.message.IBody;
+import org.lwl.netty.message.Body;
 
 /**
  * @author thinking_fioa
@@ -10,7 +10,7 @@ import org.lwl.netty.message.IBody;
  */
 
 
-public class LoginRespBody implements IBody{
+public class LoginRespBody extends Body{
 
     @Override
     public String toString() {

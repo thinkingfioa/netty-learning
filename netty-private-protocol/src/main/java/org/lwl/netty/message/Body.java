@@ -9,7 +9,9 @@ import org.lwl.netty.constant.MessageTypeEnum;
  */
 
 
-public interface IBody {
+public class Body {
 
-    public MessageTypeEnum msgType();
+    public MessageTypeEnum msgType() {
+        return MessageTypeEnum.UNKNOWN;
+    }
 }

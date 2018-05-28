@@ -1,7 +1,7 @@
 package org.lwl.netty.message.body;
 
 import org.lwl.netty.constant.MessageTypeEnum;
-import org.lwl.netty.message.IBody;
+import org.lwl.netty.message.Body;
 
 /**
  * @author thinking_fioa
@@ -9,7 +9,7 @@ import org.lwl.netty.message.IBody;
  * @description 协议订阅body，客户端发送该订阅消息
  */
 
-public class ProtocolDataBody implements IBody{
+public class ProtocolDataBody extends Body{
 
     /**
      * 频道拆分的总发送package数
@@ -21,6 +21,11 @@ public class ProtocolDataBody implements IBody{
      * 当前发送package序号
      */
     private long pkgSequenceNum;
+
+    /**
+     * package内容长度
+     */
+    private int contentLen;
 
     /**
      * 当前package序号的内容
@@ -51,9 +56,17 @@ public class ProtocolDataBody implements IBody{
         this.content = content;
     }
 
+    public int getContentLen() {
+        return contentLen;
+    }
+
+    public void setContentLen(int contentLen) {
+        this.contentLen = contentLen;
+    }
+
     @Override
     public MessageTypeEnum msgType() {
-        return MessageTypeEnum.PORTOCOL_DATA;
+        return MessageTypeEnum.PROTOCOL_DATA;
     }
 
     @Override
@@ -62,6 +75,7 @@ public class ProtocolDataBody implements IBody{
         sb.append("ProtocolSubBody [");
         sb.append("pkgSum=").append(pkgSum);
         sb.append("pkgSequenceNum=").append(pkgSequenceNum);
+        sb.append("contentLen=").append(contentLen);
         if(null != content) {
             sb.append("contentLen=").append(content.length).append("]");
         } else {

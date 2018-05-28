@@ -3,7 +3,7 @@ package org.lwl.netty.codec.marshalling.serialize.body;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
-import org.lwl.netty.message.body.DefaultBody;
+import org.lwl.netty.message.Body;
 
 /**
  * @author thinking_fioa
@@ -12,7 +12,7 @@ import org.lwl.netty.message.body.DefaultBody;
  */
 
 
-public final class DefaultBodySerializer implements IBodySerializer<DefaultBody>{
+public final class DefaultBodySerializer implements IBodySerializer<Body>{
 
     private static final DefaultBodySerializer INSTANCE = new DefaultBodySerializer();
     private DefaultBodySerializer(){}
@@ -23,12 +23,12 @@ public final class DefaultBodySerializer implements IBodySerializer<DefaultBody>
 
 
     @Override
-    public void serialize(ChannelHandlerContext ctx,  ByteBuf outByteBuf, DefaultBody body) {
+    public void serialize(ChannelHandlerContext ctx,  ByteBuf outByteBuf, Body body) {
 
     }
 
     @Override
-    public DefaultBody deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) {
-        return new DefaultBody();
+    public Body deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) {
+        return new Body();
     }
 }

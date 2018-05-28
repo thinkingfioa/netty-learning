@@ -44,10 +44,10 @@ public class NettyClientAdapter {
     }
 
     public void reconnect() {
-        // TODO:: 新线程
-        new Thread(() -> {
-            connection(ip, port);
-        }
+
+        new Thread( () -> {
+                connection(ip, port);
+            }
         ).start();
     }
 
@@ -60,12 +60,13 @@ public class NettyClientAdapter {
                     if(future.isSuccess()) {
                         LOGGER.info("client connect success. ip:{}, port:{}", ip, port);
                     } else {
-                        // TODO:: error重连
+                        LOGGER.error("connect fail.", future.cause());
+                        reconnect();
                     }
                 }
             });
         } catch (Exception e) {
-            //TODO:: 重连
+            reconnect();
         }
 
     }

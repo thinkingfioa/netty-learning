@@ -6,6 +6,7 @@ import org.lwl.netty.codec.marshalling.Decoder;
 import org.lwl.netty.codec.marshalling.Encoder;
 import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
 import org.lwl.netty.constant.ProtocolDataType;
+import org.lwl.netty.message.Body;
 import org.lwl.netty.message.body.ProtocolSubBody;
 
 import java.util.ArrayList;
@@ -29,8 +30,9 @@ public final class ProtocolSubBodySerializer implements IBodySerializer<Protocol
 
 
     @Override
-    public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, ProtocolSubBody body) throws Exception {
-        Encoder.getInstance().writeList(ctx, outByteBuf, body.getDataTypeList());
+    public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, Body body) throws Exception {
+        ProtocolSubBody subBody = (ProtocolSubBody)body;
+        Encoder.getInstance().writeList(ctx, outByteBuf, subBody.getDataTypeList());
     }
 
     @Override

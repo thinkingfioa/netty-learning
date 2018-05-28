@@ -1,7 +1,7 @@
 package org.lwl.netty.message.body;
 
 import org.lwl.netty.constant.MessageTypeEnum;
-import org.lwl.netty.message.IBody;
+import org.lwl.netty.message.Body;
 
 /**
  * @author thinking_fioa
@@ -10,7 +10,7 @@ import org.lwl.netty.message.IBody;
  */
 
 
-public class LogoutBody implements IBody{
+public class LogoutBody extends Body{
 
     @Override
     public MessageTypeEnum msgType() {

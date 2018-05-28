@@ -41,7 +41,7 @@ public class ProtocolDataDecoder extends LengthFieldBasedFrameDecoder {
                 return null;
             }
 
-            return codecUtil.decode(inByteBuf);
+            return codecUtil.decode(ctx, inByteBuf);
         } catch (Throwable cause) {
             LOGGER.error("Decode error.", cause);
             throw new EncoderException("Decode error.");

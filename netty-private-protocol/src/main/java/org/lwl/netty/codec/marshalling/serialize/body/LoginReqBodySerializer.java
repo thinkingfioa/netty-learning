@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.marshalling.Decoder;
 import org.lwl.netty.codec.marshalling.Encoder;
 import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
+import org.lwl.netty.message.Body;
 import org.lwl.netty.message.body.LoginReqBody;
 
 import java.io.UnsupportedEncodingException;
@@ -27,7 +28,8 @@ public final class LoginReqBodySerializer implements IBodySerializer<LoginReqBod
 
 
     @Override
-    public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, LoginReqBody login) throws UnsupportedEncodingException {
+    public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, Body body) throws UnsupportedEncodingException {
+        LoginReqBody login = (LoginReqBody)body;
         Encoder.getInstance().writeString(outByteBuf, login.getUserName());
         Encoder.getInstance().writeString(outByteBuf, login.getPassword());
     }

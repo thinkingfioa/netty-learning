@@ -2,12 +2,7 @@ package org.lwl.netty.codec.marshalling.serialize;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import org.lwl.netty.message.Header;
-import org.lwl.netty.message.IBody;
-import org.lwl.netty.message.Tail;
-import org.lwl.netty.message.body.DefaultBody;
-
-import java.io.UnsupportedEncodingException;
+import org.lwl.netty.message.Body;
 
 /**
  * @author thinking_fioa
@@ -18,7 +13,7 @@ import java.io.UnsupportedEncodingException;
 
 public interface IBodySerializer<T> {
 
-    public void serialize(ChannelHandlerContext ctx,  ByteBuf outByteBuf, T body) throws Exception;
+    public void serialize(ChannelHandlerContext ctx,  ByteBuf outByteBuf, Body body) throws Exception;
 
     public T deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception;
 }

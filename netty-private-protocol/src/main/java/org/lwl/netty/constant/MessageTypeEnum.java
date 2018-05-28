@@ -42,12 +42,12 @@ public enum MessageTypeEnum {
     /**
      * 协议请求
      */
-    PORTOCOL_SUB("protocol_sub"),
+    PROTOCOL_SUB("protocol_sub"),
 
     /**
      * 协议数据消息
      */
-    PORTOCOL_DATA("protocol_data")
+    PROTOCOL_DATA("protocol_data")
     ;
 
     MessageTypeEnum(final String msgType) {

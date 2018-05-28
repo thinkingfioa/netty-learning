@@ -30,7 +30,7 @@ public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage>{
     }
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, ProtocolMessage protocolMessage, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, ProtocolMessage protocolMessage, ByteBuf byteBuf) throws Exception {
         if(null == protocolMessage || null == protocolMessage.getBody()) {
             LOGGER.error("protocolMessage is null. refuse encode");
 
@@ -39,7 +39,7 @@ public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage>{
         try {
             ByteBuf outByteBuf = Unpooled.buffer();
 
-            codecUtil.encode(outByteBuf, protocolMessage);
+            codecUtil.encode(ctx, outByteBuf, protocolMessage);
 
         } catch(Throwable cause) {
             LOGGER.error("Encode error.", cause);

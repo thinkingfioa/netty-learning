@@ -20,4 +20,10 @@ public class ClientExceptionHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         LOGGER.error("Client Handler happen exception.", cause);
     }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        LOGGER.error("client close channel.");
+        ctx.close();
+    }
 }

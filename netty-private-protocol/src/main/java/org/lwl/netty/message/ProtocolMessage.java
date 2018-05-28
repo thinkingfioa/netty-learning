@@ -11,27 +11,27 @@ public class ProtocolMessage {
 
     private Header header;
 
-    private IBody body;
+    private Body body;
 
     private Tail tail;
 
-    private ProtocolMessage(Header header, IBody body, Tail tail) {
+    private ProtocolMessage(Header header, Body body, Tail tail) {
         this.header = header;
         this.body = body;
         this.tail = tail;
     }
 
-    private ProtocolMessage(IBody body) {
+    private ProtocolMessage(Body body) {
         this.header = new Header();
         this.body = body;
         this.tail = new Tail();
     }
 
-    public static ProtocolMessage createMsgOfEncode(IBody body) {
+    public static ProtocolMessage createMsgOfEncode(Body body) {
         return new ProtocolMessage(body);
     }
 
-    public static ProtocolMessage createMsgOfDecode(Header header, IBody body, Tail tail) {
+    public static ProtocolMessage createMsgOfDecode(Header header, Body body, Tail tail) {
         return new ProtocolMessage(header, body, tail);
     }
 
@@ -43,11 +43,11 @@ public class ProtocolMessage {
         this.header = header;
     }
 
-    public IBody getBody() {
+    public Body getBody() {
         return body;
     }
 
-    public void setBody(IBody body) {
+    public void setBody(Body body) {
         this.body = body;
     }
 
