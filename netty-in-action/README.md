@@ -364,9 +364,30 @@ public void bind(int port) throws InterruptedException {
 ## 4.1 案例研究: 传输迁徙
 - 1. Java提供的阻塞(OIO)和异步(NIO)的代码完全不同。如果一个项目想从Java原始的OIO迁移到NIO。
 - 2. Netty提供的阻塞(OIO)和异步(NIO)的代码只有一行不同。体现了Netty高度的抽象能力和水平
-- 3. 具体代码地址请参考[chapter4代码]()
+- 3. 通过对比可以发现，Netty代码提供的OIO/NIO转换几乎无成本。给力
+- 4. 具体代码地址请参考[chapter4代码](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action/src/main/java/org/lwl/netty/chapter/four)
 
 ## 4.2 传输API
+Netty的传输API重点关注3个组件: Channel、ChannelPipeline和ChannelConfig
+
+- 1. Channel - 是核心，所有的I/O操作都是围绕这个Channel
+- 2. ChannelPipeline - 持有所有应用于入站和出站数据以及事件的ChannelHandler实例。
+- 3. ChannelConfig - 包含该Channel的所有配置信息
+
+### 4.2.1 ChannelHandler的典型用途
+- 1. 将数据从一种格式转换成另一种格式 - 编码器/解码器
+- 2. 异常通知 - exceptionCaught事件
+- 3. 提供Channel变为活动或者非活动的通知 - channelActive/channelInactive
+- 4. 提供用户自定义事件的通知。
+
+##### 注:
+可以利用上面的第4点：提供用户自定义事件的通知。实现Pipeline动态编排ChannelHandler。可参考项目中如何实现。[参考项目地址](//TODO::动态编排Handler链)
+
+### 4.2.2 Channel
+下图是Channel的方法。
+![](./docs/pics/table-4-1.png)
+##### 注:
+上图中isActive在tcp和udp特性是不同的。tcp只有连接上远程，isActive才会被触发。udp是无连接的，所以一旦被打开，便触发。所以isActive无法用来判断udp的另一端是否正常。
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)

@@ -21,17 +21,20 @@ Netty中大量使用NIO技术，满足高性能、高并发要求。进行初步
 
 ## 3. Netty实战
 《Netty实战》比《Netty权威指南2》好很多，最近在读第二遍。推荐此书，讲的非常透彻
+- 1.[文档地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
+
 
 ## 4. Netty 源码学习
 Netty源码较复杂，本人等学习研究完RocketMQ项目(rocketmq-learning)后，开始此项目源码分析。
 
 ## 5. TODO LIST
 
-- 1.动态编码ChannelHandler
-- 2.AttributeMap使用
-- 3.blog: Channel的理解。包括死锁问题
-- 4.udp项目
-- 5.Netty 接收缓冲区
+- 1. 动态编码ChannelHandler
+- 2. AttributeMap使用
+- 3. blog: Channel的理解。包括死锁问题
+- 4. udp项目
+- 5. Netty 接收缓冲区
+- 6. Netty实现RPC框架
 
 # 参考文档
 - 1.《Netty权威指南2》
