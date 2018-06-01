@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwl.netty.codec.marshalling.MarshallingCodecUtil;
@@ -22,7 +23,7 @@ import java.util.Map;
  */
 
 
-public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage>{
+public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage> {
     private static final Logger LOGGER = LogManager.getLogger(ProtocolDataEncoder.class);
 
     private long msgNum = 1;
@@ -38,19 +39,18 @@ public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage>{
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, ProtocolMessage protocolMessage, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, ProtocolMessage protocolMessage, ByteBuf outByteBuf) throws Exception {
         if(null == protocolMessage || null == protocolMessage.getBody()) {
             LOGGER.error("protocolMessage is null. refuse encode");
 
             return;
         }
         try {
-            ByteBuf outByteBuf = Unpooled.buffer();
             // 填写头协议
             fillInHeader(protocolMessage);
 
             codecUtil.encode(ctx, outByteBuf, protocolMessage);
-//            outByteBuf.setInt(0, outByteBuf.readableBytes());
+
             LOGGER.info("--> encode msg");
         } catch(Throwable cause) {
             LOGGER.error("Encode error.", cause);

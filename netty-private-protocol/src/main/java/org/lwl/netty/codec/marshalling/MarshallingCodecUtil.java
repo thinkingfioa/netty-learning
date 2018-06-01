@@ -39,7 +39,7 @@ public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> 
 
         // 更新Header消息中的长度域字段
         int msgLen = outByteBuf.writerIndex() + msg.getTail().byteSize();
-        LOGGER.error("msgLen: {}", msgLen);
+
         outByteBuf.setInt(0, msgLen);
         // Tail
         TailSerializer.getInstance().serialize(ctx, outByteBuf, msg.getTail());

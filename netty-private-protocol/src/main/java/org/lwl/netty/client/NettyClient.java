@@ -7,6 +7,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.logging.log4j.LogManager;
@@ -44,6 +46,7 @@ public class NettyClient {
     private static class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         @Override
         protected  void initChannel(SocketChannel ch) throws Exception {
+//            ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
             ch.pipeline().addLast(new ProtocolDataDecoder());
             ch.pipeline().addLast(new ProtocolDataEncoder());
             ch.pipeline().addLast(new LoginReqHandler());
