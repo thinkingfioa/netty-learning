@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="OFF">
     <properties>
-        <property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %l - %msg%n</property>
+        <property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %C{1}.%M(%F:%L) - %msg%n</property>
         <property name="log_home">~/logs/netty-learning</property>
         <property name="file_name">netty-private-protocol</property>
         <property name="every_file_size">10M</property>
@@ -31,6 +31,7 @@
             <DefaultRolloverStrategy max="${error_file_count}"/>
             <Filters>
                 <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
             <PatternLayout pattern="${log_pattern}"/>
         </RollingFile>

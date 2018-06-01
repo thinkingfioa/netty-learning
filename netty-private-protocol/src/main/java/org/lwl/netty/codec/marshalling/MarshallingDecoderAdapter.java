@@ -22,6 +22,7 @@ public class MarshallingDecoderAdapter extends MarshallingDecoder{
         super(provider, maxObjectSize);
     }
 
+    @Override
     public Object decode(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
         return super.decode(ctx, inByteBuf);
     }

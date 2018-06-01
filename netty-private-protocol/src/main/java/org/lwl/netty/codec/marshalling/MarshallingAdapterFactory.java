@@ -53,7 +53,7 @@ public final class MarshallingAdapterFactory {
         configuration.setVersion(5);
         UnmarshallerProvider provider = new DefaultUnmarshallerProvider(marshallerFactory, configuration);
 
-        return new MarshallingDecoderAdapter(provider, ProtocolConstant.getMessageMaxSize());
+        return new MarshallingDecoderAdapter(provider, ProtocolConstant.getMaxFramelength());
     }
 
     public static MarshallingEncoderAdapter buildEncoderAdapter() {

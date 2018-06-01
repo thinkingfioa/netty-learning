@@ -47,9 +47,9 @@ public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception  {
         ProtocolMessage message = (ProtocolMessage) msg;
-        final String msgType = message.getHeader().getMsgType();
+        final MessageTypeEnum msgType = message.getHeader().getMsgType();
         lossConnectCount = 0;
-        if(MessageTypeEnum.HEARTBEAT_REQ.getMsgType().equals(msgType)) {
+        if(MessageTypeEnum.HEARTBEAT_REQ.equals(msgType)) {
             LOGGER.info("receive heartbeat req.");
             ctx.writeAndFlush(buildHtRespMsg());
         } else {

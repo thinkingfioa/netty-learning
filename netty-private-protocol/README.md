@@ -104,7 +104,21 @@ public class Header {
 TODO:: 提供时序图
 
 ### 1.1.3 Tail
-Tail是消息尾部字段描述。只有一个checkSum字段，防止消息字节流串改或消息出现错误
+- 1. Tail是消息尾部字段描述。只有一个checkSum字段，防止消息字节流串改或消息出现错误。
+- 2. checkSum的值只涉及Header+Body部分。
+- 3. 自定义私有协议的checkSum只有8个bit
+
+##### checkSum计算代码:
+```java
+public int calcCheckSum(byte[] bytes){
+	byte checkSum = 0;
+	for(int i = 0; i<bytes.length; i++) {
+		checkSum += bytes[i];
+	}
+
+	return 0x00ff & checkSum;
+}
+```
 
 ## 1.2 心跳机制
 Client端和Server端在数据传输空闲期间，利用心跳机制来保持回话正常。
@@ -123,12 +137,19 @@ Client端和Server端在数据传输空闲期间，利用心跳机制来保持�
 ## 2.1 Marshalling 编码
 
 ### 2.1.1 pom依赖
+下面两个dependency缺一不可，否则会有: java.lang.NullPointerException: null
+
 ```
 <!-- marshalling  -->
 <dependency>
     <groupId>org.jboss.marshalling</groupId>
     <artifactId>jboss-marshalling</artifactId>
     <version>2.0.0.Final</version>
+</dependency>
+<dependency>
+    <groupId>org.jboss.marshalling</groupId>
+    <artifactId>jboss-marshalling-serial</artifactId>
+	<version>2.0.0.Final</version>
 </dependency>
 ```
 

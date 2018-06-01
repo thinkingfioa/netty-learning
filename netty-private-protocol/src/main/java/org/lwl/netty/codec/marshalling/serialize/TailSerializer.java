@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.marshalling.Decoder;
 import org.lwl.netty.codec.marshalling.Encoder;
 import org.lwl.netty.message.Tail;
+import org.lwl.netty.util.CommonUtil;
 
 /**
  * @author thinking_fioa
@@ -23,7 +24,8 @@ public class TailSerializer {
     }
 
     public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, Tail msg) throws Exception {
-        Encoder.getInstance().writeInt(outByteBuf, msg.getCheckSum());
+        int checkSum = CommonUtil.calCheckSum(outByteBuf, outByteBuf.writerIndex());
+        Encoder.getInstance().writeInt(outByteBuf, checkSum);
     }
 
     public Tail deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {

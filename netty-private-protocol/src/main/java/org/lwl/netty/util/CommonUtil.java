@@ -1,6 +1,9 @@
 package org.lwl.netty.util;
 
+import io.netty.buffer.ByteBuf;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -19,22 +22,25 @@ public  final class CommonUtil {
      * 计算checkSum
      * @return
      */
-    public static int calCheckSum() {
-        //TODO:: 提供checkSum计算
-        return 100;
+    public static int calCheckSum(ByteBuf byteBuf, int length) {
+        if(length <=0) {
+            throw new IllegalArgumentException("length <= 0");
+        }
+        byte checkSum = 0;
+        length = Math.min(length, byteBuf.writerIndex());
+        for(int i = 0; i<length; i++) {
+            checkSum += byteBuf.getByte(i);
+        }
+
+        return 0x00ff & checkSum;
     }
 
     /**
-     *
+     * jdk1.8的DateTimeFormat无法解析格式: yyyyMMddHHmmssSSS格式。会报错。
      */
-
-    private static String calTime() {
-        LocalDate now = LocalDate.now();
-        DateTimeFormatter dateToStrFmt = DateTimeFormatter.ofPattern("yyyyMMdd HH:MM:SS");
+    public static String nowTime() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateToStrFmt = DateTimeFormatter.ofPattern("yyyyMMdd hh:mm:ss");
         return dateToStrFmt.format(now);
-    }
-
-    public static void main(String [] args) {
-        System.out.println(calTime());
     }
 }

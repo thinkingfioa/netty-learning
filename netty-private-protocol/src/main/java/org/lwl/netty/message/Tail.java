@@ -19,6 +19,14 @@ public class Tail {
         this.checkSum = checkSum;
     }
 
+    /**
+     * 属性字节数
+     * @return
+     */
+    public int byteSize() {
+        return 4;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

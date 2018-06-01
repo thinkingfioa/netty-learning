@@ -1,5 +1,7 @@
 package org.lwl.netty.message;
 
+import org.lwl.netty.constant.MessageTypeEnum;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ public class Header {
     /**
      * 消息类型，{@code MessageTypeEnum}
      */
-    private String msgType;
+    private MessageTypeEnum msgType;
 
     /**
      * 消息时间，格式:
@@ -78,11 +80,11 @@ public class Header {
         this.flag = flag;
     }
 
-    public String getMsgType() {
+    public MessageTypeEnum getMsgType() {
         return msgType;
     }
 
-    public void setMsgType(String msgType) {
+    public void setMsgType(MessageTypeEnum msgType) {
         this.msgType = msgType;
     }
 

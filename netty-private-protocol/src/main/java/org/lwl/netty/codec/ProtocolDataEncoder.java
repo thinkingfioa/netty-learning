@@ -7,7 +7,13 @@ import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwl.netty.codec.marshalling.MarshallingCodecUtil;
+import org.lwl.netty.message.Header;
 import org.lwl.netty.message.ProtocolMessage;
+import org.lwl.netty.util.CommonUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author thinking_fioa
@@ -19,6 +25,8 @@ import org.lwl.netty.message.ProtocolMessage;
 public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage>{
     private static final Logger LOGGER = LogManager.getLogger(ProtocolDataEncoder.class);
 
+    private long msgNum = 1;
+
     private IMessageCodecUtil codecUtil;
 
     public ProtocolDataEncoder(IMessageCodecUtil codecUtil) {
@@ -26,7 +34,7 @@ public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage>{
     }
 
     public ProtocolDataEncoder() {
-        this.codecUtil = null;
+        this.codecUtil = new MarshallingCodecUtil();
     }
 
     @Override
@@ -38,12 +46,32 @@ public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage>{
         }
         try {
             ByteBuf outByteBuf = Unpooled.buffer();
+            // 填写头协议
+            fillInHeader(protocolMessage);
 
             codecUtil.encode(ctx, outByteBuf, protocolMessage);
-
+//            outByteBuf.setInt(0, outByteBuf.readableBytes());
+            LOGGER.info("--> encode msg");
         } catch(Throwable cause) {
             LOGGER.error("Encode error.", cause);
         }
 
+    }
+
+    private void fillInHeader(ProtocolMessage protocolMessage) {
+        Header header = protocolMessage.getHeader();
+        header.setMsgNum(msgNum++);
+        header.setMsgType(protocolMessage.getBody().msgType());
+        header.setMsgTime(CommonUtil.nowTime());
+
+        // 下面的值，随机填。主要目的是证明协议支持多种类型格式
+        header.setFlag((short)2);
+        header.setOneByte((byte)3);
+
+        Map<String, Object> attachment = new HashMap<String, Object>();
+        attachment.put("name", "thinking_fioa");
+        attachment.put("age", 18);
+
+        header.getAttachment().putAll(attachment);
     }
 }

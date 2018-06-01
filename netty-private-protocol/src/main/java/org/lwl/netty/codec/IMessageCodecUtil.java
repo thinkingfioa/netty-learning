@@ -16,5 +16,5 @@ public interface IMessageCodecUtil<T> {
 
     void encode(ChannelHandlerContext ctx, ByteBuf outByteBuf, T object) throws Exception;
 
-    T decode(ChannelHandlerContext ctx, ByteBuf inByteBuf);
+    T decode(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception;
 }

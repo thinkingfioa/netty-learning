@@ -5,6 +5,8 @@ import org.lwl.netty.client.NettyClientAdapter;
 import org.lwl.netty.config.ProtocolConfig;
 import org.lwl.netty.constant.ProtocolConstant;
 
+import java.io.IOException;
+
 /**
  * @author thinking_fioa
  * @createTime 2018/4/24
@@ -14,7 +16,8 @@ import org.lwl.netty.constant.ProtocolConstant;
 
 public class NettyClientStart {
 
-    public static void main(String [] args) {
+    public static void main(String [] args) throws IOException {
+        ProtocolConfig.init();
         new NettyClientAdapter().start();
     }
 }

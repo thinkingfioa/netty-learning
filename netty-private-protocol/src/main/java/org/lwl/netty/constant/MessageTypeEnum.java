@@ -77,4 +77,9 @@ public enum MessageTypeEnum {
     public String getMsgType() {
         return msgType;
     }
+
+    @Override
+    public String toString() {
+        return msgType;
+    }
 }

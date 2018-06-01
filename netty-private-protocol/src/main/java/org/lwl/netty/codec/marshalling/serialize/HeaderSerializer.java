@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.marshalling.Decoder;
 import org.lwl.netty.codec.marshalling.Encoder;
+import org.lwl.netty.constant.MessageTypeEnum;
 import org.lwl.netty.message.Header;
 
 import java.util.Map;
@@ -26,7 +27,7 @@ public class HeaderSerializer {
     public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, Header header) throws Exception {
         Encoder.getInstance().writeInt(outByteBuf, header.getMsgLen());
         Encoder.getInstance().writeLong(outByteBuf, header.getMsgNum());
-        Encoder.getInstance().writeString(outByteBuf, header.getMsgType());
+        Encoder.getInstance().writeString(outByteBuf, header.getMsgType().getMsgType());
         Encoder.getInstance().writeString(outByteBuf, header.getMsgTime());
         Encoder.getInstance().writeShort(outByteBuf, header.getFlag());
         Encoder.getInstance().writeByte(outByteBuf, header.getOneByte());
@@ -45,7 +46,7 @@ public class HeaderSerializer {
         Header header = new Header();
         header.setMsgLen(msgLen);
         header.setMsgNum(msgNum);
-        header.setMsgType(msgType);
+        header.setMsgType(MessageTypeEnum.getMsgTypeEnum(msgType));
         header.setMsgTime(msgTime);
         header.setFlag(flag);
         header.setOneByte(oneByte);

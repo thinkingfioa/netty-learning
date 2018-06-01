@@ -22,8 +22,8 @@ public class ProtocolMsgSendHandler extends ChannelInboundHandlerAdapter{
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ProtocolMessage message = (ProtocolMessage) msg;
-        final String msgType = message.getHeader().getMsgType();
-        if(MessageTypeEnum.PROTOCOL_SUB.getMsgType().equals(msgType)) {
+        final MessageTypeEnum msgType = message.getHeader().getMsgType();
+        if(MessageTypeEnum.PROTOCOL_SUB.equals(msgType)) {
             LOGGER.info("receive msgSub message.");
             sendPrtcData();
         } else {

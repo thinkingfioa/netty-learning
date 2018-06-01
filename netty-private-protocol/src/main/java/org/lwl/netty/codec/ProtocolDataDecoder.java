@@ -36,11 +36,12 @@ public class ProtocolDataDecoder extends LengthFieldBasedFrameDecoder {
     public Object decode(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception{
         ByteBuf frame = null;
         try {
+            LOGGER.info("  <-- decode msg");
             frame = (ByteBuf) super.decode(ctx, inByteBuf);
             if(null == frame) {
                 return null;
             }
-
+            LOGGER.info("  <-- decode msg");
             return codecUtil.decode(ctx, inByteBuf);
         } catch (Throwable cause) {
             LOGGER.error("Decode error.", cause);

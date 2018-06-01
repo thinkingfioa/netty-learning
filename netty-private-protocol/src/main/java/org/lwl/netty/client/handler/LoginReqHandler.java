@@ -26,15 +26,15 @@ public class LoginReqHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         ProtocolMessage loginMsg = buildLoginReqMsg();
-        LOGGER.info("channel active. login req sent");
+        LOGGER.info("channel active. login req sent.");
         ctx.writeAndFlush(loginMsg);
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ProtocolMessage message = (ProtocolMessage) msg;
-        final String msgType = message.getHeader().getMsgType();
-        if(MessageTypeEnum.LOGIN_RESP.getMsgType().equals(msgType)) {
+        final MessageTypeEnum msgType = message.getHeader().getMsgType();
+        if(MessageTypeEnum.LOGIN_RESP.equals(msgType)) {
             LOGGER.info("receive login resp.");
             ctx.fireChannelActive();
             return ;

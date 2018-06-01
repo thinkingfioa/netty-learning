@@ -18,6 +18,7 @@ public class MarshallingEncoderAdapter extends MarshallingEncoder {
         super(provider);
     }
 
+    @Override
     public void encode(ChannelHandlerContext ctx, Object msg, ByteBuf outByteBuf) throws Exception {
         super.encode(ctx, msg, outByteBuf);
     }

@@ -28,8 +28,8 @@ public class LoginRespHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ProtocolMessage message = (ProtocolMessage) msg;
-        final String msgType = message.getHeader().getMsgType();
-        if(MessageTypeEnum.LOGIN_REQ.getMsgType().equals(msgType)) {
+        final MessageTypeEnum msgType = message.getHeader().getMsgType();
+        if(MessageTypeEnum.LOGIN_REQ.equals(msgType)) {
             LOGGER.info("receive login req.");
             LoginReqBody reqBody = (LoginReqBody) message.getBody();
             if(checkPermission(reqBody)) {
