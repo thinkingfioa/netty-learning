@@ -17,4 +17,10 @@ public class HeartbeatReqBody extends Body {
     public MessageTypeEnum msgType() {
         return MessageTypeEnum.HEARTBEAT_REQ;
     }
+
+    @Override
+    public String toString(){
+
+        return "HeartbeatReqBody []";
+    }
 }

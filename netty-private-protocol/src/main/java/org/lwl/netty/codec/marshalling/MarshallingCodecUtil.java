@@ -39,7 +39,6 @@ public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> 
 
         // 更新Header消息中的长度域字段
         int msgLen = outByteBuf.writerIndex() + msg.getTail().byteSize();
-
         outByteBuf.setInt(0, msgLen);
         // Tail
         TailSerializer.getInstance().serialize(ctx, outByteBuf, msg.getTail());
@@ -49,14 +48,12 @@ public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> 
     public ProtocolMessage decode(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
         // Header
         Header header = HeaderSerializer.getInstance().deserialize(ctx, inByteBuf);
-
         // Body
         MessageTypeEnum msgType = header.getMsgType();
         IBodySerializer<? extends Body> bodySerializer = getBodySerializer(msgType);
         Body body = bodySerializer.deserialize(ctx, inByteBuf);
 
-        int headBodyLen = inByteBuf.writerIndex();
-
+        int headBodyLen = inByteBuf.readerIndex();
         // Tail
         Tail tail = TailSerializer.getInstance().deserialize(ctx, inByteBuf);
 

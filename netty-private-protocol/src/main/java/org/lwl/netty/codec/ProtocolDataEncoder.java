@@ -9,10 +9,12 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwl.netty.codec.marshalling.MarshallingCodecUtil;
+import org.lwl.netty.config.ProtocolConfig;
 import org.lwl.netty.message.Header;
 import org.lwl.netty.message.ProtocolMessage;
 import org.lwl.netty.util.CommonUtil;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,8 +52,7 @@ public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage> {
             fillInHeader(protocolMessage);
 
             codecUtil.encode(ctx, outByteBuf, protocolMessage);
-
-            LOGGER.info("--> encode msg");
+            LOGGER.info("--> encode msgType:{}, msLen: {}", protocolMessage.getHeader().getMsgType(), outByteBuf.writerIndex());
         } catch(Throwable cause) {
             LOGGER.error("Encode error.", cause);
         }

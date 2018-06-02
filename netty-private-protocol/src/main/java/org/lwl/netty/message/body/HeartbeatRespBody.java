@@ -18,4 +18,10 @@ public class HeartbeatRespBody extends Body {
         return MessageTypeEnum.HEARTBEAT_RESP;
     }
 
+    @Override
+    public String toString(){
+
+        return "HeartbeatRespBody []";
+    }
+
 }

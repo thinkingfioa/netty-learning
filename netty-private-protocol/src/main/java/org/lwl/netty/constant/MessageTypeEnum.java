@@ -17,12 +17,12 @@ public enum MessageTypeEnum {
     /**
      * 登陆消息
      */
-    LOGIN_REQ("login_req"),
+    LOGIN_REQ("loginReq"),
 
     /**
      * 登陆响应
      */
-    LOGIN_RESP("login_resp"),
+    LOGIN_RESP("loginResp"),
 
     /**
      * 注销
@@ -32,22 +32,22 @@ public enum MessageTypeEnum {
     /**
      * 心跳请求
      */
-    HEARTBEAT_REQ("heartbeat_req"),
+    HEARTBEAT_REQ("heartbeatReq"),
 
     /**
      * 心跳响应
      */
-    HEARTBEAT_RESP("heartbeat_resp"),
+    HEARTBEAT_RESP("heartbeatResp"),
 
     /**
      * 协议请求
      */
-    PROTOCOL_SUB("protocol_sub"),
+    PROTOCOL_SUB("protocolSub"),
 
     /**
      * 协议数据消息
      */
-    PROTOCOL_DATA("protocol_data")
+    PROTOCOL_DATA("protocolData")
     ;
 
     MessageTypeEnum(final String msgType) {

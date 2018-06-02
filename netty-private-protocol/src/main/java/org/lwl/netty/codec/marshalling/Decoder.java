@@ -64,12 +64,14 @@ public class Decoder {
 
     public String readString(ByteBuf inByteBuf) throws UnsupportedEncodingException {
         int byteSize = inByteBuf.readInt();
+
         if(-1 == byteSize) {
             return null;
         }
         if(0 == byteSize) {
             return "";
         }
+
         byte[] bytes = new byte[byteSize];
         readBytes(inByteBuf, bytes);
 

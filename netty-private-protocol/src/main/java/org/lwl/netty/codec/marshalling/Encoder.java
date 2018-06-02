@@ -58,7 +58,7 @@ public class Encoder {
 
             return;
         }
-
+        outByteBuf.writeInt(valueMap.size());
         Set<Map.Entry<String, T>> entrySet = valueMap.entrySet();
         for(Map.Entry<String, T> entry: entrySet) {
             String key = entry.getKey();
