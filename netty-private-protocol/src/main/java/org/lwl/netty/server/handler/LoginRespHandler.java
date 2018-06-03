@@ -33,7 +33,7 @@ public class LoginRespHandler extends ChannelInboundHandlerAdapter {
             LOGGER.info("receive login req.");
             LoginReqBody reqBody = (LoginReqBody) message.getBody();
             if(checkPermission(reqBody)) {
-                LOGGER.info("login resp sent.");
+                LOGGER.info("user check pass. login resp sent.");
                 ctx.writeAndFlush(buildLoginResp());
             }
         } else {

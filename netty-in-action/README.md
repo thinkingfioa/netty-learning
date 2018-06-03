@@ -307,7 +307,7 @@ Netty中所有的I/O操作都是异步的，该异步操作可能无法立即得
 - 2. 一个出站事件触发，从链路尾端的ChannelOutboundHandler开始流动，直到它到达链的头部为止。
 
 ### 3.2.3 channel.write(...)和channelHandlerContext.write(...)区别
-- 1. channel.write(...) - 消息从ChannelPipeline总的下一个ChannelHandler开始流转
+- 1. channel.write(...) - 消息从ChannelPipeline中的下一个ChannelHandler开始流转
 - 2. channelHandlerContext.write(...) - 消息直接从ChannelPipeline的尾端开始流转
 - 3. ctx.write(...)的性能**优于**channel.write(...)
 

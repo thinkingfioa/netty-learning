@@ -13,11 +13,13 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 ```
 
 ## 提醒
-- 1.netty4.1以上版本中将channelRead(...)等方法从ChannelHandlerAdapter类中移除。添加到子类: ChannelInboundHandlerAdapter中。
+- 1. netty4.1以上版本中将channelRead(...)等方法从ChannelHandlerAdapter类中移除。添加到子类: ChannelInboundHandlerAdapter中。
+
 
 # 1. 私有协议开发
-- 1.业务场景: 先进行Tcp连接，然后拆分发送多个数据包，实现文件传输。
-- 2.不同的业务场景需要定制化不同的私有协议，本例子讲给出一个私有化协议，讲述其利用Netty的Tcp协议进行传输。采用5种不同的编解码来实现通信编码，并进行比较。
+- 1. 业务场景: 先进行Tcp连接，然后拆分发送多个数据包，实现文件传输。
+- 2. 不同的业务场景需要定制化不同的私有协议，本例子讲给出一个私有化协议，讲述其利用Netty的Tcp协议进行传输。采用5种不同的编解码来实现通信编码，并进行比较。
+- 3. 项目实现的私有协议开发，允许发送超多4K字节的数据。具体多大数据，可通过配置文件配置大小
 
 ## 1.1 场景描述
 私有协议实现场景，客户端登录完成后，发起频道订阅，目前实现3个频道: 新闻、体育和娱乐。服务端根据客户端订阅的频道，将对应的频道文件拆分后，发送给客户端。客户端接收到完整的频道文件后，写入文件。
@@ -195,3 +197,4 @@ Netty的LengthFieldBasedFrameDecoder编码器构造函数需要6的参数，帮�
 
 - 1. [Netty-msg](https://github.com/tang-jie/NettyRPC)
 - 2. [LengthFieldBasedFrameDecoder](http://netty.io/5.0/api/io/netty/handler/codec/LengthFieldBasedFrameDecoder.html)
+- 3. [LengthFieldBasedFrameDecoder中文版]()
