@@ -438,7 +438,56 @@ Netty常用的传输类型(NIO)。利用选择器(Selector)管理多个Channel�
 - 3. 请区别于：直接内存和堆内存之间的拷贝。
 
 # 第5章 ByteBuf
+Netty提供的ByteBuf与JDK的ByteBuffer相比，前者具有卓越的功能性和灵活性。
 
+## 5.1 ByteBuf的API
+ByteBuf提供读访问索引(readerIndex)和写访问索引(writerIndex)来控制字节数组。ByteBuf API具有以下优点:
+
+- 1. 允许用户自定义缓冲区类型扩展
+- 2. 通过内置的复合缓冲区类型实现透明的零拷贝
+- 3. 容量可按需增长
+- 4. 读写这两种模式之间不需要调用类似于JDK的ByteBuffer的flip()方法进行切换
+- 5. 读和写使用不同的索引
+- 6. 支持方法的链式调用
+- 7. 支持引用计数
+- 8. 支持池化
+
+## 5.2 ByteBuf类 ----- Netty的数据容器
+
+### 5.2.1 ByteBuf如何工作的
+ByteBuf维护两个不同的索引: 读索引(readerIndex)和写索引(writerIndex)。如下图:
+![](./docs/pics/5-1.png)
+
+- 1. ByteBuf维护了readerIndex和writerIndex索引
+- 2. 当readerIndex > writerIndex时，则抛出IndexOutOfBoundsException
+- 3. ByteBuf容量 = writerIndex。
+- 4. ByteBuf可读容量 = writerIndex - readerIndex
+- 5. readXXX()和writeXXX()方法将会推进其对应的索引。自动推进
+- 6. getXXX()和setXXX()方法将只改变bytes数组的值，对writerIndex和readerIndex无影响
+
+### 5.2.2 ByteBuf的使用模式
+ByteBuf本质是: 一个由不同的索引分别控制读访问和写访问的字节数组。请记住这句话。ByteBuf共有三种模式: 堆缓冲区模式、直接缓冲区模式和复合缓冲区模式
+
+##### 1. 堆缓冲区模式
+堆缓冲区模式又称为：支撑数组(backing array)。是基于Java堆分配的内存空间，回收也是依赖于Jvm的垃圾回收机制。垃圾回收逻辑遵循GC-ROOT可达性。
+
+##### 代码:
+```
+public static void heapBuffer() {
+    // 创建Java堆缓冲区
+    ByteBuf heapBuf = Unpooled.buffer(); 
+    if (heapBuf.hasArray()) {
+        byte[] array = heapBuf.array();
+        int offset = heapBuf.arrayOffset() + heapBuf.readerIndex();
+        int length = heapBuf.readableBytes();
+        handleArray(array, offset, length);
+    }
+}
+```
+
+##### 2. 直接缓冲区模式 
+
+##### 3. 复合缓冲区模式
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
