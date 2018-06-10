@@ -10,6 +10,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.IMessageCodecUtil;
 import org.lwl.netty.config.ProtocolConfig;
 import org.lwl.netty.message.ProtocolMessage;
+import org.lwl.netty.message.Tail;
+import org.lwl.netty.util.CommonUtil;
 
 import java.io.IOException;
 
@@ -34,6 +36,10 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
             output.setOutputStream(byteBufOutputStream);
             kryo.writeClassAndObject(output, object);
 
+            // 更新最大长度字段
+            outByteBuf.setInt(0, outByteBuf.writerIndex());
+            // 计算并更新checkSum
+            int checkSum = CommonUtil.calCheckSum(outByteBuf, outByteBuf.writerIndex() - Tail.byteSize());
             output.flush();
             output.close();
         } finally {

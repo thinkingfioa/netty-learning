@@ -20,6 +20,7 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 - 1. 业务场景: 先进行Tcp连接，然后拆分发送多个数据包，实现文件传输。
 - 2. 不同的业务场景需要定制化不同的私有协议，本例子讲给出一个私有化协议，讲述其利用Netty的Tcp协议进行传输。采用5种不同的编解码来实现通信编码，并进行比较。
 - 3. 项目实现的私有协议开发，允许发送超多4K字节的数据。具体多大数据，可通过配置文件配置大小
+- 4. Netty实际项目中，请不要试图阻塞I/O线程。
 
 ## 1.1 场景描述
 私有协议实现场景，客户端登录完成后，发起频道订阅，目前实现3个频道: 新闻、体育和娱乐。服务端根据客户端订阅的频道，将对应的频道文件拆分后，发送给客户端。客户端接收到完整的频道文件后，写入文件。
@@ -141,14 +142,25 @@ Client端和Server端在数据传输空闲期间，利用心跳机制来保持�
 ## 1.5 Server端
 
 ## 1.6 LengthFieldBasedFrameDecoder的构造函数中5个参数解释
-Netty的LengthFieldBasedFrameDecoder编码器构造函数需要6的参数，帮忙解决TCP粘包/粘包问题。网上关于这6个参数的中文解释，太垃圾。英文不好的同学，可参考[博客]()，帮助理解并会使用。英文文档[地址](http://netty.io/5.0/api/io/netty/handler/codec/LengthFieldBasedFrameDecoder.html)。
+Netty的LengthFieldBasedFrameDecoder编码器构造函数需要6的参数，解决TCP粘包/粘包问题。网上关于这6个参数的中文解释，太垃圾。英文不好的同学，可参考[博客](https://blog.csdn.net/thinking_fioa/article/details/80573483)，理解并会学会使用。英文文档[地址](http://netty.io/5.0/api/io/netty/handler/codec/LengthFieldBasedFrameDecoder.html)。
 
 # 2. 编解码
+配置文件中配置项目的编码工具，切换非常简单。
+
+|编码|codec值|
+|:---:|:---:|
+|Marshalling|(byte)1|
+|Kryo|(byte)2|
+|Protobuf|(byte)3|
+|thrift|(byte)4|
+|Avro|(byte)5|
+
+TOTO：类图
 
 ## 2.1 Marshalling 编码
 
 ### 2.1.1 pom依赖
-下面两个dependency缺一不可，否则会有: java.lang.NullPointerException: null
+下面两个dependency缺一不可，否则会有: java.lang.NullPointerException: null。
 
 ```
 <!-- marshalling  -->
@@ -163,6 +175,10 @@ Netty的LengthFieldBasedFrameDecoder编码器构造函数需要6的参数，帮�
 	<version>2.0.0.Final</version>
 </dependency>
 ```
+
+### 2.1.2 Marshalling 编码讲解
+ - 1. Marshalling编码对应于代码中的package org.lwl.netty.codec.marshalling;
+ - 2. Marshalling主要用于对Object进行编码。对于基础的数据类型:List、Map、Integer等直接使用ByteBuf的writeXXX方法编码
 
 ## 2.2 Kryo 编码
 
@@ -187,14 +203,15 @@ Netty的LengthFieldBasedFrameDecoder编码器构造函数需要6的参数，帮�
 
 ## 2.5 Avro 编码
 
-## 2.6 二进制编码
-
 # 3. 多种编码性能比较
 
 # 4. Netty相关知识补充
+- 1. 如果以前未接触过Netty，可以阅读专栏[地址]()
+- 2. LengthFieldBasedFrameDecoder自定义长度解码器，[博客](https://blog.csdn.net/thinking_fioa/article/details/80573483)
 
 # 参考文档
 
 - 1. [Netty-msg](https://github.com/tang-jie/NettyRPC)
 - 2. [LengthFieldBasedFrameDecoder](http://netty.io/5.0/api/io/netty/handler/codec/LengthFieldBasedFrameDecoder.html)
-- 3. [LengthFieldBasedFrameDecoder中文版]()
+- 3. [LengthFieldBasedFrameDecoder博客](https://blog.csdn.net/thinking_fioa/article/details/80573483)
+- 4. 

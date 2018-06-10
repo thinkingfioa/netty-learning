@@ -11,7 +11,7 @@ import org.lwl.netty.message.Body;
  */
 
 
-public interface IBodySerializer<T> {
+public interface IBodyMslSerializer<T> {
 
     public void serialize(ChannelHandlerContext ctx,  ByteBuf outByteBuf, Body body) throws Exception;
 

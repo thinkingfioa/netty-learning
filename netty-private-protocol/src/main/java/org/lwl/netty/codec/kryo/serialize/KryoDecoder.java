@@ -1,7 +1,10 @@
-package org.lwl.netty.codec.marshalling;
+package org.lwl.netty.codec.kryo.serialize;
 
+import com.esotericsoftware.kryo.Kryo;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import org.lwl.netty.codec.marshalling.MarshallingAdapterFactory;
+import org.lwl.netty.codec.marshalling.MarshallingDecoderAdapter;
 import org.lwl.netty.config.ProtocolConfig;
 
 import java.io.UnsupportedEncodingException;
@@ -17,16 +20,16 @@ import java.util.Map;
  */
 
 
-public class Decoder {
+public class KryoDecoder {
     private static final MarshallingDecoderAdapter DECODER_ADAPTER = MarshallingAdapterFactory.buildDecoderAdapter();
 
-    private static final Decoder INSTANCE = new Decoder();
+    private static final KryoDecoder INSTANCE = new KryoDecoder();
 
-    public static Decoder getInstance() {
+    public static KryoDecoder getInstance() {
         return INSTANCE;
     }
 
-    public List<Object> readList(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
+    public List<Object> readList(Kryo kryo, ByteBuf inByteBuf) throws Exception {
         int size = inByteBuf.readInt();
         if(-1 == size) {
             return null;
@@ -37,13 +40,13 @@ public class Decoder {
 
         List<Object> list = new ArrayList<Object>(size);
         for(int i =0;i<size; i++) {
-            list.add(readObject(ctx, inByteBuf));
+            list.add(readObject(kryo, inByteBuf));
         }
 
         return list;
     }
 
-    public Map<String, Object> readMap(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
+    public Map<String, Object> readMap(Kryo kryo, ByteBuf inByteBuf) throws Exception {
         int size = inByteBuf.readInt();
         if(-1 == size) {
             return null;
@@ -78,7 +81,7 @@ public class Decoder {
         return new String(bytes, ProtocolConfig.getCharsetFormat());
     }
 
-    public Object readObject(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
+    public Object readObject(Kryo kryo, ByteBuf inByteBuf) throws Exception {
         return DECODER_ADAPTER.decode(ctx, inByteBuf);
     }
 

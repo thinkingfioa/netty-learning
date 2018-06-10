@@ -7,5 +7,5 @@ package org.lwl.netty.codec.kryo.serialize;
  */
 
 
-public class TailSerializer {
+public class TailKryoSerializer {
 }

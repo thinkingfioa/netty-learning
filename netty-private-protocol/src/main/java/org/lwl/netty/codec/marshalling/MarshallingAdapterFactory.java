@@ -7,7 +7,7 @@ import io.netty.handler.codec.marshalling.UnmarshallerProvider;
 import org.jboss.marshalling.MarshallerFactory;
 import org.jboss.marshalling.Marshalling;
 import org.jboss.marshalling.MarshallingConfiguration;
-import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
+import org.lwl.netty.codec.marshalling.serialize.IBodyMslSerializer;
 import org.lwl.netty.codec.marshalling.serialize.body.*;
 import org.lwl.netty.constant.MessageTypeEnum;
 import org.lwl.netty.constant.ProtocolConstant;
@@ -28,23 +28,23 @@ public final class MarshallingAdapterFactory {
         throw new IllegalAccessError("can not use constructor.");
     }
 
-    private static EnumMap<MessageTypeEnum, IBodySerializer<? extends Body>> bodySerializerMap = new EnumMap<>(MessageTypeEnum.class);
+    private static EnumMap<MessageTypeEnum, IBodyMslSerializer<? extends Body>> bodySerializerMap = new EnumMap<>(MessageTypeEnum.class);
 
     static {
-        bodySerializerMap.put(MessageTypeEnum.UNKNOWN, DefaultBodySerializer.getInstance());
-        bodySerializerMap.put(MessageTypeEnum.HEARTBEAT_REQ, HeartbeatReqBodySerializer.getInstance());
-        bodySerializerMap.put(MessageTypeEnum.HEARTBEAT_RESP, HeartbeatRespBodySerializer.getInstance());
-        bodySerializerMap.put(MessageTypeEnum.LOGIN_REQ, LoginReqBodySerializer.getInstance());
-        bodySerializerMap.put(MessageTypeEnum.LOGIN_RESP, LoginRespBodySerializer.getInstance());
-        bodySerializerMap.put(MessageTypeEnum.LOGOUT, LogoutBodySerializer.getInstance());
-        bodySerializerMap.put(MessageTypeEnum.PROTOCOL_SUB, ProtocolSubBodySerializer.getInstance());
-        bodySerializerMap.put(MessageTypeEnum.PROTOCOL_DATA, ProtocolDataBodySerializer.getInstance());
+        bodySerializerMap.put(MessageTypeEnum.UNKNOWN, DefaultBodyMslSerializer.getInstance());
+        bodySerializerMap.put(MessageTypeEnum.HEARTBEAT_REQ, HeartbeatReqBodyMslSerializer.getInstance());
+        bodySerializerMap.put(MessageTypeEnum.HEARTBEAT_RESP, HeartbeatRespBodyMslSerializer.getInstance());
+        bodySerializerMap.put(MessageTypeEnum.LOGIN_REQ, LoginReqBodyMslSerializer.getInstance());
+        bodySerializerMap.put(MessageTypeEnum.LOGIN_RESP, LoginRespBodyMslSerializer.getInstance());
+        bodySerializerMap.put(MessageTypeEnum.LOGOUT, LogoutBodyMslSerializer.getInstance());
+        bodySerializerMap.put(MessageTypeEnum.PROTOCOL_SUB, ProtocolSubBodyMslSerializer.getInstance());
+        bodySerializerMap.put(MessageTypeEnum.PROTOCOL_DATA, ProtocolDataBodyMslSerializer.getInstance());
     }
 
-    public static IBodySerializer<? extends Body> getBodySerializer(final MessageTypeEnum msgType) {
-        IBodySerializer<? extends Body> bodySerializer = bodySerializerMap.get(msgType);
+    public static IBodyMslSerializer<? extends Body> getBodySerializer(final MessageTypeEnum msgType) {
+        IBodyMslSerializer<? extends Body> bodySerializer = bodySerializerMap.get(msgType);
 
-        return null != bodySerializer ? bodySerializer: DefaultBodySerializer.getInstance();
+        return null != bodySerializer ? bodySerializer: DefaultBodyMslSerializer.getInstance();
     }
 
     public static MarshallingDecoderAdapter buildDecoderAdapter() {

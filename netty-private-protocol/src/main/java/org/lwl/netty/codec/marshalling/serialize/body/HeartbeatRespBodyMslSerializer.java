@@ -2,7 +2,7 @@ package org.lwl.netty.codec.marshalling.serialize.body;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
+import org.lwl.netty.codec.marshalling.serialize.IBodyMslSerializer;
 import org.lwl.netty.message.Body;
 import org.lwl.netty.message.body.HeartbeatRespBody;
 
@@ -13,12 +13,12 @@ import org.lwl.netty.message.body.HeartbeatRespBody;
  */
 
 
-public final class HeartbeatRespBodySerializer implements IBodySerializer<HeartbeatRespBody>{
+public final class HeartbeatRespBodyMslSerializer implements IBodyMslSerializer<HeartbeatRespBody> {
 
-    private static final HeartbeatRespBodySerializer INSTANCE = new HeartbeatRespBodySerializer();
-    private HeartbeatRespBodySerializer(){}
+    private static final HeartbeatRespBodyMslSerializer INSTANCE = new HeartbeatRespBodyMslSerializer();
+    private HeartbeatRespBodyMslSerializer(){}
 
-    public static HeartbeatRespBodySerializer getInstance() {
+    public static HeartbeatRespBodyMslSerializer getInstance() {
         return INSTANCE;
     }
 

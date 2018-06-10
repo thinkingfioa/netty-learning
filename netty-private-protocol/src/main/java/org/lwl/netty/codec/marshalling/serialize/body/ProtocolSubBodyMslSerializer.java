@@ -2,9 +2,9 @@ package org.lwl.netty.codec.marshalling.serialize.body;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import org.lwl.netty.codec.marshalling.Decoder;
-import org.lwl.netty.codec.marshalling.Encoder;
-import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
+import org.lwl.netty.codec.marshalling.MslDecoder;
+import org.lwl.netty.codec.marshalling.MslEncoder;
+import org.lwl.netty.codec.marshalling.serialize.IBodyMslSerializer;
 import org.lwl.netty.constant.ProtocolDataType;
 import org.lwl.netty.message.Body;
 import org.lwl.netty.message.body.ProtocolSubBody;
@@ -19,12 +19,12 @@ import java.util.List;
  */
 
 
-public final class ProtocolSubBodySerializer implements IBodySerializer<ProtocolSubBody>{
+public final class ProtocolSubBodyMslSerializer implements IBodyMslSerializer<ProtocolSubBody> {
 
-    private static final ProtocolSubBodySerializer INSTANCE = new ProtocolSubBodySerializer();
-    private ProtocolSubBodySerializer(){}
+    private static final ProtocolSubBodyMslSerializer INSTANCE = new ProtocolSubBodyMslSerializer();
+    private ProtocolSubBodyMslSerializer(){}
 
-    public static ProtocolSubBodySerializer getInstance() {
+    public static ProtocolSubBodyMslSerializer getInstance() {
         return INSTANCE;
     }
 
@@ -32,13 +32,13 @@ public final class ProtocolSubBodySerializer implements IBodySerializer<Protocol
     @Override
     public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, Body body) throws Exception {
         ProtocolSubBody subBody = (ProtocolSubBody)body;
-        Encoder.getInstance().writeList(ctx, outByteBuf, subBody.getDataTypeList());
+        MslEncoder.getInstance().writeList(ctx, outByteBuf, subBody.getDataTypeList());
     }
 
     @Override
     public ProtocolSubBody deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
 
-        List<Object> objectList = Decoder.getInstance().readList(ctx, inByteBuf);
+        List<Object> objectList = MslDecoder.getInstance().readList(ctx, inByteBuf);
 
         List<ProtocolDataType> dataTypeList = new ArrayList<>();
         for(Object o : objectList) {

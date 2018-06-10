@@ -16,13 +16,13 @@ import java.util.Set;
  */
 
 
-public class Encoder {
+public class MslEncoder {
 
     private static final MarshallingEncoderAdapter ENCODER_ADAPTER = MarshallingAdapterFactory.buildEncoderAdapter();
 
-    private static final Encoder INSTANCE = new Encoder();
+    private static final MslEncoder INSTANCE = new MslEncoder();
 
-    public static Encoder getInstance() {
+    public static MslEncoder getInstance() {
         return INSTANCE;
     }
 

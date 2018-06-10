@@ -23,7 +23,7 @@ public class Tail {
      * 属性字节数
      * @return
      */
-    public int byteSize() {
+    public static int byteSize() {
         return 4;
     }
 

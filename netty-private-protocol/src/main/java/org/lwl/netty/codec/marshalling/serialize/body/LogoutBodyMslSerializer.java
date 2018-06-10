@@ -2,7 +2,7 @@ package org.lwl.netty.codec.marshalling.serialize.body;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
+import org.lwl.netty.codec.marshalling.serialize.IBodyMslSerializer;
 import org.lwl.netty.message.Body;
 import org.lwl.netty.message.body.LogoutBody;
 
@@ -13,12 +13,12 @@ import org.lwl.netty.message.body.LogoutBody;
  */
 
 
-public final class LogoutBodySerializer implements IBodySerializer<LogoutBody>{
+public final class LogoutBodyMslSerializer implements IBodyMslSerializer<LogoutBody> {
 
-    private static final LogoutBodySerializer INSTANCE = new LogoutBodySerializer();
-    private LogoutBodySerializer(){}
+    private static final LogoutBodyMslSerializer INSTANCE = new LogoutBodyMslSerializer();
+    private LogoutBodyMslSerializer(){}
 
-    public static LogoutBodySerializer getInstance() {
+    public static LogoutBodyMslSerializer getInstance() {
         return INSTANCE;
     }
 

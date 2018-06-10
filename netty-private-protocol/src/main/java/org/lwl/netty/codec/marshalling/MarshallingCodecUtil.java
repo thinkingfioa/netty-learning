@@ -5,18 +5,15 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwl.netty.codec.IMessageCodecUtil;
-import org.lwl.netty.codec.ProtocolDataEncoder;
-import org.lwl.netty.codec.marshalling.serialize.HeaderSerializer;
-import org.lwl.netty.codec.marshalling.serialize.IBodySerializer;
-import org.lwl.netty.codec.marshalling.serialize.TailSerializer;
+import org.lwl.netty.codec.marshalling.serialize.HeaderMslSerializer;
+import org.lwl.netty.codec.marshalling.serialize.IBodyMslSerializer;
+import org.lwl.netty.codec.marshalling.serialize.TailMslSerializer;
 import org.lwl.netty.constant.MessageTypeEnum;
 import org.lwl.netty.message.Body;
 import org.lwl.netty.message.Header;
 import org.lwl.netty.message.ProtocolMessage;
 import org.lwl.netty.message.Tail;
 import org.lwl.netty.util.CommonUtil;
-
-import java.awt.*;
 
 /**
  * @author thinking_fioa
@@ -31,31 +28,31 @@ public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> 
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf outByteBuf, ProtocolMessage msg) throws Exception {
         // Header
-        HeaderSerializer.getInstance().serialize(ctx, outByteBuf, msg.getHeader());
+        HeaderMslSerializer.getInstance().serialize(ctx, outByteBuf, msg.getHeader());
 
         // Body
-        IBodySerializer<? extends Body> bodySerializer = getBodySerializer(msg.getBody().msgType());
+        IBodyMslSerializer<? extends Body> bodySerializer = getBodySerializer(msg.getBody().msgType());
         bodySerializer.serialize(ctx, outByteBuf, msg.getBody());
 
         // 更新Header消息中的长度域字段
-        int msgLen = outByteBuf.writerIndex() + msg.getTail().byteSize();
+        int msgLen = outByteBuf.writerIndex() + Tail.byteSize();
         outByteBuf.setInt(0, msgLen);
         // Tail
-        TailSerializer.getInstance().serialize(ctx, outByteBuf, msg.getTail());
+        TailMslSerializer.getInstance().serialize(ctx, outByteBuf, msg.getTail());
     }
 
     @Override
     public ProtocolMessage decode(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
         // Header
-        Header header = HeaderSerializer.getInstance().deserialize(ctx, inByteBuf);
+        Header header = HeaderMslSerializer.getInstance().deserialize(ctx, inByteBuf);
         // Body
         MessageTypeEnum msgType = header.getMsgType();
-        IBodySerializer<? extends Body> bodySerializer = getBodySerializer(msgType);
+        IBodyMslSerializer<? extends Body> bodySerializer = getBodySerializer(msgType);
         Body body = bodySerializer.deserialize(ctx, inByteBuf);
 
         int headBodyLen = inByteBuf.readerIndex();
         // Tail
-        Tail tail = TailSerializer.getInstance().deserialize(ctx, inByteBuf);
+        Tail tail = TailMslSerializer.getInstance().deserialize(ctx, inByteBuf);
 
         if(!checkSumRight(inByteBuf, headBodyLen, tail.getCheckSum())) {
             // checkSum wrong
@@ -75,7 +72,7 @@ public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> 
         return false;
     }
 
-    private IBodySerializer<? extends Body> getBodySerializer(MessageTypeEnum msgType) {
+    private IBodyMslSerializer<? extends Body> getBodySerializer(MessageTypeEnum msgType) {
         return MarshallingAdapterFactory.getBodySerializer(msgType);
     }
 }
