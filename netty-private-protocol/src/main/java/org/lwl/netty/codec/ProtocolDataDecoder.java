@@ -29,7 +29,7 @@ public class ProtocolDataDecoder extends LengthFieldBasedFrameDecoder {
 
     public ProtocolDataDecoder() {
         super(MAX_FRAMELENGTH, LENGTH_FIELD_OFFSET, LENGTHFIELD_LENGTH, LENGTH_ADJUSTMENT, INITIAL_BYTES_TO_STRIP);
-        this.codecUtil = new MarshallingCodecUtil();
+        this.codecUtil = MessageCodecUtilFactory.getCodecUtil();
     }
 
     @Override

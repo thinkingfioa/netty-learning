@@ -47,6 +47,11 @@ public class ProtocolConfig {
     private static String userName = "thinkingfioa";
     private static String password = "123456";
 
+    /**
+     * Netty消息编码格式。 1 - Marshalling; 2 - Kryo; 3 - Protobuf; 4 - Thrift; 5 - Avro
+     */
+    private static byte codecType = 1;
+
     public static void init() throws IOException {
         LOGGER.error("Reading configuration: {}", PROTOCOL_PROPERTIES);
         InputStream inputStream = ProtocolConfig.class.getClassLoader().getResourceAsStream(PROTOCOL_PROPERTIES);
@@ -67,6 +72,7 @@ public class ProtocolConfig {
         pkgMaxLen = BaseConfig.getIntProperty(propertiesMap, "pkg.max.len", pkgMaxLen);
         port = BaseConfig.getIntProperty(propertiesMap, "port", port);
         ip = BaseConfig.getStringProperty(propertiesMap, "ip", ip);
+        codecType = BaseConfig.getByteProperty(propertiesMap, "message.codec", codecType);
     }
 
     public static String getCharsetFormat() {
@@ -95,5 +101,9 @@ public class ProtocolConfig {
 
     public static String getIp() {
         return ip;
+    }
+
+    public static byte getCodecType() {
+        return codecType;
     }
 }

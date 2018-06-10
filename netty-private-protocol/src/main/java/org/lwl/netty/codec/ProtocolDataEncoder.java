@@ -32,12 +32,8 @@ public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage> {
 
     private IMessageCodecUtil codecUtil;
 
-    public ProtocolDataEncoder(IMessageCodecUtil codecUtil) {
-        this.codecUtil = codecUtil;
-    }
-
     public ProtocolDataEncoder() {
-        this.codecUtil = new MarshallingCodecUtil();
+        this.codecUtil = MessageCodecUtilFactory.getCodecUtil();
     }
 
     @Override

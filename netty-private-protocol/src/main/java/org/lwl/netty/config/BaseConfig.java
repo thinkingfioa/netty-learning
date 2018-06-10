@@ -36,13 +36,22 @@ public class BaseConfig {
         return Integer.parseInt(props.get(key).trim());
     }
 
-    public static long getIntProperty(Map<String, String> props, String key, long defaultVal) {
+    public static long getLongProperty(Map<String, String> props, String key, long defaultVal) {
         Object value = props.get(key);
         if(null == value) {
             return defaultVal;
         }
 
         return Long.parseLong(props.get(key).trim());
+    }
+
+    public static byte getByteProperty(Map<String, String> props, String key, byte defaultVal) {
+        Object value = props.get(key);
+        if(null == value) {
+            return defaultVal;
+        }
+
+        return Byte.parseByte(props.get(key).trim());
     }
 
     public static boolean getBooleanProperty(Map<String, String> props, String key, Boolean defaultVal) {
