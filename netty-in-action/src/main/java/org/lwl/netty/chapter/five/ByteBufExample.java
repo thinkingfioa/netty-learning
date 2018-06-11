@@ -1,6 +1,7 @@
 package org.lwl.netty.chapter.five;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 
 /**
@@ -24,6 +25,45 @@ public class ByteBufExample {
             handleArray(array, offset, length);
         }
     }
+
+    /**
+     * 代码清单 5-2 直接内存
+     */
+    public static void directBuffer() { // 不是数组支撑
+        ByteBuf directBuf = Unpooled.directBuffer();
+        if (!directBuf.hasArray()) {
+            int length = directBuf.readableBytes();
+            byte[] array = new byte[length];
+            directBuf.getBytes(directBuf.readerIndex(), array);
+            handleArray(array, 0, length);
+        }
+    }
+
+    /**
+     * 代码清单 5-4  复合内存
+     */
+    public static void byteBufComposite() {
+        CompositeByteBuf messageBuf = Unpooled.compositeBuffer();
+        ByteBuf headerBuf = Unpooled.buffer(); // can be backing or direct
+        ByteBuf bodyBuf = Unpooled.directBuffer();   // can be backing or direct
+        messageBuf.addComponents(headerBuf, bodyBuf);
+        messageBuf.removeComponent(0); // remove the header
+        for (ByteBuf buf : messageBuf) {
+            System.out.println(buf.toString());
+        }
+    }
+
+    /**
+     * 代码清单 5-6 随机访问索引
+     */
+    public static void byteBufRelativeAccess() {
+        ByteBuf buffer = Unpooled.buffer(); //get reference form somewhere
+        for (int i = 0; i < buffer.capacity(); i++) {
+            byte b = buffer.getByte(i);
+            System.out.println((char) b);
+        }
+    }
+
 
     private static void handleArray(byte[] array, int offset, int len) {}
 }

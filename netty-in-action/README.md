@@ -466,17 +466,20 @@ ByteBuf维护两个不同的索引: 读索引(readerIndex)和写索引(writerInd
 - 6. getXXX()和setXXX()方法将只改变bytes数组的值，对writerIndex和readerIndex无影响
 
 ### 5.2.2 ByteBuf的使用模式
-ByteBuf本质是: 一个由不同的索引分别控制读访问和写访问的字节数组。请记住这句话。ByteBuf共有三种模式: 堆缓冲区模式、直接缓冲区模式和复合缓冲区模式
+ByteBuf本质是: 一个由不同的索引分别控制读访问和写访问的字节数组。请记住这句话。ByteBuf共有三种模式: 堆缓冲区模式(Heap Buffer)、直接缓冲区模式(Direct Buffer)和复合缓冲区模式(Composite Buffer)
 
-##### 1. 堆缓冲区模式
+##### 1. 堆缓冲区模式(Heap Buffer)
 堆缓冲区模式又称为：支撑数组(backing array)。是基于Java堆分配的内存空间，回收也是依赖于Jvm的垃圾回收机制。垃圾回收逻辑遵循GC-ROOT可达性。
+
+- 1. 堆缓冲的优点: 由于数据存储在Jvm堆中可以快速创建和快速释放，并且提供了数组直接快速访问的方法
+- 2. 堆缓冲的缺点: 每次数据与I/O进行传输时，都需要将数据拷贝到直接缓冲区，在传递
 
 ##### 代码:
 ```
 public static void heapBuffer() {
     // 创建Java堆缓冲区
     ByteBuf heapBuf = Unpooled.buffer(); 
-    if (heapBuf.hasArray()) {
+    if (heapBuf.hasArray()) { // 是数组支撑
         byte[] array = heapBuf.array();
         int offset = heapBuf.arrayOffset() + heapBuf.readerIndex();
         int length = heapBuf.readableBytes();
@@ -485,9 +488,70 @@ public static void heapBuffer() {
 }
 ```
 
-##### 2. 直接缓冲区模式 
+##### 2. 直接缓冲区模式(Direct Buffer)
+Direct Buffer属于堆外分配的内存，直接内存不会占用堆的容量。适用于套接字，避免了将Jvm从内部缓冲区拷贝到直接缓冲区的过程
 
-##### 3. 复合缓冲区模式
+- 1. Direct Buffer的优点: 使用Socket传递数据时性能很好，避免了从Jvm堆内存拷贝到直接缓冲区的过程。
+- 2. Direct Buffer的缺点: 相对于堆缓冲区而言，Direct Buffer分配内存空间和释放更为昂贵
+- 3. 对于涉及大量I/O的数据读写，建议使用Direct Buffer。而对于后端的业务消息的编解码模块建议使用Heap Buffer
+
+###### 代码:
+```java
+public static void directBuffer() {
+    ByteBuf directBuf = Unpooled.directBuffer();
+    if (!directBuf.hasArray()) {
+        int length = directBuf.readableBytes();
+        byte[] array = new byte[length];
+        directBuf.getBytes(directBuf.readerIndex(), array);
+        handleArray(array, 0, length);
+    }
+}
+```
+
+##### 3. 复合缓冲区模式(Composite Buffer)
+Composite Buffer是Netty特有的缓冲区。本质上类似于一个ByteBuf的**组合视图**，可以根据需要添加和删除不同类型的ByteBuf。
+
+- 1. 想要理解Composite Buffer，要记住：它是一个组合视图，提供一种方式，让使用者自由的组合多个ByteBuf。避免了拷贝和分配新的缓冲区
+- 2. Composite Buffer不支持访问其支撑数组。因此如果要访问，需要先将内容拷贝到堆内存中
+- 3. 下图是将两个ByteBuf：头部+Body组合在一起，没有进行任何复制过程。仅仅创建了一个视图
+
+![](./docs/pics/5-2.png)
+
+##### 代码:
+```
+public static void byteBufComposite() {
+	// 复合缓冲区，只是提供一个视图
+    CompositeByteBuf messageBuf = Unpooled.compositeBuffer();
+    ByteBuf headerBuf = Unpooled.buffer(); // can be backing or direct
+    ByteBuf bodyBuf = Unpooled.directBuffer();   // can be backing or direct
+    messageBuf.addComponents(headerBuf, bodyBuf);
+    messageBuf.removeComponent(0); // remove the header
+    for (ByteBuf buf : messageBuf) {
+        System.out.println(buf.toString());
+    }
+}
+```
+
+## 5.3 字节级操作
+
+### 5.3.1 随机访问索引
+ByteBuf的索引与普通的Java字节数组一样。第一个字节的索引是0，最后一个字节索引总是capacity()-1。请记住下列两条，非常有用
+
+- 1. readXXX()和writeXXX()方法将会推进其对应的索引readerIndex和writerIndex。自动推进
+- 2. getXXX()和setXXX()方法将只改变bytes数组的值，对writerIndex和readerIndex无影响
+
+##### 代码:
+```
+public static void byteBufRelativeAccess() {
+    ByteBuf buffer = Unpooled.buffer(); //get reference form somewhere
+    for (int i = 0; i < buffer.capacity(); i++) {
+        byte b = buffer.getByte(i);// 不改变readerIndex值
+        System.out.println((char) b);
+    }
+}
+```
+
+### 5.3.2 顺序访问索引
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
