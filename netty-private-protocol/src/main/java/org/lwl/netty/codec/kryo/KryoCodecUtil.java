@@ -40,6 +40,7 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
             outByteBuf.setInt(0, outByteBuf.writerIndex());
             // 计算并更新checkSum
             int checkSum = CommonUtil.calCheckSum(outByteBuf, outByteBuf.writerIndex() - Tail.byteSize());
+            outByteBuf.setInt(outByteBuf.writerIndex() - Tail.byteSize(), checkSum);
             output.flush();
             output.close();
         } finally {

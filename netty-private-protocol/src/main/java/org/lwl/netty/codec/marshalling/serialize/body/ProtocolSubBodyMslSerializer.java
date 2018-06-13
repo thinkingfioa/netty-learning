@@ -38,16 +38,7 @@ public final class ProtocolSubBodyMslSerializer implements IBodyMslSerializer<Pr
     @Override
     public ProtocolSubBody deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
 
-        List<Object> objectList = MslDecoder.getInstance().readList(ctx, inByteBuf);
-
-        List<ProtocolDataType> dataTypeList = new ArrayList<>();
-        for(Object o : objectList) {
-            if(o instanceof ProtocolDataType) {
-                dataTypeList.add((ProtocolDataType)o);
-            } else {
-                throw new IllegalAccessError("decode error.");
-            }
-        }
+        List<ProtocolDataType> dataTypeList = MslDecoder.getInstance().readList(ctx, inByteBuf, ProtocolDataType.class);
         ProtocolSubBody subBody = new ProtocolSubBody();
         subBody.setDataTypeList(dataTypeList);
 

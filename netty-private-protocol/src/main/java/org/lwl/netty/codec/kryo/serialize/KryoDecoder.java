@@ -1,6 +1,7 @@
 package org.lwl.netty.codec.kryo.serialize;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.marshalling.MarshallingAdapterFactory;
@@ -21,7 +22,6 @@ import java.util.Map;
 
 
 public class KryoDecoder {
-    private static final MarshallingDecoderAdapter DECODER_ADAPTER = MarshallingAdapterFactory.buildDecoderAdapter();
 
     private static final KryoDecoder INSTANCE = new KryoDecoder();
 
@@ -29,8 +29,9 @@ public class KryoDecoder {
         return INSTANCE;
     }
 
-    public List<Object> readList(Kryo kryo, ByteBuf inByteBuf) throws Exception {
-        int size = inByteBuf.readInt();
+    @SuppressWarnings("unchecked")
+    public <T> List<T> readList(Kryo kryo, Input input, Class<T> clazz) {
+        int size = input.readInt();
         if(-1 == size) {
             return null;
         }
@@ -38,16 +39,16 @@ public class KryoDecoder {
             return new ArrayList<>();
         }
 
-        List<Object> list = new ArrayList<Object>(size);
+        List<T> list = new ArrayList<>(size);
         for(int i =0;i<size; i++) {
-            list.add(readObject(kryo, inByteBuf));
+            list.add((T)readObject(kryo, input));
         }
 
         return list;
     }
 
-    public Map<String, Object> readMap(Kryo kryo, ByteBuf inByteBuf) throws Exception {
-        int size = inByteBuf.readInt();
+    public Map<String, Object> readMap(Kryo kryo, Input input) {
+        int size = input.readInt();
         if(-1 == size) {
             return null;
         }
@@ -57,55 +58,43 @@ public class KryoDecoder {
 
         Map<String, Object> valueMap = new HashMap<String, Object>(size);
         for(int i = 0; i<size; i++) {
-            String key = readString(inByteBuf);
-            Object value = readObject(ctx, inByteBuf);
+            String key = readString(input);
+            Object value = readObject(kryo, input);
             valueMap.put(key, value);
         }
 
         return valueMap;
     }
 
-    public String readString(ByteBuf inByteBuf) throws UnsupportedEncodingException {
-        int byteSize = inByteBuf.readInt();
-
-        if(-1 == byteSize) {
-            return null;
-        }
-        if(0 == byteSize) {
-            return "";
-        }
-
-        byte[] bytes = new byte[byteSize];
-        readBytes(inByteBuf, bytes);
-
-        return new String(bytes, ProtocolConfig.getCharsetFormat());
+    public String readString(Input input) {
+        return input.readString();
     }
 
-    public Object readObject(Kryo kryo, ByteBuf inByteBuf) throws Exception {
-        return DECODER_ADAPTER.decode(ctx, inByteBuf);
+    public Object readObject(Kryo kryo, Input input) {
+        return kryo.readClassAndObject(input);
     }
 
-    public void readBytes(ByteBuf inByteBuf, byte[] dst) {
-        inByteBuf.readBytes(dst);
+    public void readBytes(Input input, byte[] dst) {
+        input.readBytes(dst);
     }
 
-    public int readInt(ByteBuf inByteBuf) {
-        return inByteBuf.readInt();
+    public int readInt(Input input) {
+        return input.readInt();
     }
 
-    public long readLong(ByteBuf inByteBuf) {
-        return inByteBuf.readLong();
+    public long readLong(Input input) {
+        return input.readLong();
     }
 
-    public byte readByte(ByteBuf inByteBuf) {
-        return inByteBuf.readByte();
+    public byte readByte(Input input) {
+        return input.readByte();
     }
 
-    public double readDouble(ByteBuf inByteBuf) {
-        return inByteBuf.readDouble();
+    public double readDouble(Input input) {
+        return input.readDouble();
     }
 
-    public short readShort(ByteBuf inByteBuf) {
-        return inByteBuf.readShort();
+    public short readShort(Input input) {
+        return input.readShort();
     }
 }

@@ -26,12 +26,12 @@ public final class ProtocolDataBodyMslSerializer implements IBodyMslSerializer<P
 
     @Override
     public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, Body body) {
-        ProtocolDataBody datBody = (ProtocolDataBody)body;
+        ProtocolDataBody dataBody = (ProtocolDataBody)body;
 
-        MslEncoder.getInstance().writeLong(outByteBuf, datBody.getPkgSum());
-        MslEncoder.getInstance().writeLong(outByteBuf, datBody.getPkgSequenceNum());
-        MslEncoder.getInstance().writeInt(outByteBuf, datBody.getContentLen());
-        MslEncoder.getInstance().writeBytes(outByteBuf, datBody.getContent());
+        MslEncoder.getInstance().writeLong(outByteBuf, dataBody.getPkgSum());
+        MslEncoder.getInstance().writeLong(outByteBuf, dataBody.getPkgSequenceNum());
+        MslEncoder.getInstance().writeInt(outByteBuf, dataBody.getContentLen());
+        MslEncoder.getInstance().writeBytes(outByteBuf, dataBody.getContent());
     }
 
     @Override

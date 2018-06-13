@@ -28,7 +28,7 @@ public class KryoEncoder {
         return INSTANCE;
     }
 
-    public <T> void writeList(Kryo kryo, Output output, List<T> valueList) throws Exception {
+    public <T> void writeList(Kryo kryo, Output output, List<T> valueList){
         if(null == valueList) {
             output.writeInt(-1);
 
@@ -48,7 +48,7 @@ public class KryoEncoder {
         }
     }
 
-    public <T> void writeMap(Kryo kryo, Output output, Map<String, T> valueMap) throws Exception {
+    public <T> void writeMap(Kryo kryo, Output output, Map<String, T> valueMap){
         if(null == valueMap) {
             output.writeInt(-1);
 
@@ -76,11 +76,11 @@ public class KryoEncoder {
      * @param output
      * @param value
      */
-    public void writeString(Output output, String value) throws UnsupportedEncodingException {
+    public void writeString(Output output, String value) {
         output.writeString(value);
     }
 
-    public void writeObject(Kryo kryo, Output output, Object valueObject) throws Exception {
+    public void writeObject(Kryo kryo, Output output, Object valueObject){
         if(null == valueObject) {
             throw new NullPointerException("valueObject is null.");
         }

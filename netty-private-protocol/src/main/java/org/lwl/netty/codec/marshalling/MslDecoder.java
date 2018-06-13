@@ -26,7 +26,8 @@ public class MslDecoder {
         return INSTANCE;
     }
 
-    public List<Object> readList(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
+    @SuppressWarnings("unchecked")
+    public <T> List<T> readList(ChannelHandlerContext ctx, ByteBuf inByteBuf, Class<T> clazz) throws Exception {
         int size = inByteBuf.readInt();
         if(-1 == size) {
             return null;
@@ -35,9 +36,10 @@ public class MslDecoder {
             return new ArrayList<>();
         }
 
-        List<Object> list = new ArrayList<Object>(size);
+        List<T> list = new ArrayList<T>(size);
         for(int i =0;i<size; i++) {
-            list.add(readObject(ctx, inByteBuf));
+            Object object = readObject(ctx, inByteBuf);
+            list.add((T)object);
         }
 
         return list;
