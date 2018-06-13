@@ -11,6 +11,7 @@
     <modules>
         <module>netty-private-protocol</module>
         <module>netty-in-action</module>
+        <module>netty-rpc</module>
     </modules>
 
     <dependencyManagement>

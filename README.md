@@ -26,6 +26,9 @@ netty-private-protocol是一个利用Netty实现自定义的协议开发，具�
 - 3.代码中实现了使用了多种编码和解码逻辑。
 - 4.[子项目文档地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)
 
+### 2.2 RPC框架实现
+基于Netty，实现基本RPC框架
+
 ## 3. Netty实战
 《Netty实战》是一本好书。讲解非常透彻，能帮助开发人员更好的理解和使用Netty。最近在读第二遍。推荐此书，讲的非常透彻
 
