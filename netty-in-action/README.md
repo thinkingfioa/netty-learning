@@ -535,7 +535,7 @@ public static void byteBufComposite() {
 ## 5.3 字节级操作
 
 ### 5.3.1 随机访问索引
-ByteBuf的索引与普通的Java字节数组一样。第一个字节的索引是0，最后一个字节索引总是capacity()-1。请记住下列两条，非常有用
+ByteBuf的索引与普通的Java字节数组一样。第一个字节的索引是0，最后一个字节索引总是capacity()-1。请记住下列两条，非常有用:
 
 - 1. readXXX()和writeXXX()方法将会推进其对应的索引readerIndex和writerIndex。自动推进
 - 2. getXXX()和setXXX()方法将只改变bytes数组的值，对writerIndex和readerIndex无影响
@@ -552,6 +552,32 @@ public static void byteBufRelativeAccess() {
 ```
 
 ### 5.3.2 顺序访问索引
+Netty的ByteBuf同时具有读索引和写索引，但JDK的ByteBuffer只有一个索引，所以JDK需要调用flip()方法在读模式和写模式之间切换。
+
+- 1. ByteBuf被读索引和写索引划分成3个区域：可丢弃字节，可读字节和可写字节
+![](./docs/pics/5-3.png)
+
+### 5.3.3 可丢弃字节
+可丢弃字节是指:[0，readerIndex)之间的区域。可调用discardReadBytes()方法丢弃已经读过的字节。
+
+- 1. discardReadBytes()效果 ----- 将可读字节区域(CONTENT)[readerIndex, writerIndex)往前移动readerIndex位，同时修改读索引和写索引。
+- 2. discardReadBytes()方法会移动可读字节区域内容(CONTENT)。频繁调用，会有性能损耗。
+
+### 5.3.4 可读字节
+可读字节是指:[readerIndex, writerIndex)之间的区域。任何名称以read和skip开头的操作方法，都会改变readerIndex索引。
+
+### 5.3.5 可写字节
+可写字节是指:[writerIndex, capacity)之间的区域。任何名称以write开头的操作方法都将改变writerIndex的值。
+
+### 5.3.6 索引管理
+
+- 1. markReaderIndex()+resetReaderIndex() ----- markReaderIndex()是先备份当前的readerIndex，resetReaderIndex()则是将刚刚备份的readerIndex恢复回来。常用于dump出ByteBuf的内容，又不影响后续的使用
+- 2. readerIndex(int) ----- 设置readerIndex为固定的值
+- 3. writerIndex(int) ----- 设置writerIndex未固定的值
+- 4. clear() ----- 效果是: readerIndex=0, writerIndex(0)。但不会清楚内存
+- 5. 调用clear()比调用discardReadBytes()轻量的多。仅仅重置readerIndex和writerIndex的值，不会拷贝任何内存。
+
+### 5.3.7 查找操作
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)

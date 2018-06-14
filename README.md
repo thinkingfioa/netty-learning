@@ -47,6 +47,7 @@ Netty源码较复杂，本人等学习研究完RocketMQ项目(rocketmq-learning)
 - 4. udp项目
 - 5. Netty 接收缓冲区
 - 6. Netty实现RPC框架
+- 7. Netty.4x用户指南
 
 # 参考文档
 - 1.《Netty权威指南2》
