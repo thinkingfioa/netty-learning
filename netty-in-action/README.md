@@ -463,16 +463,16 @@ ByteBuf维护两个不同的索引: 读索引(readerIndex)和写索引(writerInd
 - 3. ByteBuf容量 = writerIndex。
 - 4. ByteBuf可读容量 = writerIndex - readerIndex
 - 5. readXXX()和writeXXX()方法将会推进其对应的索引。自动推进
-- 6. getXXX()和setXXX()方法将只改变bytes数组的值，对writerIndex和readerIndex无影响
+- 6. getXXX()和setXXX()方法将对writerIndex和readerIndex无影响
 
 ### 5.2.2 ByteBuf的使用模式
 ByteBuf本质是: 一个由不同的索引分别控制读访问和写访问的字节数组。请记住这句话。ByteBuf共有三种模式: 堆缓冲区模式(Heap Buffer)、直接缓冲区模式(Direct Buffer)和复合缓冲区模式(Composite Buffer)
 
 ##### 1. 堆缓冲区模式(Heap Buffer)
-堆缓冲区模式又称为：支撑数组(backing array)。是基于Java堆分配的内存空间，回收也是依赖于Jvm的垃圾回收机制。垃圾回收逻辑遵循GC-ROOT可达性。
+堆缓冲区模式又称为：支撑数组(backing array)。将数据存放在JVM的堆空间，通过将数据存储在数组中实现
 
 - 1. 堆缓冲的优点: 由于数据存储在Jvm堆中可以快速创建和快速释放，并且提供了数组直接快速访问的方法
-- 2. 堆缓冲的缺点: 每次数据与I/O进行传输时，都需要将数据拷贝到直接缓冲区，在传递
+- 2. 堆缓冲的缺点: 每次数据与I/O进行传输时，都需要将数据拷贝到直接缓冲区，再传输
 
 ##### 代码:
 ```
@@ -489,7 +489,7 @@ public static void heapBuffer() {
 ```
 
 ##### 2. 直接缓冲区模式(Direct Buffer)
-Direct Buffer属于堆外分配的内存，直接内存不会占用堆的容量。适用于套接字，避免了将Jvm从内部缓冲区拷贝到直接缓冲区的过程
+Direct Buffer属于堆外分配的内存，直接内存不会占用堆的容量。适用于套接字，避免了将Jvm从内部缓冲区拷贝到直接缓冲区的过程，性能较好
 
 - 1. Direct Buffer的优点: 使用Socket传递数据时性能很好，避免了从Jvm堆内存拷贝到直接缓冲区的过程。
 - 2. Direct Buffer的缺点: 相对于堆缓冲区而言，Direct Buffer分配内存空间和释放更为昂贵
@@ -511,7 +511,7 @@ public static void directBuffer() {
 ##### 3. 复合缓冲区模式(Composite Buffer)
 Composite Buffer是Netty特有的缓冲区。本质上类似于一个ByteBuf的**组合视图**，可以根据需要添加和删除不同类型的ByteBuf。
 
-- 1. 想要理解Composite Buffer，要记住：它是一个组合视图，提供一种方式，让使用者自由的组合多个ByteBuf。避免了拷贝和分配新的缓冲区
+- 1. 想要理解Composite Buffer，要记住：它是一个组合视图。它提供一种方式让使用者自由的组合多个ByteBuf，避免了拷贝和分配新的缓冲区。
 - 2. Composite Buffer不支持访问其支撑数组。因此如果要访问，需要先将内容拷贝到堆内存中
 - 3. 下图是将两个ByteBuf：头部+Body组合在一起，没有进行任何复制过程。仅仅创建了一个视图
 
@@ -538,7 +538,7 @@ public static void byteBufComposite() {
 ByteBuf的索引与普通的Java字节数组一样。第一个字节的索引是0，最后一个字节索引总是capacity()-1。请记住下列两条，非常有用:
 
 - 1. readXXX()和writeXXX()方法将会推进其对应的索引readerIndex和writerIndex。自动推进
-- 2. getXXX()和setXXX()方法将只改变bytes数组的值，对writerIndex和readerIndex无影响
+- 2. getXXX()和setXXX()方法用于访问数据，对writerIndex和readerIndex无影响
 
 ##### 代码:
 ```
@@ -571,13 +571,68 @@ Netty的ByteBuf同时具有读索引和写索引，但JDK的ByteBuffer只有一�
 
 ### 5.3.6 索引管理
 
-- 1. markReaderIndex()+resetReaderIndex() ----- markReaderIndex()是先备份当前的readerIndex，resetReaderIndex()则是将刚刚备份的readerIndex恢复回来。常用于dump出ByteBuf的内容，又不影响后续的使用
+- 1. markReaderIndex()+resetReaderIndex() ----- markReaderIndex()是先备份当前的readerIndex，resetReaderIndex()则是将刚刚备份的readerIndex恢复回来。常用于dump ByteBuf的内容，又不想影响原来ByteBuf的使用
 - 2. readerIndex(int) ----- 设置readerIndex为固定的值
 - 3. writerIndex(int) ----- 设置writerIndex未固定的值
 - 4. clear() ----- 效果是: readerIndex=0, writerIndex(0)。但不会清楚内存
 - 5. 调用clear()比调用discardReadBytes()轻量的多。仅仅重置readerIndex和writerIndex的值，不会拷贝任何内存。
 
 ### 5.3.7 查找操作
+查找ByteBuf指定的值。类似于，String.find("str")操作
+
+- 1. 最简单的方法 ----- indexOf(）
+- 2. 利用ByteProcessor作为参数来查找某个指定的值。
+
+##### 代码:
+```
+public static void byteProcessor() {
+    ByteBuf buffer = Unpooled.buffer(); //get reference form somewhere
+    // 使用indexOf()方法来查找
+    buffer.indexOf(buffer.readerIndex(), buffer.writerIndex(), (byte)8);
+    // 使用ByteProcessor查找给定的值
+    int index = buffer.forEachByte(ByteProcessor.FIND_CR);
+}
+```
+
+### 5.3.8 派生缓冲区 ----- 视图
+派生缓冲区为ByteBuf提供了一个访问的视图。视图仅仅提供一种访问操作，从不拷贝。下列方法，都会呈现一个视图:
+
+-  1. duplicate() 
+-  2. slice()
+-  3. slice(int, int)
+-  4. Unpooled.unmodifiableBuffer(...)
+-  5. Unpooled.wrappedBuffer(...)
+-  6. order(ByteOrder)
+-  7. readSlice(int)
+
+##### 理解
+- 1. 上面的6中方法，都会返回一个新的ByteBuf实例，具有自己的读索引和写索引。但是，其内部存储是与原对象共享的。这就是视图的概念
+- 2. 请注意：如果你修改了这个新的ByteBuf实例的具体内容，那么对应的源实例也会修改
+- 3. 如果需要现有缓冲区的**真实副本**，请使用copy()或copy(int, int)方法。
+- 4. 使用派生缓冲区，避免了复制内存的开销，有效提高性能
+
+##### 代码:
+```
+public static void byteBufSlice() {
+    Charset utf8 = Charset.forName("UTF-8");
+    ByteBuf buf = Unpooled.copiedBuffer("Netty in Action rocks!", utf8);
+    ByteBuf sliced = buf.slice(0, 15);
+    System.out.println(sliced.toString(utf8));
+    buf.setByte(0, (byte)'J');
+    assert buf.getByte(0) == sliced.getByte(0); // return true
+}
+
+public static void byteBufCopy() {
+    Charset utf8 = Charset.forName("UTF-8");
+    ByteBuf buf = Unpooled.copiedBuffer("Netty in Action rocks!", utf8);
+    ByteBuf copy = buf.copy(0, 15);
+    System.out.println(copy.toString(utf8));
+    buf.setByte(0, (byte)'J');
+    assert buf.getByte(0) != copy.getByte(0); // return true
+}
+```
+
+### 5.3.9 读/写操作
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
