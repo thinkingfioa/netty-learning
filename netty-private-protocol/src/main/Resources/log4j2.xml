@@ -21,8 +21,10 @@
             <SizeBasedTriggeringPolicy size="${every_file_size}"/>
             <DefaultRolloverStrategy max="${file_count}"/>
             <Filters>
-                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
-                <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="trace" onMatch="DENY" onMismatch="DENY"/>
             </Filters>
         </RollingFile>
         <!-- RollingRandomAccessFile -->
@@ -30,7 +32,7 @@
             <SizeBasedTriggeringPolicy size="${every_file_size}"/>
             <DefaultRolloverStrategy max="${error_file_count}"/>
             <Filters>
-                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
                 <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
             <PatternLayout pattern="${log_pattern}"/>
