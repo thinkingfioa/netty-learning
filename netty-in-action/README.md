@@ -472,7 +472,7 @@ ByteBuf本质是: 一个由不同的索引分别控制读访问和写访问的�
 堆缓冲区模式又称为：支撑数组(backing array)。将数据存放在JVM的堆空间，通过将数据存储在数组中实现
 
 - 1. 堆缓冲的优点: 由于数据存储在Jvm堆中可以快速创建和快速释放，并且提供了数组直接快速访问的方法
-- 2. 堆缓冲的缺点: 每次数据与I/O进行传输时，都需要将数据拷贝到直接缓冲区，再传输
+- 2. 堆缓冲的缺点: 每次数据与I/O进行传输时，都需要将数据拷贝到直接缓冲区
 
 ##### 代码:
 ```
@@ -489,13 +489,13 @@ public static void heapBuffer() {
 ```
 
 ##### 2. 直接缓冲区模式(Direct Buffer)
-Direct Buffer属于堆外分配的内存，直接内存不会占用堆的容量。适用于套接字，避免了将Jvm从内部缓冲区拷贝到直接缓冲区的过程，性能较好
+Direct Buffer属于堆外分配的直接内存，不会占用堆的容量。适用于套接字传输过程，避免了数据从内部缓冲区拷贝到直接缓冲区的过程，性能较好
 
-- 1. Direct Buffer的优点: 使用Socket传递数据时性能很好，避免了从Jvm堆内存拷贝到直接缓冲区的过程。
+- 1. Direct Buffer的优点: 使用Socket传递数据时性能很好，避免了数据从Jvm堆内存拷贝到直接缓冲区的过程。提高了性能
 - 2. Direct Buffer的缺点: 相对于堆缓冲区而言，Direct Buffer分配内存空间和释放更为昂贵
-- 3. 对于涉及大量I/O的数据读写，建议使用Direct Buffer。而对于后端的业务消息的编解码模块建议使用Heap Buffer
+- 3. 对于涉及大量I/O的数据读写，建议使用Direct Buffer。而对于用于后端的业务消息编解码模块建议使用Heap Buffer
 
-###### 代码:
+##### 代码:
 ```java
 public static void directBuffer() {
     ByteBuf directBuf = Unpooled.directBuffer();
@@ -509,10 +509,10 @@ public static void directBuffer() {
 ```
 
 ##### 3. 复合缓冲区模式(Composite Buffer)
-Composite Buffer是Netty特有的缓冲区。本质上类似于一个ByteBuf的**组合视图**，可以根据需要添加和删除不同类型的ByteBuf。
+Composite Buffer是Netty特有的缓冲区。本质上类似于提供一个或多个ByteBuf的**组合视图**，可以根据需要添加和删除不同类型的ByteBuf。
 
-- 1. 想要理解Composite Buffer，要记住：它是一个组合视图。它提供一种方式让使用者自由的组合多个ByteBuf，避免了拷贝和分配新的缓冲区。
-- 2. Composite Buffer不支持访问其支撑数组。因此如果要访问，需要先将内容拷贝到堆内存中
+- 1. 想要理解Composite Buffer，请记住：它是一个组合视图。它提供一种访问方式让使用者自由的组合多个ByteBuf，避免了拷贝和分配新的缓冲区。
+- 2. Composite Buffer不支持访问其支撑数组。因此如果要访问，需要先将内容拷贝到堆内存中，再进行访问
 - 3. 下图是将两个ByteBuf：头部+Body组合在一起，没有进行任何复制过程。仅仅创建了一个视图
 
 ![](./docs/pics/5-2.png)
@@ -554,31 +554,31 @@ public static void byteBufRelativeAccess() {
 ### 5.3.2 顺序访问索引
 Netty的ByteBuf同时具有读索引和写索引，但JDK的ByteBuffer只有一个索引，所以JDK需要调用flip()方法在读模式和写模式之间切换。
 
-- 1. ByteBuf被读索引和写索引划分成3个区域：可丢弃字节，可读字节和可写字节
+- 1. ByteBuf被读索引和写索引划分成3个区域：可丢弃字节区域，可读字节区域和可写字节区域
 ![](./docs/pics/5-3.png)
 
-### 5.3.3 可丢弃字节
-可丢弃字节是指:[0，readerIndex)之间的区域。可调用discardReadBytes()方法丢弃已经读过的字节。
+### 5.3.3 可丢弃字节区域
+可丢弃字节区域是指:[0，readerIndex)之间的区域。可调用discardReadBytes()方法丢弃已经读过的字节。
 
 - 1. discardReadBytes()效果 ----- 将可读字节区域(CONTENT)[readerIndex, writerIndex)往前移动readerIndex位，同时修改读索引和写索引。
-- 2. discardReadBytes()方法会移动可读字节区域内容(CONTENT)。频繁调用，会有性能损耗。
+- 2. discardReadBytes()方法会移动可读字节区域内容(CONTENT)。如果频繁调用，会有多次数据复制开销，对性能有一定的影响
 
-### 5.3.4 可读字节
-可读字节是指:[readerIndex, writerIndex)之间的区域。任何名称以read和skip开头的操作方法，都会改变readerIndex索引。
+### 5.3.4 可读字节区域
+可读字节区域是指:[readerIndex, writerIndex)之间的区域。任何名称以read和skip开头的操作方法，都会改变readerIndex索引。
 
-### 5.3.5 可写字节
-可写字节是指:[writerIndex, capacity)之间的区域。任何名称以write开头的操作方法都将改变writerIndex的值。
+### 5.3.5 可写字节区域
+可写字节区域是指:[writerIndex, capacity)之间的区域。任何名称以write开头的操作方法都将改变writerIndex的值。
 
 ### 5.3.6 索引管理
 
-- 1. markReaderIndex()+resetReaderIndex() ----- markReaderIndex()是先备份当前的readerIndex，resetReaderIndex()则是将刚刚备份的readerIndex恢复回来。常用于dump ByteBuf的内容，又不想影响原来ByteBuf的使用
+- 1. markReaderIndex()+resetReaderIndex() ----- markReaderIndex()是先备份当前的readerIndex，resetReaderIndex()则是将刚刚备份的readerIndex恢复回来。常用于dump ByteBuf的内容，又不想影响原来ByteBuf的readerIndex的值
 - 2. readerIndex(int) ----- 设置readerIndex为固定的值
-- 3. writerIndex(int) ----- 设置writerIndex未固定的值
-- 4. clear() ----- 效果是: readerIndex=0, writerIndex(0)。但不会清楚内存
-- 5. 调用clear()比调用discardReadBytes()轻量的多。仅仅重置readerIndex和writerIndex的值，不会拷贝任何内存。
+- 3. writerIndex(int) ----- 设置writerIndex为固定的值
+- 4. clear() ----- 效果是: readerIndex=0, writerIndex(0)。不会清除内存
+- 5. 调用clear()比调用discardReadBytes()轻量的多。仅仅重置readerIndex和writerIndex的值，不会拷贝任何内存，开销较小。
 
-### 5.3.7 查找操作
-查找ByteBuf指定的值。类似于，String.find("str")操作
+### 5.3.7 查找操作(indexOf)
+查找ByteBuf指定的值。类似于，String.indexOf("str")操作
 
 - 1. 最简单的方法 ----- indexOf(）
 - 2. 利用ByteProcessor作为参数来查找某个指定的值。
@@ -595,7 +595,7 @@ public static void byteProcessor() {
 ```
 
 ### 5.3.8 派生缓冲区 ----- 视图
-派生缓冲区为ByteBuf提供了一个访问的视图。视图仅仅提供一种访问操作，从不拷贝。下列方法，都会呈现一个视图:
+派生缓冲区为ByteBuf提供了一个访问的视图。视图仅仅提供一种访问操作，不做任何拷贝操作。下列方法，都会呈现给使用者一个视图，以供访问:
 
 -  1. duplicate() 
 -  2. slice()
@@ -606,10 +606,10 @@ public static void byteProcessor() {
 -  7. readSlice(int)
 
 ##### 理解
-- 1. 上面的6中方法，都会返回一个新的ByteBuf实例，具有自己的读索引和写索引。但是，其内部存储是与原对象共享的。这就是视图的概念
-- 2. 请注意：如果你修改了这个新的ByteBuf实例的具体内容，那么对应的源实例也会修改
-- 3. 如果需要现有缓冲区的**真实副本**，请使用copy()或copy(int, int)方法。
-- 4. 使用派生缓冲区，避免了复制内存的开销，有效提高性能
+- 1. 上面的6中方法，都会返回一个新的ByteBuf实例，具有自己的读索引和写索引。但是，其内部存储是与原对象是共享的。这就是视图的概念
+- 2. 请注意：如果你修改了这个新的ByteBuf实例的具体内容，那么对应的源实例也会被修改，因为其内部存储是共享的
+- 3. 如果需要拷贝现有缓冲区的**真实副本**，请使用copy()或copy(int, int)方法。
+- 4. 使用派生缓冲区，避免了复制内存的开销，有效提高程序的性能
 
 ##### 代码:
 ```
@@ -633,6 +633,139 @@ public static void byteBufCopy() {
 ```
 
 ### 5.3.9 读/写操作
+如上文所提到的，有两种类别的读/写操作:
+
+- 1. get()和set()操作 ----- 从给定的索引开始，并且保持索引不变
+- 2. read()和write()操作 ----- 从给定的索引开始，并且根据已经访问过的字节数对索引进行访问
+- 3. 下图给出get()操作API，对于set()操作、read()操作和write操作可参考书籍或API
+
+![](./docs/pics/table-5-1.png)
+
+### 5.3.10 更多的操作
+![](./docs/pics/table-5-5.png)
+下面的两个方法操作字面意思较难理解，给出解释:
+
+- 1. hasArray() ----- 如果ByteBuf由一个字节数组支撑，则返回true。通俗的讲：ByteBuf是堆缓冲区模式，则代表其内部存储是由字节数组支撑的。如果还没理解，可参考5.2.2章节
+- 2. array() ----- 如果ByteBuf是由一个字节数组支撑泽返回数组，否则抛出UnsupportedOperationException异常。也就是，ByteBuf是堆缓冲区模式
+
+## 5.4 ByteBufHolder接口
+ByteBufHolder为Netty的高级特性提供了支持，如缓冲区池化，可以从池中借用ByteBuf，并且在需要时自动释放。
+
+- 1. ByteBufHolder是ByteBuf的容器，可以通过子类实现ByteBufHolder接口，根据自身需要添加自己需要的数据字段。可以用于自定义缓冲区类型扩展字段。
+- 2. Netty提供了一个默认的实现DefaultByteBufHolder。
+
+##### 代码
+```
+public class CustomByteBufHolder extends DefaultByteBufHolder{
+
+    private String protocolName;
+
+    public CustomByteBufHolder(String protocolName, ByteBuf data) {
+        super(data);
+        this.protocolName = protocolName;
+    }
+
+    @Override
+    public CustomByteBufHolder replace(ByteBuf data) {
+        return new CustomByteBufHolder(protocolName, data);
+    }
+
+    @Override
+    public CustomByteBufHolder retain() {
+        super.retain();
+        return this;
+    }
+
+    @Override
+    public CustomByteBufHolder touch() {
+        super.touch();
+        return this;
+    }
+
+    @Override
+    public CustomByteBufHolder touch(Object hint) {
+        super.touch(hint);
+        return this;
+    }
+    ...
+}
+```
+
+## 5.5 ByteBuf分配
+创建和管理ByteBuf实例的多种方式：按需分配(ByteBufAllocator)、Unpooled缓冲区和ByteBufUtil类
+
+### 5.5.1 按序分配: ByteBufAllocator接口
+Netty通过接口ByteBufAllocator实现了(ByteBuf的)池化。Netty提供池化和非池化的ButeBufAllocator: 
+
+- 1. ctx.channel().alloc().buffer() ----- 本质就是: ByteBufAllocator.DEFAULT
+- 2. ByteBufAllocator.DEFAULT.buffer() ----- 返回一个基于堆或者直接内存存储的Bytebuf。默认是堆内存
+- 3. ByteBufAllocator.DEFAULT ----- 有两种类型: UnpooledByteBufAllocator.DEFAULT(非池化)和PooledByteBufAllocator.DEFAULT(池化)。对于Java程序，默认使用PooledByteBufAllocator(池化)。对于安卓，默认使用UnpooledByteBufAllocator(非池化)
+- 4. 可以通过BootStrap中的Config为每个Channel提供独立的ByteBufAllocator实例
+
+![](./docs/pics/table-5-7.png)
+
+##### 解释:
+
+- 1. 上图中的buffer()方法，返回一个基于堆或者直接内存存储的Bytebuf ----- 缺省是堆内存。源码: AbstractByteBufAllocator() { this(false); }
+- 2. ByteBufAllocator.DEFAULT ----- 可能是池化，也可能是非池化。默认是池化(PooledByteBufAllocator.DEFAULT)
+
+### 5.5.2 Unpooled缓冲区 ----- 非池化
+Unpooled提供静态的辅助方法来创建未池化的ByteBuf。
+
+![](./docs/pics/table-5-8.png)
+
+##### 注意:
+
+- 1. 上图的buffer()方法，返回一个未池化的基于堆内存存储的ByteBuf
+- 2. wrappedBuffer() ----- 创建一个视图，返回一个包装了给定数据的ByteBuf。非常实用
+
+##### 创建ByteBuf代码:
+```
+ public void createByteBuf(ChannelHandlerContext ctx) {
+    // 1. 通过Channel创建ByteBuf
+    ByteBuf buf1 = ctx.channel().alloc().buffer();
+    // 2. 通过ByteBufAllocator.DEFAULT创建
+    ByteBuf buf2 =  ByteBufAllocator.DEFAULT.buffer();
+    // 3. 通过Unpooled创建
+    ByteBuf buf3 = Unpooled.buffer();
+}
+```
+
+### 5.5.3 ByteBufUtil类
+ByteBufUtil类提供了用于操作ByteBuf的静态的辅助方法: hexdump()和equals
+
+- 1. hexdump() ----- 以十六进制的表示形式打印ByteBuf的内容。非常有价值 
+- 2. equals() ----- 判断两个ByteBuf实例的相等性
+
+## 5.6 引用计数
+Netty4.0版本中为ButeBuf和ButeBufHolder引入了引用计数技术。请区别引用计数和可达性分析算法(jvm垃圾回收)
+
+- 1. 谁负责释放: 一般来说，是由最后访问(引用计数)对象的那一方来负责将它释放
+- 2. buffer.release() ----- 引用计数减1 
+- 3. buffer.retain() ----- 引用计数加1
+- 4. buffer.refCnt() ----- 返回当前对象引用计数值
+- 5. buffer.touch() ----- 记录当前对象的访问位置，主要用于调试。
+- 6. 引用计数并非仅对于直接缓冲区(direct Buffer)。ByteBuf的三种模式: 堆缓冲区(heap Buffer)、直接缓冲区(dirrect Buffer)和复合缓冲区(Composite Buffer)都使用了引用计数，某些时候需要程序员手动维护引用数值
+
+##### 代码：
+```
+public static void releaseReferenceCountedObject(){
+    ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer();
+    // 引用计数加1
+    buffer.retain();
+    // 输出引用计数
+    buffer.refCnt();
+    // 引用计数减1
+    buffer.release();
+}
+```
+
+## 5.7 建议
+- 1. 如果使用了Netty的ByteBuf，建议功能测试时，打开内存检测: -Dio.netty.leakDetectionLevel=paranoid
+- 2. ByteBuf的三种模式: 堆缓冲区(heap Buffer)、直接缓冲区(dirrect Buffer)和复合缓冲区(Composite Buffer)都使用了引用计数，某些时候需要程序员手动维护引用数值。
+
+# 第6章 ChannelHandler和ChannelPipeline
+
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)

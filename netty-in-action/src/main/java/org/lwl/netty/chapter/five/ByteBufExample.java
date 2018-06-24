@@ -1,6 +1,7 @@
 package org.lwl.netty.chapter.five;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
@@ -101,6 +102,19 @@ public class ByteBufExample {
         System.out.println(copy.toString(utf8));
         buf.setByte(0, (byte)'J');
         assert buf.getByte(0) != copy.getByte(0); // return true
+    }
+
+    /**
+     * 代码清单 5.16 引用计数
+     */
+    public static void releaseReferenceCountedObject(){
+        ByteBuf buffer = ByteBufAllocator.DEFAULT.buffer(); //get reference form somewhere
+        // 引用计数加1
+        buffer.retain();
+        // 输出引用计数
+        buffer.refCnt();
+        // 引用计数减1
+        buffer.release();
     }
 
     private static void handleArray(byte[] array, int offset, int len) {}
