@@ -1,7 +1,10 @@
 package org.lwl.netty;
 
 import org.lwl.netty.client.NettyClientAdapter;
+import org.lwl.netty.config.ProtocolConfig;
 import org.lwl.netty.server.NettyServer;
+
+import java.io.IOException;
 
 /**
  * @author thinking_fioa
@@ -12,7 +15,8 @@ import org.lwl.netty.server.NettyServer;
 
 public class NettyServerAndClientStart {
 
-    public static void main(String [] args) {
+    public static void main(String [] args) throws IOException {
+        ProtocolConfig.init();
         // 用线程启动
         // 启动 Server
         new Thread(() -> {

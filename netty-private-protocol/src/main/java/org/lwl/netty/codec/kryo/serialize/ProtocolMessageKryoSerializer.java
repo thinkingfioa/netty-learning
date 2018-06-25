@@ -30,6 +30,7 @@ public class ProtocolMessageKryoSerializer extends Serializer<ProtocolMessage> {
 
     @Override
     public ProtocolMessage read(Kryo kryo, Input input, Class<ProtocolMessage> aClass) {
+        System.out.println("99999999999999999999");
         Header header = (Header)KryoDecoder.getInstance().readObject(kryo, input);
         Body body = (Body)KryoDecoder.getInstance().readObject(kryo, input);
         Tail tail = (Tail)KryoDecoder.getInstance().readObject(kryo, input);

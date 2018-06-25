@@ -65,7 +65,7 @@ public class ProtocolDataEncoder extends MessageToByteEncoder<ProtocolMessage> {
         header.setFlag((short)2);
         header.setOneByte((byte)3);
 
-        Map<String, Object> attachment = new HashMap<String, Object>();
+        Map<String, Object> attachment = new HashMap<>();
         attachment.put("name", "thinking_fioa");
         attachment.put("age", 18);
 

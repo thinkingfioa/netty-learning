@@ -2,6 +2,15 @@ package org.lwl.netty.codec.kryo;
 
 import com.esotericsoftware.kryo.Serializer;
 import de.javakaffee.kryoserializers.*;
+import org.lwl.netty.codec.kryo.serialize.HeaderKryoSerializer;
+import org.lwl.netty.codec.kryo.serialize.ProtocolMessageKryoSerializer;
+import org.lwl.netty.codec.kryo.serialize.TailKryoSerializer;
+import org.lwl.netty.codec.kryo.serialize.body.*;
+import org.lwl.netty.message.Body;
+import org.lwl.netty.message.Header;
+import org.lwl.netty.message.ProtocolMessage;
+import org.lwl.netty.message.Tail;
+import org.lwl.netty.message.body.*;
 
 import java.lang.reflect.InvocationHandler;
 import java.net.URI;
@@ -21,6 +30,17 @@ public class KryoReflectionFactory extends KryoReflectionFactorySupport{
         setRegistrationRequired(false);
         setReferences(true);
         // register serializer
+        register(ProtocolMessage.class, new ProtocolMessageKryoSerializer());
+        register(ProtocolSubBody.class, new ProtocolSubBodyKryoSerializer());
+        register(ProtocolDataBody.class, new ProtocolDataBodyKryoSerializer());
+        register(LogoutBody.class, new LogoutBodyKryoSerializer());
+        register(LoginRespBody.class, new LoginRespBodyKryoSerializer());
+        register(LoginReqBody.class, new LoginReqBodyKryoSerializer());
+        register(HeartbeatRespBody.class, new HtRespBodyKryoSerializer());
+        register(HeartbeatReqBody.class, new HtReqBodyKryoSerializer());
+        register(Header.class, new HeaderKryoSerializer());
+        register(Tail.class, new TailKryoSerializer());
+        register(Body.class, new DefaultBodyKryoSerializer());
         register(Arrays.asList("").getClass(), new ArraysAsListSerializer());
         register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
         register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());

@@ -9,11 +9,8 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.IMessageCodecUtil;
 import org.lwl.netty.config.ProtocolConfig;
-import org.lwl.netty.message.ProtocolMessage;
 import org.lwl.netty.message.Tail;
 import org.lwl.netty.util.CommonUtil;
-
-import java.io.IOException;
 
 /**
  * @author thinking_fioa
@@ -31,18 +28,21 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
         Kryo kryo = KryoHolder.get();
         ByteBufOutputStream byteBufOutputStream = null;
         try {
+            int startIdx = outByteBuf.writerIndex();
             byteBufOutputStream = new ByteBufOutputStream(outByteBuf);
             Output output = new Output(PKG_MAX_LEN, -1);
             output.setOutputStream(byteBufOutputStream);
             kryo.writeClassAndObject(output, object);
 
+            output.flush();
+            output.close();
+
             // 更新最大长度字段
-            outByteBuf.setInt(0, outByteBuf.writerIndex());
+            outByteBuf.setInt(startIdx, outByteBuf.writerIndex());
             // 计算并更新checkSum
             int checkSum = CommonUtil.calCheckSum(outByteBuf, outByteBuf.writerIndex() - Tail.byteSize());
             outByteBuf.setInt(outByteBuf.writerIndex() - Tail.byteSize(), checkSum);
-            output.flush();
-            output.close();
+
         } finally {
             if(null != byteBufOutputStream) {
                 byteBufOutputStream.close();
@@ -55,8 +55,13 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
         if(null == inByteBuf) {
             return null;
         }
+        //TODO:: checkSum 计算
         Input input = new Input(new ByteBufInputStream(inByteBuf));
         Kryo kryo = KryoHolder.get();
-        return kryo.readClassAndObject(input);
+        Object o =  kryo.readClassAndObject(input);
+        if(null == o) {
+            System.out.println("nullllllllllllll");
+        }
+        return o;
     }
 }

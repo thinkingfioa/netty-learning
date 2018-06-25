@@ -4,7 +4,7 @@
         <property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %C{1}.%M(%F:%L) - %msg%n</property>
         <property name="log_home">~/logs/netty-learning</property>
         <property name="file_name">netty-private-protocol</property>
-        <property name="every_file_size">10M</property>
+        <property name="every_file_size">100M</property>
         <property name="output_log_level">debug</property>
         <property name="file_count">20</property>
         <property name="error_file_count">3</property>
