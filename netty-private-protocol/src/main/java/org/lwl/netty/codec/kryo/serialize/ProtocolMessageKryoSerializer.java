@@ -4,8 +4,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwl.netty.message.Body;
 import org.lwl.netty.message.Header;
 import org.lwl.netty.message.ProtocolMessage;
@@ -30,7 +28,6 @@ public class ProtocolMessageKryoSerializer extends Serializer<ProtocolMessage> {
 
     @Override
     public ProtocolMessage read(Kryo kryo, Input input, Class<ProtocolMessage> aClass) {
-        System.out.println("99999999999999999999");
         Header header = (Header)KryoDecoder.getInstance().readObject(kryo, input);
         Body body = (Body)KryoDecoder.getInstance().readObject(kryo, input);
         Tail tail = (Tail)KryoDecoder.getInstance().readObject(kryo, input);

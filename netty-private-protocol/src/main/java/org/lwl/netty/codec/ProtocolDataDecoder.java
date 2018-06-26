@@ -42,7 +42,9 @@ public class ProtocolDataDecoder extends LengthFieldBasedFrameDecoder {
             }
 
             LOGGER.info("  <-- decode msg. msgLen: {}", frame.writerIndex());
-            return codecUtil.decode(ctx, frame);
+            Object decodeObject =  codecUtil.decode(ctx, frame);
+            LOGGER.debug("  <--  serializer msg. {}", decodeObject);
+            return decodeObject;
         } catch (Throwable cause) {
             LOGGER.error("Decode error.", cause);
             throw new EncoderException("Decode error.");

@@ -31,6 +31,9 @@ public class KryoReflectionFactory extends KryoReflectionFactorySupport{
         setReferences(true);
         // register serializer
         register(ProtocolMessage.class, new ProtocolMessageKryoSerializer());
+        register(Header.class, new HeaderKryoSerializer());
+        register(Body.class, new DefaultBodyKryoSerializer());
+        register(Tail.class, new TailKryoSerializer());
         register(ProtocolSubBody.class, new ProtocolSubBodyKryoSerializer());
         register(ProtocolDataBody.class, new ProtocolDataBodyKryoSerializer());
         register(LogoutBody.class, new LogoutBodyKryoSerializer());
@@ -38,9 +41,6 @@ public class KryoReflectionFactory extends KryoReflectionFactorySupport{
         register(LoginReqBody.class, new LoginReqBodyKryoSerializer());
         register(HeartbeatRespBody.class, new HtRespBodyKryoSerializer());
         register(HeartbeatReqBody.class, new HtReqBodyKryoSerializer());
-        register(Header.class, new HeaderKryoSerializer());
-        register(Tail.class, new TailKryoSerializer());
-        register(Body.class, new DefaultBodyKryoSerializer());
         register(Arrays.asList("").getClass(), new ArraysAsListSerializer());
         register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
         register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());

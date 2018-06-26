@@ -108,7 +108,7 @@ public class Header {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Header [");
-        sb.append(", msgLen=").append(msgLen);
+        sb.append("msgLen=").append(msgLen);
         sb.append(", msgNum=").append(msgNum);
         sb.append(", msgType=").append(msgType);
         sb.append(", flag=").append(flag);

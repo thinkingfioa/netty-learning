@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
 import org.lwl.netty.codec.IMessageCodecUtil;
 import org.lwl.netty.config.ProtocolConfig;
+import org.lwl.netty.message.ProtocolMessage;
 import org.lwl.netty.message.Tail;
 import org.lwl.netty.util.CommonUtil;
 
@@ -22,6 +23,7 @@ import org.lwl.netty.util.CommonUtil;
 public class KryoCodecUtil implements IMessageCodecUtil<Object>{
 
     private static final int PKG_MAX_LEN = ProtocolConfig.getPkgMaxLen();
+    private static final byte [] LENGTH_PLACEHOLDER = new byte[4];
 
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf outByteBuf, Object object) throws Exception {
@@ -30,13 +32,13 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
         try {
             int startIdx = outByteBuf.writerIndex();
             byteBufOutputStream = new ByteBufOutputStream(outByteBuf);
+            byteBufOutputStream.write(LENGTH_PLACEHOLDER);
             Output output = new Output(PKG_MAX_LEN, -1);
             output.setOutputStream(byteBufOutputStream);
-            kryo.writeClassAndObject(output, object);
+            kryo.writeClassAndObject(output, (ProtocolMessage)object);
 
             output.flush();
             output.close();
-
             // 更新最大长度字段
             outByteBuf.setInt(startIdx, outByteBuf.writerIndex());
             // 计算并更新checkSum
@@ -58,10 +60,6 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
         //TODO:: checkSum 计算
         Input input = new Input(new ByteBufInputStream(inByteBuf));
         Kryo kryo = KryoHolder.get();
-        Object o =  kryo.readClassAndObject(input);
-        if(null == o) {
-            System.out.println("nullllllllllllll");
-        }
-        return o;
+        return kryo.readClassAndObject(input);
     }
 }

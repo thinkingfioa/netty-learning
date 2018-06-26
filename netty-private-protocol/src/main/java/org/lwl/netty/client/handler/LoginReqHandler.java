@@ -33,7 +33,6 @@ public class LoginReqHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ProtocolMessage message = (ProtocolMessage) msg;
-        System.out.println("000000000000");
         final MessageTypeEnum msgType = message.getHeader().getMsgType();
         if(MessageTypeEnum.LOGIN_RESP.equals(msgType)) {
             LOGGER.info("receive login resp.");
