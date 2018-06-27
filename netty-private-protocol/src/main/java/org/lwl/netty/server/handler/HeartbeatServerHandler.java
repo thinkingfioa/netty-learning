@@ -27,7 +27,7 @@ public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter {
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) {
         if(evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent)evt;
-            if(event.state() == IdleState.WRITER_IDLE) {
+            if(event.state() == IdleState.READER_IDLE) {
                 lossConnectCount++;
                 if(lossConnectCount >=5) {
                     // 5 次客户端都没有给心跳回复，则关闭连接
@@ -35,8 +35,9 @@ public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter {
                     LOGGER.error("heartbeat timeout, close.");
                     return ;
                 }
-                // send heartbeat msg
-                LOGGER.warn("heartbeat req msg sent.");
+            } else if(event.state() == IdleState.WRITER_IDLE) {
+                LOGGER.warn("heartbeat timeout. lossCount: {}", lossConnectCount);
+                // sent heartbeat msg
                 ctx.writeAndFlush(buildHtReqMsg());
             }
         } else {

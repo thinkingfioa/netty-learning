@@ -14,11 +14,6 @@ import java.util.Map;
 
 public class Header {
     /**
-     * 发送pkg长度
-     */
-    private int msgLen;
-
-    /**
      * 发送消息数目
      */
     private long msgNum;
@@ -48,10 +43,6 @@ public class Header {
      */
     private Map<String, Object> attachment = new HashMap<String, Object>();
 
-    public int getMsgLen() {
-        return msgLen;
-    }
-
     public long getMsgNum() {
         return msgNum;
     }
@@ -62,10 +53,6 @@ public class Header {
 
     public Map<String, Object> getAttachment() {
         return attachment;
-    }
-
-    public void setMsgLen(int msgLen) {
-        this.msgLen = msgLen;
     }
 
     public void setAttachment(Map<String, Object> attachment) {
@@ -108,8 +95,7 @@ public class Header {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Header [");
-        sb.append("msgLen=").append(msgLen);
-        sb.append(", msgNum=").append(msgNum);
+        sb.append("msgNum=").append(msgNum);
         sb.append(", msgType=").append(msgType);
         sb.append(", flag=").append(flag);
         sb.append(", oneByte=").append(oneByte);

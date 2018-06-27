@@ -25,7 +25,6 @@ public class HeaderMslSerializer {
     }
 
     public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, Header header) throws Exception {
-        MslEncoder.getInstance().writeInt(outByteBuf, header.getMsgLen());
         MslEncoder.getInstance().writeLong(outByteBuf, header.getMsgNum());
         MslEncoder.getInstance().writeString(outByteBuf, header.getMsgType().getMsgType());
         MslEncoder.getInstance().writeString(outByteBuf, header.getMsgTime());
@@ -35,7 +34,6 @@ public class HeaderMslSerializer {
     }
 
     public Header deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception{
-        int msgLen = MslDecoder.getInstance().readInt(inByteBuf);
         long msgNum = MslDecoder.getInstance().readLong(inByteBuf);
         String msgType = MslDecoder.getInstance().readString(inByteBuf);
         String msgTime = MslDecoder.getInstance().readString(inByteBuf);
@@ -44,7 +42,6 @@ public class HeaderMslSerializer {
         Map<String, Object> attachment = MslDecoder.getInstance().readMap(ctx, inByteBuf);
 
         Header header = new Header();
-        header.setMsgLen(msgLen);
         header.setMsgNum(msgNum);
         header.setMsgType(MessageTypeEnum.getMsgTypeEnum(msgType));
         header.setMsgTime(msgTime);

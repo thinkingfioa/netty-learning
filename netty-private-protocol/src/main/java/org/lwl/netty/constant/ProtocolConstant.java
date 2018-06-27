@@ -22,8 +22,8 @@ public final class ProtocolConstant {
     private static final int MAX_FRAMELENGTH = ProtocolConfig.getPkgMaxLen();
     private static final int LENGTH_FIELD_OFFSET = 0;
     private static final int LENGTHFIELD_LENGTH = 4;
-    private static final int LENGTH_ADJUSTMENT = 0;
-    private static final int INITIAL_BYTES_TO_STRIP = 4;
+    private static final int LENGTH_ADJUSTMENT = -4;
+    private static final int INITIAL_BYTES_TO_STRIP = 0;
 
     /**
      * 序列化/反序列化方式

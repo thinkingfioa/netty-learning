@@ -133,12 +133,12 @@ public LengthFieldBasedFrameDecoder(
 - 4. initialBytesToStrip = 0 - 解码过程中，没有丢弃任何数据
 
 ### 4.7 实际案例
-我在项目[Netty-private-protocol开发](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)实际使用了LengthFieldBasedFrameDecoder自定义长度编码器。在消息Header中，添加域: msgLen字段(int型)。用于表示整个数据包的长度，欢迎一起交流。所以，我的参数是:
+我在项目[Netty-private-protocol开发](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)实际使用了LengthFieldBasedFrameDecoder自定义长度编码器。在消息Header的前添加4个字节(int型)。用于表示整个数据包的长度，欢迎一起交流。所以，我的参数是:
 
 - 1. lengthFieldOffset = 0
 - 2. lengthFieldLength = 4
 - 3. lengthAdjustment = -4 = 数据包长度(msgLen) - lengthFieldOffset(0) - lengthFieldLength(4) - msgLen
-- 4. initialBytesToStrip
+- 4. initialBytesToStrip = 0
 
 ## 5. 总结
 请记住公式: 发送数据包长度 = 长度域的值 + lengthFieldOffset + lengthFieldLength  + lengthAdjustment。

@@ -47,7 +47,6 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 
 |属性|类型|描述|
 |:---:|:---:|:---:|
-|msgLen|int|发送pkg长度|
 |sessionID|long|发送方的sessionId|
 |msgType|String|消息类型|
 |...|...|...|
@@ -55,10 +54,6 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 ##### 代码:
 ```java
 public class Header {
-    /**
-     * 发送pkg长度
-     */
-    private int msgLen;
 
     /**
      * 发送方的sessionId
@@ -128,14 +123,17 @@ public int calcCheckSum(byte[] bytes){
 ## 1.2 心跳机制
 Client端和Server端在数据传输空闲期间，利用心跳机制来保持回话正常。
 
-### 1.2.1 设计的逻辑
-- 1. Client端在指定时间间隔内没有接收数据，则主动发送心跳消息，5个心跳间隔都没有收到服务端心跳应答消息。则链路存在问题，关闭连接。
-- 2. Server监听写事件，如果指定时间间隔无数据写如，则主动发送心跳消息，5个心跳间隔都没有收到客户端心跳应答消息。则链路存在问题，关闭连接。
-- 3. Client端和Server端收到心跳消息，必须回复心跳应答消息。
+### 1.2.1 心跳设计的思路
+
+- 1. Client端和Server端收到心跳消息，必须回复心跳应答消息。
+- 2. Client端和Server端都监听写空闲事件(WRITER_IDLE)和读空闲事件(READ_IDLE)。写空闲时，发送心跳给对方。读空闲时判断对方未应答心跳次数，如果超过指定次数，则关闭链路。
+- 3. Client端的心跳事件处理Handler类:HeartbeatClientHandler。Server端的心跳事件处理Handler类:HeartbeatServerHandler。
 - 4. 心跳请求和心跳应答分别对应于Body类: HeartbeatReqBody.class/HeartbeatRespBody.class
 
 ## 1.3 编码器/解码器
-- 1. 协议中使用的通用解码器是: LengthFieldBasedFrameDecoder。该解码器自动处理粘包/粘包问题。关于LengthFieldBasedFrameDecoder中5的参数: maxFrameLength/lengthFieldOffset...解释，在下文1.6部分。
+协议中使用的通用解码器是: LengthFieldBasedFrameDecoder。该解码器自动处理粘包/粘包问题。关于LengthFieldBasedFrameDecoder中5的参数: maxFrameLength/lengthFieldOffset...解释，在下文1.6部分。
+
+### LengthFieldBasedFrameDecoder的使用
 
 ## 1.4 Client端
 
@@ -196,6 +194,10 @@ TOTO：类图
     <version>1.11.0</version>
 </dependency>
 ```
+### 2.2.2 Kryo注意事项
+
+- 1. writeClassAndObject(...)方法会写入class的信息。设计协议时，如果将长度域放在Header中，那么将会导致Kryo解码时，找不到对应class的解码器。
+- 2. 所以，协议调整为，在消息头Header前面添加4个字节(int型)的长度域。保证不会在更新长度域值是，覆盖了class信息，导致解码时找不到对应的解码器
 
 ## 2.3 Protobuf 编码
 

@@ -24,9 +24,12 @@ import org.lwl.netty.util.CommonUtil;
 
 public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> {
     private static final Logger LOGGER = LogManager.getLogger(MarshallingCodecUtil.class);
+    private static final byte [] LENGTH_PLACEHOLDER = new byte[4];
 
     @Override
     public void encode(ChannelHandlerContext ctx, ByteBuf outByteBuf, ProtocolMessage msg) throws Exception {
+        // 填入长度占位符
+        outByteBuf.writeBytes(LENGTH_PLACEHOLDER);
         // Header
         HeaderMslSerializer.getInstance().serialize(ctx, outByteBuf, msg.getHeader());
 
@@ -43,6 +46,7 @@ public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> 
 
     @Override
     public ProtocolMessage decode(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception {
+        int msgLen = inByteBuf.readInt();
         // Header
         Header header = HeaderMslSerializer.getInstance().deserialize(ctx, inByteBuf);
         // Body
@@ -60,7 +64,9 @@ public class MarshallingCodecUtil implements IMessageCodecUtil<ProtocolMessage> 
             return null;
         }
 
-        return ProtocolMessage.createMsgOfDecode(header, body, tail);
+        ProtocolMessage message = ProtocolMessage.createMsgOfDecode(header, body, tail);
+        LOGGER.debug(" <-- read msgLen:{}, {}", msgLen, message);
+        return message;
     }
 
     private boolean checkSumRight(ByteBuf inByteBuf, int length, int sendCheckSum) {

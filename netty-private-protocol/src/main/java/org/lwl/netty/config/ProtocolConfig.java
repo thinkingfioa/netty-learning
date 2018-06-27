@@ -53,7 +53,7 @@ public class ProtocolConfig {
     private static byte codecType = 1;
 
     public static void init() throws IOException {
-        LOGGER.error("Reading configuration: {}", PROTOCOL_PROPERTIES);
+        LOGGER.info("Reading configuration: {}", PROTOCOL_PROPERTIES);
         InputStream inputStream = ProtocolConfig.class.getClassLoader().getResourceAsStream(PROTOCOL_PROPERTIES);
         Properties props = new Properties();
         try {

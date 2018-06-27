@@ -34,8 +34,9 @@ public class HeartbeatClientHandler extends ChannelInboundHandlerAdapter {
                     LOGGER.error("heartbeat timeout, close.");
                     return ;
                 }
+            } else if(event.state() == IdleState.WRITER_IDLE) {
+                LOGGER.warn("heartbeat timeout. lossCount: {}", lossConnectCount);
                 // sent heartbeat msg
-                LOGGER.warn("heartbeat req msg sent.");
                 ctx.writeAndFlush(buildHtReqMsg());
             }
         } else {

@@ -50,7 +50,7 @@ public class NettyClient {
             ch.pipeline().addLast(new ProtocolDataDecoder());
             ch.pipeline().addLast(new ProtocolDataEncoder());
             ch.pipeline().addLast(new LoginReqHandler());
-            ch.pipeline().addLast(new IdleStateHandler(ProtocolConfig.getHeartbeatInterval(), 0, 0, TimeUnit.SECONDS));
+            ch.pipeline().addLast(new IdleStateHandler(ProtocolConfig.getHeartbeatInterval(), ProtocolConfig.getHeartbeatInterval(), 0, TimeUnit.SECONDS));
             ch.pipeline().addLast(new HeartbeatClientHandler());
 //            ch.pipeline().addLast(new ProtocolMsgSubHandler());
             ch.pipeline().addLast(new ClientExceptionHandler());

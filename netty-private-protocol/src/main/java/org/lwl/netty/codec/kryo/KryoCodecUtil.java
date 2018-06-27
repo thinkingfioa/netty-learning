@@ -7,7 +7,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwl.netty.codec.IMessageCodecUtil;
+import org.lwl.netty.codec.marshalling.MarshallingCodecUtil;
 import org.lwl.netty.config.ProtocolConfig;
 import org.lwl.netty.message.ProtocolMessage;
 import org.lwl.netty.message.Tail;
@@ -21,7 +24,7 @@ import org.lwl.netty.util.CommonUtil;
 
 
 public class KryoCodecUtil implements IMessageCodecUtil<Object>{
-
+    private static final Logger LOGGER = LogManager.getLogger(MarshallingCodecUtil.class);
     private static final int PKG_MAX_LEN = ProtocolConfig.getPkgMaxLen();
     private static final byte [] LENGTH_PLACEHOLDER = new byte[4];
 
@@ -35,7 +38,7 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
             byteBufOutputStream.write(LENGTH_PLACEHOLDER);
             Output output = new Output(PKG_MAX_LEN, -1);
             output.setOutputStream(byteBufOutputStream);
-            kryo.writeClassAndObject(output, (ProtocolMessage)object);
+            kryo.writeClassAndObject(output, object);
 
             output.flush();
             output.close();
@@ -54,12 +57,22 @@ public class KryoCodecUtil implements IMessageCodecUtil<Object>{
 
     @Override
     public Object decode(ChannelHandlerContext ctx, ByteBuf inByteBuf) {
-        if(null == inByteBuf) {
-            return null;
-        }
-        //TODO:: checkSum 计算
+        int msgLen = inByteBuf.readInt();
+
         Input input = new Input(new ByteBufInputStream(inByteBuf));
         Kryo kryo = KryoHolder.get();
-        return kryo.readClassAndObject(input);
+        Object message = kryo.readClassAndObject(input);
+        if(!(message instanceof ProtocolMessage)) {
+            LOGGER.error("decode fail.msgLen: {}, {}", msgLen, message);
+            return null;
+        }
+        ProtocolMessage protocolMessage = (ProtocolMessage)message;
+        int calCheckSum = CommonUtil.calCheckSum(inByteBuf, inByteBuf.writerIndex() - Tail.byteSize());
+        if(calCheckSum != protocolMessage.getTail().getCheckSum()) {
+            LOGGER.error("checkSum error. calCheckSum:{}, sendCheckSum:{}, message:{}", calCheckSum, protocolMessage.getTail().getCheckSum(), message);
+            return null;
+        }
+        LOGGER.debug(" <-- read msgLen:{}, {}", msgLen, message);
+        return message;
     }
 }

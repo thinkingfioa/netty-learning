@@ -83,7 +83,7 @@ public class NettyServer {
 //            ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
             ch.pipeline().addLast(new ProtocolDataDecoder());
             ch.pipeline().addLast(new ProtocolDataEncoder());
-            ch.pipeline().addLast(new IdleStateHandler(0L, ProtocolConfig.getHeartbeatInterval(), 0, TimeUnit.SECONDS));
+            ch.pipeline().addLast(new IdleStateHandler(ProtocolConfig.getHeartbeatInterval(), ProtocolConfig.getHeartbeatInterval(), 0, TimeUnit.SECONDS));
             ch.pipeline().addLast(new LoginRespHandler());
             ch.pipeline().addLast(new HeartbeatServerHandler());
 //            ch.pipeline().addLast(new ProtocolMsgSendHandler());
