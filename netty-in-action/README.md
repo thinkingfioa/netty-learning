@@ -766,6 +766,45 @@ public static void releaseReferenceCountedObject(){
 
 # 第6章 ChannelHandler和ChannelPipeline
 
+## 6.1 ChannelHandler家族
+
+### 6.1.1 Channel的生命周期
+- 1. ChannelUnregistered ----- Channel已经被创建，但未注册到EventLoop上
+- 2. ChannelRegistered ----- Channel已经被注册到EventLoop上
+- 3. ChannelActive ----- Channel处于活动状态。对于Tcp客户端是只有与远程建立连接后，channel才会变成Active。udp是无连接的协议，Channel一旦被打开，便激活。注意这点不同点
+- 4. ChannelInactive ----- Channel处于关闭状态。常用来发起重连或切换链路
+
+### 6.1.2 ChannelHandler的生命周期
+ChannelHandler被添加到ChannelPipeline中或者被从ChannelPipeline中移除时调用下列操作
+
+- 1. handlerAdded ----- ChannelHandler被添加到ChannelPipeline中时被触发
+- 2. handlerRemoved ----- ChannelHandler被从ChannelPipeline中移除时触发
+- 3. exceptionCaught ----- 处理过程中发生异常，则触发
+
+Netty提供了两个重要的ChannelHandler子接口:
+
+- 1. ChannelInboundHandler ----- 处理入站数据和入站事件
+- 2. ChannelOutboundHandler ----- 处理出站数据并且允许拦截所有的操作
+
+### 6.1.3 ChannelInboundHandler接口
+ChannelInboundHandler接口处理入站事件和入站数据，提供的事件方法如下图:
+
+![](./docs/pics/table-6-3.png)
+
+###### 提醒:
+上图有几个方法解释，帮助理解与学习:
+
+- 1. channelReadComplete ----- Channel一次读操作完成时被调用。Channel是一个数据载体，既可以写入数据，又可以读取数据。所以存在读操作和写操作切换。
+- 2. channelWritabilityChanged ----- 帮助用户控制写操作速度，以避免发生OOM异常。通过Channel.config().setWriteHighWaterMark()设置发送数据的高水位。
+- 3. userEventTriggered ----- 用户事件触发。Netty提供心跳机制中使用，[参考实例](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)
+- 4. userEventTriggered ----- 用来实现用户自定义事件，完成ChannelPipeline动态编排实现.[参考实例]()
+
+### 6.1.4 ChannelOutboundHandler接口
+出站数据和事件将由ChannelOutboundHandler处理。ChannelOutboundHandler大部分方法都需要一个ChannelPromise参数，以便在操作完成时得到通知。
+
+- 1. ChannelPromise是ChannelFuture的一个子类，使用setSuccess()和setFailure()方法告知操作结果。ChannelPromise设置结果后，将变成不可修改对象。
+
+### 6.1.5 ChannelHandler适配器
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
