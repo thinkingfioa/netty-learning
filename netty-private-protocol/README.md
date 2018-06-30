@@ -14,6 +14,8 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 
 ## 提醒
 - 1. netty4.1以上版本中将channelRead(...)等方法从ChannelHandlerAdapter类中移除。添加到子类: ChannelInboundHandlerAdapter中。
+- 2. Kryo编码中使用writeClassAndObject()方法序列对象时，会先写入相关的Class信息。所以，不能讲消息的长度字段(msgLen)放在Header头中。
+- 3. 使用Netty时，不要阻塞I/O线程。同时，尽量不要使用sync同步方法，请使用异步Listening传递异步执行结果。
 
 
 # 1. 私有协议开发
@@ -130,17 +132,19 @@ Client端和Server端在数据传输空闲期间，利用心跳机制来保持�
 - 3. Client端的心跳事件处理Handler类:HeartbeatClientHandler。Server端的心跳事件处理Handler类:HeartbeatServerHandler。
 - 4. 心跳请求和心跳应答分别对应于Body类: HeartbeatReqBody.class/HeartbeatRespBody.class
 
-## 1.3 编码器/解码器
-协议中使用的通用解码器是: LengthFieldBasedFrameDecoder。该解码器自动处理粘包/粘包问题。关于LengthFieldBasedFrameDecoder中5的参数: maxFrameLength/lengthFieldOffset...解释，在下文1.6部分。
+## 1.3 LengthFieldBasedFrameDecoder的使用
+协议中使用的自定义长度解码器是: LengthFieldBasedFrameDecoder。LengthFieldBasedFrameDecoder解码器自定义长度解决TCP粘包黏包问题。所以LengthFieldBasedFrameDecoder又称为: 自定义长度解码器。私有化协议中的参数是
 
-### LengthFieldBasedFrameDecoder的使用
+- 1. lengthFieldOffset = 0
+- 2. lengthFieldLength = 4
+- 3. lengthAdjustment = -4 = 数据包长度(msgLen) - lengthFieldOffset(0) - lengthFieldLength(4) - msgLen
+- 4. initialBytesToStrip = 0
+
+关于LengthFieldBasedFrameDecoder的理解，可参考博客[地址](https://blog.csdn.net/thinking_fioa/article/details/80573483)
 
 ## 1.4 Client端
 
 ## 1.5 Server端
-
-## 1.6 LengthFieldBasedFrameDecoder的构造函数中5个参数解释
-Netty的LengthFieldBasedFrameDecoder编码器构造函数需要6的参数，解决TCP粘包/粘包问题。网上关于这6个参数的中文解释，太垃圾。英文不好的同学，可参考[博客](https://blog.csdn.net/thinking_fioa/article/details/80573483)，理解并会学会使用。英文文档[地址](http://netty.io/5.0/api/io/netty/handler/codec/LengthFieldBasedFrameDecoder.html)。
 
 # 2. 编解码
 配置文件中配置项目的编码工具，切换非常简单。
@@ -197,7 +201,7 @@ TOTO：类图
 ### 2.2.2 Kryo注意事项
 
 - 1. writeClassAndObject(...)方法会写入class的信息。设计协议时，如果将长度域放在Header中，那么将会导致Kryo解码时，找不到对应class的解码器。
-- 2. 所以，协议调整为，在消息头Header前面添加4个字节(int型)的长度域。保证不会在更新长度域值是，覆盖了class信息，导致解码时找不到对应的解码器
+- 2. 所以，协议调整为，在消息头Header前面添加4个字节(int型)的长度域。保证不会在更新长度域值是，覆盖了class信息，导致解码时找不到对应的解码器。
 
 ## 2.3 Protobuf 编码
 
