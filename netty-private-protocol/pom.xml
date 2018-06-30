@@ -69,7 +69,12 @@
             <artifactId>reflectasm</artifactId>
             <version>1.11.0</version>
         </dependency>
-
+        <!-- protobuf -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.6.0</version>
+        </dependency>
         <!-- all codec dependency end.-->
 
     </dependencies>

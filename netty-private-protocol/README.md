@@ -159,9 +159,21 @@ Client端和Server端在数据传输空闲期间，利用心跳机制来保持�
 
 TOTO：类图
 
-## 2.1 Marshalling 编码
+## 2.1 几种编解码器支持的语言
+几种编码器支持的语言各有不同，Y-支持，N-不支持
 
-### 2.1.1 pom依赖
+|编解码器|java|C#|c++|go|python|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+|Marshalling|Y|N|N|N|N|
+|Kryo|Y|N|N|N|N|
+|protobuf|Y|Y|Y|Y|Y|
+|thrift|Y|Y|Y|Y|Y|
+|Avro|Y|N|N|N|N|
+
+
+## 2.2 Marshalling 编码
+
+### 2.2.1 pom依赖
 下面两个dependency缺一不可，否则会有: java.lang.NullPointerException: null。
 
 ```
@@ -178,13 +190,13 @@ TOTO：类图
 </dependency>
 ```
 
-### 2.1.2 Marshalling 编码讲解
+### 2.2.2 Marshalling 编码讲解
  - 1. Marshalling编码对应于代码中的package org.lwl.netty.codec.marshalling;
  - 2. Marshalling主要用于对Object进行编码。对于基础的数据类型:List、Map、Integer等直接使用ByteBuf的writeXXX方法编码
 
-## 2.2 Kryo 编码
+## 2.3 Kryo 编码
 
-### 2.2.1 pom依赖
+### 2.3.1 pom依赖
 ```
 <!-- kryo -->
 <dependency>
@@ -198,16 +210,76 @@ TOTO：类图
     <version>1.11.0</version>
 </dependency>
 ```
-### 2.2.2 Kryo注意事项
+### 2.3.2 Kryo注意事项
 
 - 1. writeClassAndObject(...)方法会写入class的信息。设计协议时，如果将长度域放在Header中，那么将会导致Kryo解码时，找不到对应class的解码器。
 - 2. 所以，协议调整为，在消息头Header前面添加4个字节(int型)的长度域。保证不会在更新长度域值是，覆盖了class信息，导致解码时找不到对应的解码器。
 
-## 2.3 Protobuf 编码
+## 2.4 Protobuf 编码
+protobuf是Google开源的工具，有诸多非常优秀的特性:
 
-## 2.4 thrift 编码
+- 1. 与平台无关，与语言无关，可扩展。支持的语言非常多[官方地址](https://github.com/google/protobuf)
+- 2. 性能优秀，速度是Xml的20-100倍
+- 3. 需要编写中间proto文件，这点对使用者不太友好
 
-## 2.5 Avro 编码
+### 2.4.1 安装
+Protobuf是通过C++编写的。mac电脑，安装步骤如下:
+
+- 1. 使用了brew安装automake和libtool。命令如下
+- 2. 下载版本: protobuf-java.3.6.0.tar.gz。[地址](https://github.com/google/protobuf/releases)。不要下载源码编译，我们可以直接下载releases。目前protobuf最新的是3.6.0版本
+- 3. 执行make和make install即可
+- 4. 验证安装是否成功: protoc --version
+
+##### 代码:
+```shell
+// 第一步，安装automake和libtool
+1. brew install automake
+2. brew install libtool
+
+// 第二步, 下载release包
+
+// 第三步, 安装
+3. make
+4. make install
+
+// 第四步, 验证
+5. protoc --version
+```
+
+### 2.4.2 使用
+- 1. 编写proto，具体语法可[参考](https://blog.csdn.net/fangxiaoji/article/details/78826165)。大家注意一点是protobuf3.0版本语法与2.0好像差距蛮大的。
+- 2. 使用命令: protoc -I=proto文件所在的目录 --java_out=生成java文件存放地址。如netty-private-protocol子项目的命令是: protoc -I=../proto/ --java_out=../../java/ 名字.proto。可直接使用Resources/bin下的脚本: buildProto.sh
+
+##### proto编写规则
+```
+syntax = "proto3";
+option java_package = "org.lwl.netty.message.protobuf";
+option java_outer_classname="Test";
+
+message Message {
+    string name = 1;
+    string age = 2;
+}
+```
+解释:
+
+- 1. syntax = "proto3"; ----- 申明句法的版本号。如果不指定，默认是:syntax="proto2"
+- 2. java_package ----- 生成的类包路径
+- 3. java_outer_classname ----- 生成的数据访问类的类名
+- 4. 每个field后面必须是数值，如: string name = 1;
+
+### 2.4.3 pom依赖
+```
+<dependency>
+    <groupId>com.google.protobuf</groupId>
+    <artifactId>protobuf-java</artifactId>
+    <version>3.6.0</version>
+</dependency>
+```
+
+## 2.5 thrift 编码
+
+## 2.6 Avro 编码
 
 # 3. 多种编码性能比较
 
@@ -220,4 +292,5 @@ TOTO：类图
 - 1. [Netty-msg](https://github.com/tang-jie/NettyRPC)
 - 2. [LengthFieldBasedFrameDecoder](http://netty.io/5.0/api/io/netty/handler/codec/LengthFieldBasedFrameDecoder.html)
 - 3. [LengthFieldBasedFrameDecoder博客](https://blog.csdn.net/thinking_fioa/article/details/80573483)
-- 4. 
+- 4. [Mac上protobuf安装](https://blog.csdn.net/wwq_1111/article/details/50215645)
+- 5. [protobuf 3.5语法](https://blog.csdn.net/fangxiaoji/article/details/78826165)
