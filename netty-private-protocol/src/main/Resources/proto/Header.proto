@@ -1,0 +1,28 @@
+syntax = "proto3";
+option java_package = "org.lwl.netty.message.protobuf";
+option java_outer_classname="Header";
+
+message Header {
+    int64 msgNum=1;
+
+    MessageTypeEnum msgType=2;
+
+    string msgTime=3;
+
+    int32 flag = 4;
+
+    int32 oneByte = 5;
+
+    map<string, string> attachment=6;
+}
+
+enum MessageTypeEnum {
+    UNKNOWN="unknown";
+    LOGIN_REQ="loginReq";
+    LOGIN_RESP("loginResp";
+    LOGOUT="logout";
+    HEARTBEAT_REQ="heartbeatReq";
+    HEARTBEAT_RESP="heartbeatResp";
+    PROTOCOL_SUB="protocolSub";
+    PROTOCOL_DATA="protocolData";
+}

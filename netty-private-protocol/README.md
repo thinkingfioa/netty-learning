@@ -6,7 +6,8 @@
 2. 《Netty权威指南2》书中代码存在较多问题，无法运行。我经过研究，修改了书中代码，并成功运行。
 3. 成功运行基础上，加入了Kryo编码，与书本中提供的Marshalling编码进行对比。
 4. 实验表明，Kryo编码速度的确高于Marshlling编码速度。能够加快Netty的传输速度。
-5. 给出6种编码方式在Netty下的使用，并给出详细的案例
+5. 给出6种编码方式在Netty下的使用，并给出详细的案例。
+6. 可以学习多种编码器在项目中如何使用，及他们的特性。
 
 GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol
 本人博客地址: http://blog.csdn.net/thinking_fioa/article/details/78265745
@@ -45,7 +46,8 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 ### 1.1.1 Header
 - 1. Header头中最重要的字段是:msgLen，表示整个消息长度，关系到Netty粘包粘包解码中maxFrameLength多个字段配置。
 - 2. Header头中定义了多种类型：int/long/String/short/byte/Map/Object。已证明协议编码支持多种类型数据。
-- 3. Header属性解释如下:
+- 3. 使用protobuf编码时，由于protobuf不支持Java的short/byte类型，所以协议部分字段类型进行修改，见2.4.3节。其他编码器变
+- 4. Header属性解释如下:
 
 |属性|类型|描述|
 |:---:|:---:|:---:|
@@ -268,7 +270,12 @@ message Message {
 - 3. java_outer_classname ----- 生成的数据访问类的类名
 - 4. 每个field后面必须是数值，如: string name = 1;
 
-### 2.4.3 pom依赖
+### 2.4.3 声明
+由于protobuf与Java的数据类型存在较大不同点，所以对协议中的字段部分类型修改。
+
+- 1. protobuf不支持Java中的Short和Byte类型，用int代替。如Header中的域: flag和oneByte，还有map的value类型都是String
+
+### 2.4.4 pom依赖
 ```
 <dependency>
     <groupId>com.google.protobuf</groupId>
