@@ -26,7 +26,7 @@ public class HeaderMslSerializer {
 
     public void serialize(ChannelHandlerContext ctx, ByteBuf outByteBuf, Header header) throws Exception {
         MslEncoder.getInstance().writeLong(outByteBuf, header.getMsgNum());
-        MslEncoder.getInstance().writeString(outByteBuf, header.getMsgType().getMsgType());
+        MslEncoder.getInstance().writeByte(outByteBuf, header.getMsgType().getMsgType());
         MslEncoder.getInstance().writeString(outByteBuf, header.getMsgTime());
         MslEncoder.getInstance().writeShort(outByteBuf, header.getFlag());
         MslEncoder.getInstance().writeByte(outByteBuf, header.getOneByte());
@@ -35,7 +35,7 @@ public class HeaderMslSerializer {
 
     public Header deserialize(ChannelHandlerContext ctx, ByteBuf inByteBuf) throws Exception{
         long msgNum = MslDecoder.getInstance().readLong(inByteBuf);
-        String msgType = MslDecoder.getInstance().readString(inByteBuf);
+        Byte msgType = MslDecoder.getInstance().readByte(inByteBuf);
         String msgTime = MslDecoder.getInstance().readString(inByteBuf);
         short flag = MslDecoder.getInstance().readShort(inByteBuf);
         byte oneByte = MslDecoder.getInstance().readByte(inByteBuf);

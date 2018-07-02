@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "org.lwl.netty.message.protobuf";
+option java_outer_classname = "ProtocolDataBody";
+
+message ProtocolDataBodyP {
+    sint64 pkgSum = 1;
+    sint64 pkgSequenceNum = 2;
+    int32 contentLen = 3;
+    bytes content = 4;
+}

@@ -268,7 +268,7 @@ message Message {
 - 1. syntax = "proto3"; ----- 申明句法的版本号。如果不指定，默认是:syntax="proto2"
 - 2. java_package ----- 生成的类包路径
 - 3. java_outer_classname ----- 生成的数据访问类的类名
-- 4. 每个field后面必须是数值，如: string name = 1;
+- 4. 每个field后面是标识号，必须是数值，如: string name = 1;
 
 ### 2.4.3 声明
 由于protobuf与Java的数据类型存在较大不同点，所以对协议中的字段部分类型修改。
@@ -301,3 +301,4 @@ message Message {
 - 3. [LengthFieldBasedFrameDecoder博客](https://blog.csdn.net/thinking_fioa/article/details/80573483)
 - 4. [Mac上protobuf安装](https://blog.csdn.net/wwq_1111/article/details/50215645)
 - 5. [protobuf 3.5语法](https://blog.csdn.net/fangxiaoji/article/details/78826165)
+- 6. [protobuf3语言指南](https://blog.csdn.net/u011518120/article/details/54604615)

@@ -24,7 +24,7 @@ public class HeaderKryoSerializer extends Serializer<Header> {
     @Override
     public void write(Kryo kryo, Output output, Header header) {
         KryoEncoder.getInstance().writeLong(output, header.getMsgNum());
-        KryoEncoder.getInstance().writeString(output, header.getMsgType().getMsgType());
+        KryoEncoder.getInstance().writeByte(output, header.getMsgType().getMsgType());
         KryoEncoder.getInstance().writeString(output, header.getMsgTime());
         KryoEncoder.getInstance().writeShort(output, header.getFlag());
         KryoEncoder.getInstance().writeByte(output, header.getOneByte());
@@ -34,7 +34,7 @@ public class HeaderKryoSerializer extends Serializer<Header> {
     @Override
     public Header read(Kryo kryo, Input input, Class<Header> aClass) {
         long msgNum = KryoDecoder.getInstance().readLong(input);
-        String msgType = KryoDecoder.getInstance().readString(input);
+        Byte msgType = KryoDecoder.getInstance().readByte(input);
         String msgTime = KryoDecoder.getInstance().readString(input);
         short flag = KryoDecoder.getInstance().readShort(input);
         byte oneByte = KryoDecoder.getInstance().readByte(input);

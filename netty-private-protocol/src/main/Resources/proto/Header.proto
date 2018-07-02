@@ -1,8 +1,9 @@
 syntax = "proto3";
-option java_package = "org.lwl.netty.message.protobuf";
-option java_outer_classname="Header";
 
-message Header {
+option java_package = "org.lwl.netty.message.protobuf";
+option java_outer_classname = "Header";
+
+message HeaderP {
     int64 msgNum=1;
 
     MessageTypeEnum msgType=2;
@@ -17,12 +18,12 @@ message Header {
 }
 
 enum MessageTypeEnum {
-    UNKNOWN="unknown";
-    LOGIN_REQ="loginReq";
-    LOGIN_RESP("loginResp";
-    LOGOUT="logout";
-    HEARTBEAT_REQ="heartbeatReq";
-    HEARTBEAT_RESP="heartbeatResp";
-    PROTOCOL_SUB="protocolSub";
-    PROTOCOL_DATA="protocolData";
+    UNKNOWN=0;
+    LOGIN_REQ=1;
+    LOGIN_RESP=2;
+    LOGOUT=3;
+    HEARTBEAT_REQ=4;
+    HEARTBEAT_RESP=5;
+    PROTOCOL_SUB=6;
+    PROTOCOL_DATA=7;
 }

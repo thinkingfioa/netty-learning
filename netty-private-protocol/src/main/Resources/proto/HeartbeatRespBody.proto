@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "org.lwl.netty.message.protobuf";
+option java_outer_classname = "HeartbeatRespBody";
+
+message HeartbeatRespBodyP {
+
+}

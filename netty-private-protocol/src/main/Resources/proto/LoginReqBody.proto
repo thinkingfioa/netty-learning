@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "org.lwl.netty.message.protobuf";
+option java_outer_classname = "LoginReqBody";
+
+message LoginReqBodyP {
+    string userName = 1;
+    string password = 2;
+}

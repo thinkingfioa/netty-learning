@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option java_package = "org.lwl.netty.message.protobuf";
+option java_outer_classname = "ProtocolMessage";
+
+import "Header.proto";
+import "Body.proto";
+import "HeartbeatReqBody.proto";
+import "HeartbeatRespBody.proto";
+import "LoginReqBody.proto";
+import "LoginRespBody.proto";
+import "LogoutBody.proto";
+import "ProtocolDataBody.proto";
+import "ProtocolSubBody.proto";
+import "Tail.proto";
+
+message ProtocolMessageP {
+    HeaderP header = 1;
+    oneof body {
+        BodyP bodyMsg = 2;
+        HeartbeatReqBodyP heartbeatReqBody = 3;
+        HeartbeatRespBodyP heartbeatRespBody = 4;
+        LoginReqBodyP loginReqBody = 5;
+        LoginRespBodyP loginRespBody = 6;
+        LogoutBodyP logoutBody = 7;
+        ProtocolDataBodyP protocolDataBody = 8;
+        ProtocolSubBodyP protocolSubBody = 9;
+    }
+    TailP tail = 10;
+}

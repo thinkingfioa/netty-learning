@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_package = "org.lwl.netty.message.protobuf";
+option java_outer_classname = "ProtocolSubBody";
+
+message ProtocolSubBodyP {
+    repeated int32 dataTypeList = 1;
+}
+
+enum  ProtocolDataType {
+    DEFAULT = 0;
+    NEWS = 1;
+    SPORTS = 2;
+    ENTERTAINMENT = 3;
+}

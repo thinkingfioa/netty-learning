@@ -1,5 +1,9 @@
 package org.lwl.netty.constant;
 
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author thinking_fioa
  * @createTime 2018/4/21
@@ -12,74 +16,91 @@ public enum MessageTypeEnum {
     /**
      * Unknown 消息类型
      */
-    UNKNOWN("unknown"),
+    UNKNOWN((byte)0, "unknown"),
 
     /**
      * 登陆消息
      */
-    LOGIN_REQ("loginReq"),
+    LOGIN_REQ((byte)1, "loginReq"),
 
     /**
      * 登陆响应
      */
-    LOGIN_RESP("loginResp"),
+    LOGIN_RESP((byte)2, "loginResp"),
 
     /**
      * 注销
      */
-    LOGOUT("logout"),
+    LOGOUT((byte)3, "logout"),
 
     /**
      * 心跳请求
      */
-    HEARTBEAT_REQ("heartbeatReq"),
+    HEARTBEAT_REQ((byte)4, "heartbeatReq"),
 
     /**
      * 心跳响应
      */
-    HEARTBEAT_RESP("heartbeatResp"),
+    HEARTBEAT_RESP((byte)5, "heartbeatResp"),
 
     /**
      * 协议请求
      */
-    PROTOCOL_SUB("protocolSub"),
+    PROTOCOL_SUB((byte)6, "protocolSub"),
 
     /**
      * 协议数据消息
      */
-    PROTOCOL_DATA("protocolData")
+    PROTOCOL_DATA((byte)7, "protocolData")
     ;
 
-    MessageTypeEnum(final String msgType) {
-        this.msgType = msgType;
+    MessageTypeEnum(final byte type, final String desc) {
+        this.msgType = type;
+        this.desc = desc;
     }
 
-    private final String msgType;
+    private final byte msgType;
+
+    private final String desc;
 
     /**
-     * 根据msgType类型，获取{@code MessageTypeEnum}
+     * 根据msgType类型，获取{@code MessageTypeEnum}<br>
+     * 使用Hashmap缓存，提高缓存
      * @param msgType
      * @return
      */
-    public static MessageTypeEnum getMsgTypeEnum(final String msgType) {
-        if(null == msgType || msgType.isEmpty()) {
-            return null;
-        }
-        for(MessageTypeEnum typeEnum : MessageTypeEnum.values()) {
-            if(typeEnum.getMsgType().equals(msgType)){
-                return typeEnum;
-            }
+    public static MessageTypeEnum getMsgTypeEnum(final Byte msgType) {
+        if(null == msgType ) {
+            return MessageTypeEnum.UNKNOWN;
         }
 
-        return null;
+
+        return MessageTypeHolder.getMsgTypeEnum(msgType);
     }
 
-    public String getMsgType() {
+    public byte getMsgType() {
         return msgType;
     }
 
     @Override
     public String toString() {
-        return msgType;
+        return desc;
+    }
+
+    private static class MessageTypeHolder {
+        private static Map<Byte, MessageTypeEnum> messageTypeMap;
+        static {
+            messageTypeMap = new HashMap<>();
+            for(MessageTypeEnum type: MessageTypeEnum.values()) {
+                messageTypeMap.put(type.getMsgType(), type);
+            }
+        }
+
+        public static MessageTypeEnum getMsgTypeEnum(Byte key) {
+            if(messageTypeMap.containsKey(key)) {
+                return messageTypeMap.get(key);
+            }
+            return MessageTypeEnum.UNKNOWN;
+        }
     }
 }
