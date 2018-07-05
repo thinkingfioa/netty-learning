@@ -16,3 +16,7 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-s
 - 2. ChannelHandler动态编排
 - 3. AttributeMap使用
 - 4. Netty与protobuf的使用
+- 5. ChannelGroup使用
+- 6. 文件传输性能对比
+- 7. dom4j
+- 8. channel.writeAndFlush与ctx.writeAndFlush区别

@@ -313,6 +313,7 @@ Netty中所有的I/O操作都是异步的，该异步操作可能无法立即得
 - 1. channel.write(...) ----- 消息从ChannelPipeline中的下一个ChannelHandler开始流转
 - 2. channelHandlerContext.write(...) ----- 消息直接从ChannelPipeline的尾端开始流转
 - 3. ctx.write(...)的性能**优于**channel.write(...)
+- 4. channelHandlerContext.write(...)是将消息从当前的出站队列Hanlder往头部传。 channel.write(...)是从ChannelPipeline的尾部开始往头部传。如果没有理解这点，请看下文。
 
 ### 3.2.4 编码器和解码器
 - 1. Netty提供多种编码器和解码器，比如:ProtobufDecoder或ProtobufEncoder。
@@ -794,10 +795,10 @@ ChannelInboundHandler接口处理入站事件和入站数据，提供的事件�
 ###### 提醒:
 上图有几个方法解释，帮助理解与学习:
 
-- 1. channelReadComplete ----- Channel一次读操作完成时被调用。Channel是一个数据载体，既可以写入数据，又可以读取数据。所以存在读操作和写操作切换。
+- 1. channelReadComplete ----- Channel一次读操作完成时被调用，准备切换。Channel是一个数据载体，既可以写入数据，又可以读取数据。所以存在读操作和写操作切换。
 - 2. channelWritabilityChanged ----- 帮助用户控制写操作速度，以避免发生OOM异常。通过Channel.config().setWriteHighWaterMark()设置发送数据的高水位。
 - 3. userEventTriggered ----- 用户事件触发。Netty提供心跳机制中使用，[参考实例](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)
-- 4. userEventTriggered ----- 用来实现用户自定义事件，完成ChannelPipeline动态编排实现.[参考实例]()
+- 4. userEventTriggered ----- 实现用户自定义事件，完成ChannelPipeline动态编排效果的实现.[参考实例]()
 
 ### 6.1.4 ChannelOutboundHandler接口
 出站数据和事件将由ChannelOutboundHandler处理。ChannelOutboundHandler大部分方法都需要一个ChannelPromise参数，以便在操作完成时得到通知。
@@ -805,6 +806,45 @@ ChannelInboundHandler接口处理入站事件和入站数据，提供的事件�
 - 1. ChannelPromise是ChannelFuture的一个子类，使用setSuccess()和setFailure()方法告知操作结果。ChannelPromise设置结果后，将变成不可修改对象。
 
 ### 6.1.5 ChannelHandler适配器
+Netty提供两个ChannelHandler适配器: ChannelInboundHandlerAdapter和ChannelOutboundHandlerAdapter。通常自己实现处理业务的Handler都是继承这两个适配器
+
+- 1. 适配器中的方法: isSharable() ----- 表明该Handler是否被标注为Sharable
+
+### 6.1.6 资源管理
+Netty使用的ByteBuf采用的是引用计数机制来回收。对于初学者非常容易造成资源泄漏。Netty提供以下帮助定位资源泄漏代码。推荐使用: java -Dio.netty.leadDetectionLevel=ADVANCED
+
+![](./docs/pics/table-6-5.png)
+
+##### 如何管理好资源:
+想要管理好资源，避免资源浪费，请记住以下几点:
+
+- 1. 三种ByteBuf(堆缓冲区、直接缓冲区和复合缓冲区)都采用的应用计数方式维护对象。所以都可能需要程序员参与管理资源
+- 2. 如果当前ByteBuf被Channel调用write(...)或writeAndFlush(...)方法，则Netty会帮你释放该ByteBuf
+- 3. 谁负责释放: 一般来说，是由最后访问(引用计数)对象的那一方来负责将它释放
+- 4. 如果是SimpleChannelInboundHandler的字类，则传入参数msg，会被SimpleChannelInboundHandler释放一次
+
+## 6.2 ChannelPipeline接口
+ChannelPipeline是一个拦截流经Channel的入站和出站事件的ChannelHandler实例链。需要记住以下几个重要的点:
+
+![](./docs/pics/6-3.png)
+
+- 1. ChannelHandler是组成ChannelPipeline链的节点，也就是对应于上图的入站处理器和出站处理器
+- 2. ChannelPipeline的头部和尾部是固定的。如上图所示
+- 3. ChannelHandlerContext是与ChannelHandler一一绑定的。也就是说，每一个ChannelHandler都有一个自己的ChannelHandlerContxt。后文会详细讲述
+- 4. 每次Channel收到的消息，流转路径是: 头部 -> 尾部 -> 头部
+- 5. 重要的事情说三遍: 不要阻塞ChannelChandler,不要阻塞ChannelChandler,不要阻塞ChannelChandler。否则，可能会影响其他的Channel处理。原因见：3.1.2
+
+### 6.2.1 修改ChannelPipeline
+Netty允许的修改ChannelPipeline链上的ChannelHandler。有一个案例，利用userEventTriggered机制，实现ChannelHandler动态编排效果的实现.[参考实例]()
+
+### 6.2.2 入站操作和出站操作
+ChannelPipeline入站操作
+![](./docs/pics/table-6-8.png)
+
+ChannelPipeline出站操作
+![](./docs/pics/table-6-9.png)
+
+## 6.3 ChannelHandlerContext 接口
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
