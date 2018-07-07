@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwl.netty.codec.kryo.KryoCodecUtil;
 import org.lwl.netty.codec.marshalling.MarshallingCodecUtil;
+import org.lwl.netty.codec.protobuf.ProtobufCodecUtil;
 import org.lwl.netty.config.ProtocolConfig;
 
 /**
@@ -53,8 +54,7 @@ public final class MessageCodecUtilFactory {
         PROTOBUF_CODEC((byte)3, "ProtobufCodec") {
             @Override
             public IMessageCodecUtil createCodecUtil(){
-                //TODO::
-                return null;
+                return new ProtobufCodecUtil();
             }
         },
         // thrift 编码
