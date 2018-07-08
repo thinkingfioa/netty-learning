@@ -47,14 +47,11 @@ public class NettyServer {
         LOGGER.info("***********************************************");
         LOGGER.info("Netty Server started at port:{}", port);
         LOGGER.info("***********************************************");
-        cf.addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if(future.isSuccess()) {
-                    LOGGER.info("netty server bind success.");
-                } else {
-                    LOGGER.error("netty server bind fail.", future.cause());
-                }
+        cf.addListener((future) -> {
+            if(future.isSuccess()) {
+                LOGGER.info("netty server bind success.");
+            } else {
+                LOGGER.error("netty server bind fail.", future.cause());
             }
         });
     }
@@ -80,14 +77,19 @@ public class NettyServer {
 
         @Override
         protected void initChannel(SocketChannel ch) throws Exception {
-//            ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
-            ch.pipeline().addLast(new ProtocolDataDecoder());
-            ch.pipeline().addLast(new ProtocolDataEncoder());
-            ch.pipeline().addLast(new IdleStateHandler(ProtocolConfig.getHeartbeatInterval(), ProtocolConfig.getHeartbeatInterval(), 0, TimeUnit.SECONDS));
-            ch.pipeline().addLast(new LoginRespHandler());
-            ch.pipeline().addLast(new HeartbeatServerHandler());
-//            ch.pipeline().addLast(new ProtocolMsgSendHandler());
-            ch.pipeline().addLast(new ServerExceptionHandler());
+            initChannel(ch);
         }
     }
-}
+
+    protected void initChannel(SocketChannel ch) throws Exception {
+//            ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
+        ch.pipeline().addLast(new ProtocolDataDecoder());
+        ch.pipeline().addLast(new ProtocolDataEncoder());
+        ch.pipeline().addLast(new IdleStateHandler(ProtocolConfig.getHeartbeatInterval(), ProtocolConfig.getHeartbeatInterval(), 0, TimeUnit.SECONDS));
+        ch.pipeline().addLast(new LoginRespHandler());
+        ch.pipeline().addLast(new HeartbeatServerHandler());
+//            ch.pipeline().addLast(new ProtocolMsgSendHandler());
+        ch.pipeline().addLast(new ServerExceptionHandler());
+
+    }
+ }

@@ -46,14 +46,24 @@ public class NettyClient {
     private static class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         @Override
         protected  void initChannel(SocketChannel ch) throws Exception {
-//            ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
-            ch.pipeline().addLast(new ProtocolDataDecoder());
-            ch.pipeline().addLast(new ProtocolDataEncoder());
-            ch.pipeline().addLast(new LoginReqHandler());
-            ch.pipeline().addLast(new IdleStateHandler(ProtocolConfig.getHeartbeatInterval(), ProtocolConfig.getHeartbeatInterval(), 0, TimeUnit.SECONDS));
-            ch.pipeline().addLast(new HeartbeatClientHandler());
-//            ch.pipeline().addLast(new ProtocolMsgSubHandler());
-            ch.pipeline().addLast(new ClientExceptionHandler());
+            initChannel(ch);
         }
     }
+
+    /**
+     * 字类可以覆盖写
+     * @param ch
+     * @throws Exception
+     */
+    protected  void initChannel(SocketChannel ch) throws Exception {
+  //      ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
+        ch.pipeline().addLast(new ProtocolDataDecoder());
+        ch.pipeline().addLast(new ProtocolDataEncoder());
+        ch.pipeline().addLast(new LoginReqHandler());
+        ch.pipeline().addLast(new IdleStateHandler(ProtocolConfig.getHeartbeatInterval(), ProtocolConfig.getHeartbeatInterval(), 0, TimeUnit.SECONDS));
+        ch.pipeline().addLast(new HeartbeatClientHandler());
+//            ch.pipeline().addLast(new ProtocolMsgSubHandler());
+        ch.pipeline().addLast(new ClientExceptionHandler());
+    }
+
 }
