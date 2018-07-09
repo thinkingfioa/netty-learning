@@ -845,6 +845,36 @@ ChannelPipeline出站操作
 ![](./docs/pics/table-6-9.png)
 
 ## 6.3 ChannelHandlerContext 接口
+- 1. ChannelHandlerContext对象实例与ChannelHandler对象实例的关系是n:1的关系。但是从单个ChannelPipeline来看，一个ChannelHandlerContext对象实例对应于一个ChannelHandler对象实例.
+- 2. ChannelHandlerContext的许多方法与Channel或者ChannelPipeline上方法类似。但是有一点非常大的不同点: 如果调用Channel或者ChannelPipeline上的这些方法，将沿着整个ChannelPipeline进行传播。而调用ChannelHandlerContext上的相同方法，则将从当前关联的Channelhandler开始，并且只会传播给位于该ChannelPipeline上的下一个能够处理该事件的ChannelHandler。如果对于这个点没有看懂，请往下看，下文会给出实例帮助理解。
+- 3. handler() ----- 返回绑定到这个实力的ChannelHandler。
+
+##### 注意点:
+- 1. ChannelHandlerContext和ChannelHandler之间的关联是永远不变的，所以缓存对它的引用是安全的。等同于上诉第一点。
+- 2. 相对于Channel和ChannelPipeline上的方法，ChannelHandlerContext的方法将产生更短的事件流(解释如上述第二点)，所以性能也会更优越些。
+
+### 6.3.1 使用ChannelHandlerContext
+下图充分说明了ChannelHandlerContext在ChannelPipeline充当的作用，我们可以从图中发现
+
+- 1. 对于单个ChannelPipeline来看，ChannelHandlerContext和ChannelHandler的关联关系n:1
+- 2. ChannlePipeline中实现事件的传递，原来是依赖于ChannelHandlerContext
+- 3. 图中AContext将事件(read)传递给BHandler，BContext再将事件(read)传递给了Chandler。
+- 4. 如果想从特定的Handler传播事件，需要获取上一个ChannelHandlerContext。比如：希望事件从CHandler开始传播，跳过AHandler和BHandler，需要获取到BContext即可
+
+![](./docs/pics/6-5.png)
+
+### 6.3.2 ChannelHandler和ChannelHandlerContext高级用法
+- 1. ChannelHandler可以使用@Sharable注解标注，可以将一个ChannelHandler绑定到多个ChannelPipeline链中，也就绑定了多个ChannelhandlerContext。
+- 2. ChannelHandler可以使用@Sharable注解标注后。多个线程会访问同一个ChannelHandler，开发人员需要考虑线程安全因素。
+
+## 6.4 异常处理
+
+## 6.5 如何理解ChannelHandler、ChannelPipeline和ChannelHandlerContext关系
+ChannelHandler、ChannelPipeline和ChannelHandlerContext是Netty3个非常重要的组件，博主写了几个例子，帮助读者进一步理解和使用这三个组件
+
+### 6.5.1 实现动态编排ChannelHandler
+
+### 6.5.2 ctx.write(...)和channel.write(...)本质区别
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
