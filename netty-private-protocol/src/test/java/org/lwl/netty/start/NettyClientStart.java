@@ -18,6 +18,6 @@ public class NettyClientStart {
 
     public static void main(String [] args) throws IOException {
         ProtocolConfig.init();
-        new NettyClientAdapter().start();
+        new NettyClientAdapter(new NettyClient()).start();
     }
 }

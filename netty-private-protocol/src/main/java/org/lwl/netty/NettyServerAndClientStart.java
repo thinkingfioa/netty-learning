@@ -1,5 +1,6 @@
 package org.lwl.netty;
 
+import org.lwl.netty.client.NettyClient;
 import org.lwl.netty.client.NettyClientAdapter;
 import org.lwl.netty.config.ProtocolConfig;
 import org.lwl.netty.server.NettyServer;
@@ -24,7 +25,7 @@ public class NettyServerAndClientStart {
         }).start();
 
         new Thread(() -> {
-            new NettyClientAdapter().start();
+            new NettyClientAdapter(new NettyClient()).start();
         }).start();
     }
 }

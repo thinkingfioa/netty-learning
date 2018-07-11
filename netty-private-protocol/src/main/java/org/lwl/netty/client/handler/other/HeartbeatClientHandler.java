@@ -1,4 +1,4 @@
-package org.lwl.netty.client.handler.protobuf;
+package org.lwl.netty.client.handler.other;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -6,15 +6,15 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwl.netty.message.protobuf.Header;
-import org.lwl.netty.message.protobuf.HeartbeatReqBody;
-import org.lwl.netty.message.protobuf.HeartbeatRespBody;
-import org.lwl.netty.message.protobuf.ProtocolMessage;
+import org.lwl.netty.constant.MessageTypeEnum;
+import org.lwl.netty.message.ProtocolMessage;
+import org.lwl.netty.message.body.HeartbeatReqBody;
+import org.lwl.netty.message.body.HeartbeatRespBody;
 
 /**
  * @author thinking_fioa
- * @createTime 2018/7/8
- * @description
+ * @createTime 2018/5/24
+ * @description Client心跳，负责监听读空闲
  */
 
 public class HeartbeatClientHandler extends ChannelInboundHandlerAdapter {
@@ -46,10 +46,10 @@ public class HeartbeatClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ProtocolMessage.ProtocolMessageP message = (ProtocolMessage.ProtocolMessageP) msg;
-        final Header.MessageTypeEnum msgType = message.getHeader().getMsgType();
+        ProtocolMessage message = (ProtocolMessage) msg;
+        final MessageTypeEnum msgType = message.getHeader().getMsgType();
         lossConnectCount = 0;
-        if(Header.MessageTypeEnum.HEARTBEAT_REQ.equals(msgType)) {
+        if(MessageTypeEnum.HEARTBEAT_REQ.equals(msgType)) {
             LOGGER.info("receive heartbeat req.");
             ctx.writeAndFlush(buildHtRespMsg());
         } else {
@@ -57,19 +57,15 @@ public class HeartbeatClientHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private ProtocolMessage.ProtocolMessageP.Builder buildHtReqMsg() {
-        ProtocolMessage.ProtocolMessageP.Builder msgBuilder = ProtocolMessage.ProtocolMessageP.newBuilder();
-        HeartbeatReqBody.HeartbeatReqBodyP.Builder htReqBodyBuilder = HeartbeatReqBody.HeartbeatReqBodyP.newBuilder();
-        msgBuilder.setHeartbeatReqBody(htReqBodyBuilder.build());
+    private ProtocolMessage buildHtReqMsg() {
+        HeartbeatReqBody htReqBody = new HeartbeatReqBody();
 
-        return msgBuilder;
+        return ProtocolMessage.createMsgOfEncode(htReqBody);
     }
 
-    private ProtocolMessage.ProtocolMessageP.Builder buildHtRespMsg() {
-        ProtocolMessage.ProtocolMessageP.Builder msgBuilder = ProtocolMessage.ProtocolMessageP.newBuilder();
-        HeartbeatRespBody.HeartbeatRespBodyP.Builder htResqBodyBuilder = HeartbeatRespBody.HeartbeatRespBodyP.newBuilder();
-        msgBuilder.setHeartbeatRespBody(htResqBodyBuilder.build());
+    private ProtocolMessage buildHtRespMsg() {
+        HeartbeatRespBody htRespBody = new HeartbeatRespBody();
 
-        return msgBuilder;
+        return ProtocolMessage.createMsgOfEncode(htRespBody);
     }
 }

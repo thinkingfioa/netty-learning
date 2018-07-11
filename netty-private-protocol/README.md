@@ -193,7 +193,7 @@ TOTO：类图
 ```
 
 ### 2.2.2 Marshalling 编码讲解
- - 1. Marshalling编码对应于代码中的package org.lwl.netty.codec.marshalling;
+ - 1. Marshalling编码对应于代码中的package org.lwl.netty.codec.other.marshalling;
  - 2. Marshalling主要用于对Object进行编码。对于基础的数据类型:List、Map、Integer等直接使用ByteBuf的writeXXX方法编码
 
 ## 2.3 Kryo 编码

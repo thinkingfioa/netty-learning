@@ -873,8 +873,11 @@ ChannelPipeline出站操作
 ChannelHandler、ChannelPipeline和ChannelHandlerContext是Netty3个非常重要的组件，博主写了几个例子，帮助读者进一步理解和使用这三个组件
 
 ### 6.5.1 实现动态编排ChannelHandler
+实际开发中，往往在初始化ChannelPipeline时候，无法确定程序需要添加的所有ChannelHandler。所以，采用动态的添加ChannelHandler。下图展示了如何实现ChannelHandler的动态编排。源代[项目地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-small-demo)
+
 
 ### 6.5.2 ctx.write(...)和channel.write(...)本质区别
+
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)

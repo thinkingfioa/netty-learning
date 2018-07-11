@@ -19,18 +19,18 @@ import org.lwl.netty.util.concurrent.CustomThreadFactory;
 public class NettyClientAdapter {
     private static final Logger LOGGER = LogManager.getLogger(NettyClientAdapter.class);
 
-    private static final CustomThreadFactory THREAD_FACTORY = new CustomThreadFactory("ClentEventLoop", false);
+    private static final CustomThreadFactory THREAD_FACTORY = new CustomThreadFactory("ClientEventLoop", false);
 
     private final String ip;
     private final int port;
     private final EventLoopGroup clientGroup;
     private final NettyClient client;
 
-    public NettyClientAdapter() {
+    public NettyClientAdapter(NettyClient client) {
         this.ip = ProtocolConfig.getIp();
         this.port = ProtocolConfig.getPort();
         clientGroup = new NioEventLoopGroup(1, THREAD_FACTORY);
-        client = new NettyClient();
+        this.client = client;
     }
 
     public void start() {
