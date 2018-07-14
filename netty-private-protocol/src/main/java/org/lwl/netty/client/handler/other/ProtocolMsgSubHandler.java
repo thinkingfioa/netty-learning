@@ -23,7 +23,7 @@ public class ProtocolMsgSubHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         ProtocolMessage ptclSubMsg = buildPtclSubMsg();
-        LOGGER.info("MsgSub active. protocl msg sub sent");
+        LOGGER.info("MsgSub active. protocol msg sub sent");
         ctx.writeAndFlush(ptclSubMsg);
     }
 

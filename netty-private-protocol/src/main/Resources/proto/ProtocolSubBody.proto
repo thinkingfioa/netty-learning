@@ -4,7 +4,7 @@ option java_package = "org.lwl.netty.message.protobuf";
 option java_outer_classname = "ProtocolSubBody";
 
 message ProtocolSubBodyP {
-    repeated int32 dataTypeList = 1;
+    repeated ProtocolDataType dataTypeList = 1;
 }
 
 enum  ProtocolDataType {

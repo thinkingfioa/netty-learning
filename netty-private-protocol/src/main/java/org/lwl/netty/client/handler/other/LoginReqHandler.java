@@ -36,7 +36,6 @@ public class LoginReqHandler extends ChannelInboundHandlerAdapter {
         final MessageTypeEnum msgType = message.getHeader().getMsgType();
         if(MessageTypeEnum.LOGIN_RESP.equals(msgType)) {
             LOGGER.info("receive login resp.");
-            ctx.fireChannelActive();
         } else {
             ctx.fireChannelRead(msg);
         }

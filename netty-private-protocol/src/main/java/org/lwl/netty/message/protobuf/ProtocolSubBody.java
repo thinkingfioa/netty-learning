@@ -135,17 +135,26 @@ public final class ProtocolSubBody {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated int32 dataTypeList = 1;</code>
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
      */
-    java.util.List<java.lang.Integer> getDataTypeListList();
+    java.util.List<org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType> getDataTypeListList();
     /**
-     * <code>repeated int32 dataTypeList = 1;</code>
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
      */
     int getDataTypeListCount();
     /**
-     * <code>repeated int32 dataTypeList = 1;</code>
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
      */
-    int getDataTypeList(int index);
+    org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType getDataTypeList(int index);
+    /**
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+     */
+    java.util.List<java.lang.Integer>
+    getDataTypeListValueList();
+    /**
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+     */
+    int getDataTypeListValue(int index);
   }
   /**
    * Protobuf type {@code ProtocolSubBodyP}
@@ -188,24 +197,26 @@ public final class ProtocolSubBody {
               done = true;
               break;
             case 8: {
+              int rawValue = input.readEnum();
               if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 dataTypeList_ = new java.util.ArrayList<java.lang.Integer>();
                 mutable_bitField0_ |= 0x00000001;
               }
-              dataTypeList_.add(input.readInt32());
+              dataTypeList_.add(rawValue);
               break;
             }
             case 10: {
               int length = input.readRawVarint32();
-              int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
-                dataTypeList_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000001;
+              int oldLimit = input.pushLimit(length);
+              while(input.getBytesUntilLimit() > 0) {
+                int rawValue = input.readEnum();
+                if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                  dataTypeList_ = new java.util.ArrayList<java.lang.Integer>();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                dataTypeList_.add(rawValue);
               }
-              while (input.getBytesUntilLimit() > 0) {
-                dataTypeList_.add(input.readInt32());
-              }
-              input.popLimit(limit);
+              input.popLimit(oldLimit);
               break;
             }
             default: {
@@ -245,26 +256,49 @@ public final class ProtocolSubBody {
 
     public static final int DATATYPELIST_FIELD_NUMBER = 1;
     private java.util.List<java.lang.Integer> dataTypeList_;
+    private static final com.google.protobuf.Internal.ListAdapter.Converter<
+        java.lang.Integer, org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType> dataTypeList_converter_ =
+            new com.google.protobuf.Internal.ListAdapter.Converter<
+                java.lang.Integer, org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType>() {
+              public org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType convert(java.lang.Integer from) {
+                @SuppressWarnings("deprecation")
+                org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType result = org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType.valueOf(from);
+                return result == null ? org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType.UNRECOGNIZED : result;
+              }
+            };
     /**
-     * <code>repeated int32 dataTypeList = 1;</code>
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
      */
-    public java.util.List<java.lang.Integer>
-        getDataTypeListList() {
-      return dataTypeList_;
+    public java.util.List<org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType> getDataTypeListList() {
+      return new com.google.protobuf.Internal.ListAdapter<
+          java.lang.Integer, org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType>(dataTypeList_, dataTypeList_converter_);
     }
     /**
-     * <code>repeated int32 dataTypeList = 1;</code>
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
      */
     public int getDataTypeListCount() {
       return dataTypeList_.size();
     }
     /**
-     * <code>repeated int32 dataTypeList = 1;</code>
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
      */
-    public int getDataTypeList(int index) {
+    public org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType getDataTypeList(int index) {
+      return dataTypeList_converter_.convert(dataTypeList_.get(index));
+    }
+    /**
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+     */
+    public java.util.List<java.lang.Integer>
+    getDataTypeListValueList() {
+      return dataTypeList_;
+    }
+    /**
+     * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+     */
+    public int getDataTypeListValue(int index) {
       return dataTypeList_.get(index);
     }
-    private int dataTypeListMemoizedSerializedSize = -1;
+    private int dataTypeListMemoizedSerializedSize;
 
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
@@ -286,7 +320,7 @@ public final class ProtocolSubBody {
         output.writeUInt32NoTag(dataTypeListMemoizedSerializedSize);
       }
       for (int i = 0; i < dataTypeList_.size(); i++) {
-        output.writeInt32NoTag(dataTypeList_.get(i));
+        output.writeEnumNoTag(dataTypeList_.get(i));
       }
       unknownFields.writeTo(output);
     }
@@ -301,15 +335,13 @@ public final class ProtocolSubBody {
         int dataSize = 0;
         for (int i = 0; i < dataTypeList_.size(); i++) {
           dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(dataTypeList_.get(i));
+            .computeEnumSizeNoTag(dataTypeList_.get(i));
         }
         size += dataSize;
-        if (!getDataTypeListList().isEmpty()) {
-          size += 1;
+        if (!getDataTypeListList().isEmpty()) {  size += 1;
           size += com.google.protobuf.CodedOutputStream
-              .computeInt32SizeNoTag(dataSize);
-        }
-        dataTypeListMemoizedSerializedSize = dataSize;
+            .computeUInt32SizeNoTag(dataSize);
+        }dataTypeListMemoizedSerializedSize = dataSize;
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -327,8 +359,7 @@ public final class ProtocolSubBody {
       org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolSubBodyP other = (org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolSubBodyP) obj;
 
       boolean result = true;
-      result = result && getDataTypeListList()
-          .equals(other.getDataTypeListList());
+      result = result && dataTypeList_.equals(other.dataTypeList_);
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -342,7 +373,7 @@ public final class ProtocolSubBody {
       hash = (19 * hash) + getDescriptor().hashCode();
       if (getDataTypeListCount() > 0) {
         hash = (37 * hash) + DATATYPELIST_FIELD_NUMBER;
-        hash = (53 * hash) + getDataTypeListList().hashCode();
+        hash = (53 * hash) + dataTypeList_.hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
@@ -599,36 +630,96 @@ public final class ProtocolSubBody {
       }
       private int bitField0_;
 
-      private java.util.List<java.lang.Integer> dataTypeList_ = java.util.Collections.emptyList();
+      private java.util.List<java.lang.Integer> dataTypeList_ =
+        java.util.Collections.emptyList();
       private void ensureDataTypeListIsMutable() {
         if (!((bitField0_ & 0x00000001) == 0x00000001)) {
           dataTypeList_ = new java.util.ArrayList<java.lang.Integer>(dataTypeList_);
           bitField0_ |= 0x00000001;
-         }
+        }
       }
       /**
-       * <code>repeated int32 dataTypeList = 1;</code>
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
        */
-      public java.util.List<java.lang.Integer>
-          getDataTypeListList() {
-        return java.util.Collections.unmodifiableList(dataTypeList_);
+      public java.util.List<org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType> getDataTypeListList() {
+        return new com.google.protobuf.Internal.ListAdapter<
+            java.lang.Integer, org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType>(dataTypeList_, dataTypeList_converter_);
       }
       /**
-       * <code>repeated int32 dataTypeList = 1;</code>
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
        */
       public int getDataTypeListCount() {
         return dataTypeList_.size();
       }
       /**
-       * <code>repeated int32 dataTypeList = 1;</code>
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
        */
-      public int getDataTypeList(int index) {
+      public org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType getDataTypeList(int index) {
+        return dataTypeList_converter_.convert(dataTypeList_.get(index));
+      }
+      /**
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+       */
+      public Builder setDataTypeList(
+          int index, org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDataTypeListIsMutable();
+        dataTypeList_.set(index, value.getNumber());
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+       */
+      public Builder addDataTypeList(org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDataTypeListIsMutable();
+        dataTypeList_.add(value.getNumber());
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+       */
+      public Builder addAllDataTypeList(
+          java.lang.Iterable<? extends org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType> values) {
+        ensureDataTypeListIsMutable();
+        for (org.lwl.netty.message.protobuf.ProtocolSubBody.ProtocolDataType value : values) {
+          dataTypeList_.add(value.getNumber());
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+       */
+      public Builder clearDataTypeList() {
+        dataTypeList_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+       */
+      public java.util.List<java.lang.Integer>
+      getDataTypeListValueList() {
+        return java.util.Collections.unmodifiableList(dataTypeList_);
+      }
+      /**
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
+       */
+      public int getDataTypeListValue(int index) {
         return dataTypeList_.get(index);
       }
       /**
-       * <code>repeated int32 dataTypeList = 1;</code>
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
        */
-      public Builder setDataTypeList(
+      public Builder setDataTypeListValue(
           int index, int value) {
         ensureDataTypeListIsMutable();
         dataTypeList_.set(index, value);
@@ -636,31 +727,23 @@ public final class ProtocolSubBody {
         return this;
       }
       /**
-       * <code>repeated int32 dataTypeList = 1;</code>
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
        */
-      public Builder addDataTypeList(int value) {
+      public Builder addDataTypeListValue(int value) {
         ensureDataTypeListIsMutable();
         dataTypeList_.add(value);
         onChanged();
         return this;
       }
       /**
-       * <code>repeated int32 dataTypeList = 1;</code>
+       * <code>repeated .ProtocolDataType dataTypeList = 1;</code>
        */
-      public Builder addAllDataTypeList(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
+      public Builder addAllDataTypeListValue(
+          java.lang.Iterable<java.lang.Integer> values) {
         ensureDataTypeListIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, dataTypeList_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>repeated int32 dataTypeList = 1;</code>
-       */
-      public Builder clearDataTypeList() {
-        dataTypeList_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
+        for (int value : values) {
+          dataTypeList_.add(value);
+        }
         onChanged();
         return this;
       }
@@ -731,11 +814,12 @@ public final class ProtocolSubBody {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\025ProtocolSubBody.proto\"(\n\020ProtocolSubBo" +
-      "dyP\022\024\n\014dataTypeList\030\001 \003(\005*H\n\020ProtocolDat" +
-      "aType\022\013\n\007DEFAULT\020\000\022\010\n\004NEWS\020\001\022\n\n\006SPORTS\020\002" +
-      "\022\021\n\rENTERTAINMENT\020\003B1\n\036org.lwl.netty.mes" +
-      "sage.protobufB\017ProtocolSubBodyb\006proto3"
+      "\n\025ProtocolSubBody.proto\";\n\020ProtocolSubBo" +
+      "dyP\022\'\n\014dataTypeList\030\001 \003(\0162\021.ProtocolData" +
+      "Type*H\n\020ProtocolDataType\022\013\n\007DEFAULT\020\000\022\010\n" +
+      "\004NEWS\020\001\022\n\n\006SPORTS\020\002\022\021\n\rENTERTAINMENT\020\003B1" +
+      "\n\036org.lwl.netty.message.protobufB\017Protoc" +
+      "olSubBodyb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
