@@ -35,6 +35,17 @@ public  final class CommonUtil {
         return 0x00ff & checkSum;
     }
 
+    public static int calCheckSum(byte[] bytes) {
+        if(null == bytes) {
+            throw new IllegalArgumentException("byte is null.");
+        }
+        byte checkSum = 0;
+        for(int i =0; i<bytes.length; i++) {
+            checkSum += bytes[i];
+        }
+        return 0x00ff & checkSum;
+    }
+
     /**
      * jdk1.8的DateTimeFormat无法解析格式: yyyyMMddHHmmssSSS格式。会报错。
      */

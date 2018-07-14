@@ -6,6 +6,7 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwl.netty.message.protobuf.Tail;
 import org.lwl.netty.message.protobuf.Header;
 import org.lwl.netty.message.protobuf.HeartbeatReqBody;
 import org.lwl.netty.message.protobuf.HeartbeatRespBody;
@@ -57,19 +58,32 @@ public class HeartbeatClientHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private ProtocolMessage.ProtocolMessageP.Builder buildHtReqMsg() {
+    private ProtocolMessage.ProtocolMessageP buildHtReqMsg() {
         ProtocolMessage.ProtocolMessageP.Builder msgBuilder = ProtocolMessage.ProtocolMessageP.newBuilder();
+
+        // Header
+        Header.HeaderP.Builder headerBuilder = ProtobufCodecHelper.generateHeaderBuilder(Header.MessageTypeEnum.HEARTBEAT_REQ);
+        msgBuilder.setHeader(headerBuilder);
+        // Body
         HeartbeatReqBody.HeartbeatReqBodyP.Builder htReqBodyBuilder = HeartbeatReqBody.HeartbeatReqBodyP.newBuilder();
         msgBuilder.setHeartbeatReqBody(htReqBodyBuilder.build());
-
-        return msgBuilder;
+        // Tail
+        Tail.TailP.Builder tailBuilder = ProtobufCodecHelper.generateTailBuilder(msgBuilder);
+        msgBuilder.setTail(tailBuilder);
+        return msgBuilder.build();
     }
 
-    private ProtocolMessage.ProtocolMessageP.Builder buildHtRespMsg() {
+    private ProtocolMessage.ProtocolMessageP buildHtRespMsg() {
         ProtocolMessage.ProtocolMessageP.Builder msgBuilder = ProtocolMessage.ProtocolMessageP.newBuilder();
+        // Header
+        Header.HeaderP.Builder headerBuilder = ProtobufCodecHelper.generateHeaderBuilder(Header.MessageTypeEnum.HEARTBEAT_RESP);
+        msgBuilder.setHeader(headerBuilder);
+        // Body
         HeartbeatRespBody.HeartbeatRespBodyP.Builder htResqBodyBuilder = HeartbeatRespBody.HeartbeatRespBodyP.newBuilder();
-        msgBuilder.setHeartbeatRespBody(htResqBodyBuilder.build());
-
-        return msgBuilder;
+        msgBuilder.setHeartbeatRespBody(htResqBodyBuilder);
+        // Tail
+        Tail.TailP.Builder tailBuilder = ProtobufCodecHelper.generateTailBuilder(msgBuilder);
+        msgBuilder.setTail(tailBuilder);
+        return msgBuilder.build();
     }
 }

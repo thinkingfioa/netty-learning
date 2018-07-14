@@ -26,4 +26,6 @@ public class ClientExceptionHandler extends ChannelInboundHandlerAdapter {
         LOGGER.error("client close channel.");
         ctx.close();
     }
+
+
 }
