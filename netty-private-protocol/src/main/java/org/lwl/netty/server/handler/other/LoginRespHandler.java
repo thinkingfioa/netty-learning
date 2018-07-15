@@ -19,7 +19,7 @@ import org.lwl.netty.message.body.LoginRespBody;
 
 
 public class LoginRespHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger LOGGER = LogManager.getLogger(LoginReqHandler.class);
+    private static final Logger LOGGER = LogManager.getLogger(LoginRespHandler.class);
 
     private static final String USERNAME = ProtocolConfig.getUserName();
     private static final String PASSWORD = ProtocolConfig.getPassword();

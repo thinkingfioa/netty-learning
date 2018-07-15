@@ -15,7 +15,6 @@ import java.io.IOException;
  * 都与编码方式:Marshalling和Kryo不同。单独一套。
  */
 
-
 public class ProtobufServerAndClientStart {
     public static void main(String [] args) throws IOException {
         ProtocolConfig.init();

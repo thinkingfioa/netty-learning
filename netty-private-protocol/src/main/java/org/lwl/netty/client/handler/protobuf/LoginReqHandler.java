@@ -39,13 +39,12 @@ public class LoginReqHandler extends ChannelInboundHandlerAdapter {
         } else {
             ctx.fireChannelRead(message);
         }
-
     }
 
     private ProtocolMessage.ProtocolMessageP buildLoginReqMsg() {
         ProtocolMessage.ProtocolMessageP.Builder msgBuilder = ProtocolMessage.ProtocolMessageP.newBuilder();
         // Header
-        Header.HeaderP.Builder headerBuilder = ProtobufCodecHelper.generateHeaderBuilder(Header.MessageTypeEnum.LOGIN_REQ);
+        Header.HeaderP.Builder headerBuilder = ProtobufClientCodecHelper.generateHeaderBuilder(Header.MessageTypeEnum.LOGIN_REQ);
         msgBuilder.setHeader(headerBuilder);
         // Body
         LoginReqBody.LoginReqBodyP.Builder loginReqBuilder = LoginReqBody.LoginReqBodyP.newBuilder();
@@ -53,7 +52,7 @@ public class LoginReqHandler extends ChannelInboundHandlerAdapter {
         loginReqBuilder.setPassword(PASSWORD);
         msgBuilder.setLoginReqBody(loginReqBuilder.build());
         // Tail
-        Tail.TailP.Builder tailBuilder = ProtobufCodecHelper.generateTailBuilder(msgBuilder);
+        Tail.TailP.Builder tailBuilder = ProtobufClientCodecHelper.generateTailBuilder(msgBuilder);
         msgBuilder.setTail(tailBuilder);
         return msgBuilder.build();
     }

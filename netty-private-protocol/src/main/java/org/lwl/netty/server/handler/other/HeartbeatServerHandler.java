@@ -30,7 +30,7 @@ public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter {
             if(event.state() == IdleState.READER_IDLE) {
                 lossConnectCount++;
                 if(lossConnectCount >=5) {
-                    // 5 次客户端都没有给心跳回复，则关闭连接
+                    // 5次心跳客户端都没有给心跳回复，则关闭连接
                     ctx.channel().close();
                     LOGGER.error("heartbeat timeout, close.");
                     return ;

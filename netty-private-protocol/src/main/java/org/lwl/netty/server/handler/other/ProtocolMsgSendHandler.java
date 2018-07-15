@@ -16,7 +16,7 @@ import org.lwl.netty.message.body.ProtocolDataBody;
  */
 
 public class ProtocolMsgSendHandler extends ChannelInboundHandlerAdapter{
-    private static final Logger LOGGER = LogManager.getLogger(LoginReqHandler.class);
+    private static final Logger LOGGER = LogManager.getLogger(ProtocolMsgSendHandler.class);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -31,6 +31,7 @@ public class ProtocolMsgSendHandler extends ChannelInboundHandlerAdapter{
     }
 
     private void sendPrtcData() {
+        // TODO 提供for循环多次发送，比较各种编码器性能
         buildPrctDataMsg();
     }
 

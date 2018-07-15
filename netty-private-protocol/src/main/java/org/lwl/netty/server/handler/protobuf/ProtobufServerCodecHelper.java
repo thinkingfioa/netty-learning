@@ -1,4 +1,4 @@
-package org.lwl.netty.client.handler.protobuf;
+package org.lwl.netty.server.handler.protobuf;
 
 import org.lwl.netty.message.protobuf.Header;
 import org.lwl.netty.message.protobuf.ProtocolMessage;
@@ -15,12 +15,11 @@ import java.util.concurrent.atomic.AtomicLong;
  * @description 帮助Protobuf编码和解码工具类
  */
 
-
-public final class ProtobufCodecHelper {
+final class ProtobufServerCodecHelper {
 
     private static final AtomicLong MSG_NUM = new AtomicLong(0);
 
-    private ProtobufCodecHelper() {
+    private ProtobufServerCodecHelper() {
         throw new IllegalAccessError("can not use constructor.");
     }
 

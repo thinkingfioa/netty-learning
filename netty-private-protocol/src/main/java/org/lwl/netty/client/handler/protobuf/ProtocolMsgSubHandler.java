@@ -30,7 +30,7 @@ public class ProtocolMsgSubHandler extends ChannelInboundHandlerAdapter {
     private ProtocolMessage.ProtocolMessageP buildPtclSubMsg() {
         ProtocolMessage.ProtocolMessageP.Builder msgBuilder= ProtocolMessage.ProtocolMessageP.newBuilder();
         // Header
-        Header.HeaderP.Builder headerBuilder = ProtobufCodecHelper.generateHeaderBuilder(Header.MessageTypeEnum.PROTOCOL_SUB);
+        Header.HeaderP.Builder headerBuilder = ProtobufClientCodecHelper.generateHeaderBuilder(Header.MessageTypeEnum.PROTOCOL_SUB);
         msgBuilder.setHeader(headerBuilder);
         // Body
         ProtocolSubBody.ProtocolSubBodyP.Builder subBuilder = ProtocolSubBody.ProtocolSubBodyP.newBuilder();
@@ -40,7 +40,7 @@ public class ProtocolMsgSubHandler extends ChannelInboundHandlerAdapter {
         dataTypeList.add(ProtocolDataType.ENTERTAINMENT);
         subBuilder.addAllDataTypeList(dataTypeList);
         // Tail
-        Tail.TailP.Builder tailBuilder = ProtobufCodecHelper.generateTailBuilder(msgBuilder);
+        Tail.TailP.Builder tailBuilder = ProtobufClientCodecHelper.generateTailBuilder(msgBuilder);
         msgBuilder.setTail(tailBuilder);
 
         return msgBuilder.build();
