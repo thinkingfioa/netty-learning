@@ -776,7 +776,7 @@ public static void releaseReferenceCountedObject(){
 - 4. ChannelInactive ----- Channel处于关闭状态。常用来发起重连或切换链路
 
 ### 6.1.2 ChannelHandler的生命周期
-ChannelHandler被添加到ChannelPipeline中或者被从ChannelPipeline中移除时调用下列操作
+ChannelHandler被添加到ChannelPipeline中或者被从ChannelPipeline中移除时将调用下列操作:
 
 - 1. handlerAdded ----- ChannelHandler被添加到ChannelPipeline中时被触发
 - 2. handlerRemoved ----- ChannelHandler被从ChannelPipeline中移除时触发
@@ -793,12 +793,12 @@ ChannelInboundHandler接口处理入站事件和入站数据，提供的事件�
 ![](./docs/pics/table-6-3.png)
 
 ###### 提醒:
-上图有几个方法解释，帮助理解与学习:
+解释上图中的几个方法，帮助理解与学习:
 
-- 1. channelReadComplete ----- Channel一次读操作完成时被调用，准备切换。Channel是一个数据载体，既可以写入数据，又可以读取数据。所以存在读操作和写操作切换。
+- 1. channelReadComplete ----- Channel一次读操作完成时被触发，开始准备切换为写操作。Channel是一个数据载体，既可以写入数据，又可以读取数据。所以存在读操作和写操作切换。
 - 2. channelWritabilityChanged ----- 帮助用户控制写操作速度，以避免发生OOM异常。通过Channel.config().setWriteHighWaterMark()设置发送数据的高水位。
-- 3. userEventTriggered ----- 用户事件触发。Netty提供心跳机制中使用，[参考实例](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)
-- 4. userEventTriggered ----- 实现用户自定义事件，完成ChannelPipeline动态编排效果的实现.[参考实例]()
+- 3. userEventTriggered ----- 用户事件触发。Netty提供心跳机制中使用，请参考netty-private-protocol开发子项目，[子项目地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)
+- 4. userEventTriggered ----- 实现用户自定义事件，完成ChannelPipeline动态编排效果的实现。请参考另一个子项目中动态编排ChannelHandler案例，[子项目地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-small-demo)
 
 ### 6.1.4 ChannelOutboundHandler接口
 出站数据和事件将由ChannelOutboundHandler处理。ChannelOutboundHandler大部分方法都需要一个ChannelPromise参数，以便在操作完成时得到通知。
@@ -808,20 +808,20 @@ ChannelInboundHandler接口处理入站事件和入站数据，提供的事件�
 ### 6.1.5 ChannelHandler适配器
 Netty提供两个ChannelHandler适配器: ChannelInboundHandlerAdapter和ChannelOutboundHandlerAdapter。通常自己实现处理业务的Handler都是继承这两个适配器
 
-- 1. 适配器中的方法: isSharable() ----- 表明该Handler是否被标注为Sharable
+- 1. ChannelHandlerAdapter适配器中的一个使用的方法: isSharable() ----- 标记该Handler被标注为Sharable。可在多个ChannelPipeline共享一个实例
 
 ### 6.1.6 资源管理
-Netty使用的ByteBuf采用的是引用计数机制来回收。对于初学者非常容易造成资源泄漏。Netty提供以下帮助定位资源泄漏代码。推荐使用: java -Dio.netty.leadDetectionLevel=ADVANCED
+Netty使用的ByteBuf采用的是引用计数机制来回收。对于初学者非常容易造成资源泄漏。Netty提供以下帮助定位资源泄漏代码。推荐使用Java系统属性设置方法: java -Dio.netty.leadDetectionLevel=ADVANCED
 
 ![](./docs/pics/table-6-5.png)
 
 ##### 如何管理好资源:
 想要管理好资源，避免资源浪费，请记住以下几点:
 
-- 1. 三种ByteBuf(堆缓冲区、直接缓冲区和复合缓冲区)都采用的应用计数方式维护对象。所以都可能需要程序员参与管理资源
-- 2. 如果当前ByteBuf被Channel调用write(...)或writeAndFlush(...)方法，则Netty会帮你释放该ByteBuf
-- 3. 谁负责释放: 一般来说，是由最后访问(引用计数)对象的那一方来负责将它释放
-- 4. 如果是SimpleChannelInboundHandler的字类，则传入参数msg，会被SimpleChannelInboundHandler释放一次
+- 1. 三种ByteBuf(堆缓冲区、直接缓冲区和复合缓冲区)都采用的引用计数方式维护对象。所以都可能需要程序员参与管理资源。对于刚使用ByteBuf的程序员来说，存在误区：以为只有直接缓冲区才使用引用计数。
+- 2. 如果当前ByteBuf被Channel调用write(...)或writeAndFlush(...)方法，则Netty会自动执行引用计数减1操作，释放该ByteBuf
+- 3. 谁负责释放: 一般来说，是由最后访问(引用计数)对象的来负责释放该对象
+- 4. 如果是SimpleChannelInboundHandler的子类，传入的参数msg，会被SimpleChannelInboundHandler自动释放一次
 
 ## 6.2 ChannelPipeline接口
 ChannelPipeline是一个拦截流经Channel的入站和出站事件的ChannelHandler实例链。需要记住以下几个重要的点:
@@ -829,13 +829,13 @@ ChannelPipeline是一个拦截流经Channel的入站和出站事件的ChannelHan
 ![](./docs/pics/6-3.png)
 
 - 1. ChannelHandler是组成ChannelPipeline链的节点，也就是对应于上图的入站处理器和出站处理器
-- 2. ChannelPipeline的头部和尾部是固定的。如上图所示
-- 3. ChannelHandlerContext是与ChannelHandler一一绑定的。也就是说，每一个ChannelHandler都有一个自己的ChannelHandlerContxt。后文会详细讲述
-- 4. 每次Channel收到的消息，流转路径是: 头部 -> 尾部 -> 头部
-- 5. 重要的事情说三遍: 不要阻塞ChannelChandler,不要阻塞ChannelChandler,不要阻塞ChannelChandler。否则，可能会影响其他的Channel处理。原因见：3.1.2
+- 2. ChannelPipeline的头部和尾部是固定不变的。如上图6.3所示
+- 3. 在一个ChannelPipeline链上，ChannelHandlerContext与ChannelHandler是1:1对应的。也就是说，每一个ChannelHandler都有一个自己的ChannelHandlerContxt。后文会详细讲述
+- 4. 每次Channel收到的消息，流转路径是: 头部 -> 尾部。每次Channel调用一次write操作时，流转路径是: 尾部 -> 头部
+- 5. 重要的事情说三遍: 不要阻塞ChannelChandler,不要阻塞ChannelChandler,不要阻塞ChannelChandler。否则，可能会影响其他的Channel处理。原因见：3.1.2章节
 
 ### 6.2.1 修改ChannelPipeline
-Netty允许的修改ChannelPipeline链上的ChannelHandler。有一个案例，利用userEventTriggered机制，实现ChannelHandler动态编排效果的实现.[参考实例]()
+Netty允许的修改ChannelPipeline链上的ChannelHandler。有一个案例，利用userEventTriggered机制，实现ChannelHandler动态编排效果的实现.参考另一个子项目中动态编排ChannelHandler案例。 [子项目地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-small-demo)
 
 ### 6.2.2 入站操作和出站操作
 ChannelPipeline入站操作
@@ -845,29 +845,76 @@ ChannelPipeline出站操作
 ![](./docs/pics/table-6-9.png)
 
 ## 6.3 ChannelHandlerContext 接口
-- 1. ChannelHandlerContext对象实例与ChannelHandler对象实例的关系是n:1的关系。但是从单个ChannelPipeline来看，一个ChannelHandlerContext对象实例对应于一个ChannelHandler对象实例.
-- 2. ChannelHandlerContext的许多方法与Channel或者ChannelPipeline上方法类似。但是有一点非常大的不同点: 如果调用Channel或者ChannelPipeline上的这些方法，将沿着整个ChannelPipeline进行传播。而调用ChannelHandlerContext上的相同方法，则将从当前关联的Channelhandler开始，并且只会传播给位于该ChannelPipeline上的下一个能够处理该事件的ChannelHandler。如果对于这个点没有看懂，请往下看，下文会给出实例帮助理解。
+- 1. ChannelHandlerContext对象实例与ChannelHandler对象实例的关系是n:1的关系。如果从单个ChannelPipeline来看，一个ChannelHandlerContext对象实例对应于一个ChannelHandler对象实例.
+- 2. ChannelHandlerContext的许多方法与Channel或者ChannelPipeline上方法类似。但是有一点非常大的不同点: 调用Channel或者ChannelPipeline上的这些方法，将沿着整个ChannelPipeline进行传播。而调用ChannelHandlerContext上的相同方法，则将从当前关联的Channelhandler开始，并且只会传播给位于该ChannelPipeline上的下一个能够处理该事件的ChannelHandler。如果对于这个点没有看懂，请看下文6.5.2章节，帮助理解。
 - 3. handler() ----- 返回绑定到这个实力的ChannelHandler。
 
 ##### 注意点:
-- 1. ChannelHandlerContext和ChannelHandler之间的关联是永远不变的，所以缓存对它的引用是安全的。等同于上诉第一点。
-- 2. 相对于Channel和ChannelPipeline上的方法，ChannelHandlerContext的方法将产生更短的事件流(解释如上述第二点)，所以性能也会更优越些。
+- 1. ChannelHandlerContext和ChannelHandler之间的关联是永远不变的，所以缓存对它的引用是安全且可行的。如上6.3章节中第一点所描述的。
+- 2. 相对于Channel和ChannelPipeline上的方法，ChannelHandlerContext的方法将产生更短的事件流(解释如上述6.3章节的第二点)，所以性能也会更优秀。
 
 ### 6.3.1 使用ChannelHandlerContext
 下图充分说明了ChannelHandlerContext在ChannelPipeline充当的作用，我们可以从图中发现
 
-- 1. 对于单个ChannelPipeline来看，ChannelHandlerContext和ChannelHandler的关联关系n:1
-- 2. ChannlePipeline中实现事件的传递，原来是依赖于ChannelHandlerContext
+- 1. 对于单个ChannelPipeline来看，ChannelHandlerContext和ChannelHandler的关联关系是1:1
+- 2. ChannlePipeline中事件的传递，原来是依赖于ChannelHandlerContext实现的。
 - 3. 图中AContext将事件(read)传递给BHandler，BContext再将事件(read)传递给了Chandler。
-- 4. 如果想从特定的Handler传播事件，需要获取上一个ChannelHandlerContext。比如：希望事件从CHandler开始传播，跳过AHandler和BHandler，需要获取到BContext即可
+- 4. 如果想从特定的Handler传播事件，需要获取上一个ChannelHandlerContext。比如：希望事件从CHandler开始传播，跳过AHandler和BHandler，则获取到BContext即可。
 
 ![](./docs/pics/6-5.png)
 
 ### 6.3.2 ChannelHandler和ChannelHandlerContext高级用法
-- 1. ChannelHandler可以使用@Sharable注解标注，可以将一个ChannelHandler绑定到多个ChannelPipeline链中，也就绑定了多个ChannelhandlerContext。
-- 2. ChannelHandler可以使用@Sharable注解标注后。多个线程会访问同一个ChannelHandler，开发人员需要考虑线程安全因素。
+- 1. ChannelHandler可以使用@Sharable注解标注，可以将一个ChannelHandler绑定到多个ChannelPipeline链中，也就绑定到多个ChannelhandlerContext。
+- 2. ChannelHandler使用@Sharable注解标注后。多个线程会访问同一个ChannelHandler，开发人员需要考虑多个线程操作同一个ChannelHandler实例，会不会存在同步互斥问题。
 
 ## 6.4 异常处理
+Netty提供几种方式用于处理入站或者出站处理过程中所抛出的异常。
+
+### 6.4.1 处理入站异常
+- 1. 入站事件发生异常时，从异常发生的ChannelHandler开始，沿着ChannelPipeline链向后传播。前面的ChannelHandler中的exceptionCaught(...)不会被执行。
+- 2. 如果想处理入站异常，则需要重写方法exceptionCaught(...)
+- 3. 建议在ChannelPipeline链的尾部，添加处理入站异常的ChannelHandler
+
+### 6.4.2 处理出站异常
+出站异常的处理与入站异常截然不同。出站异常通过异步通知机制实现:
+
+- 1. 每个出站操作都将返回一个ChannelFuture。注册到ChannelFuture的ChannelFutureListener将在操作完成后通知调用方操作成功还是出错了
+- 2. 几乎所有的ChannelOutboundHandler上的方法都会传入一个ChannelPromise的实例。ChannelPromise提供立即通知的可写方法:setSuccess()/setFailure(Throwable cause)，通知调用方操作完成结果。
+
+##### 第一种方法(6.4.2.1)代码实现:
+```
+public static void addingChannelFutureListener(ChannelHandlerContext ctx){
+    Channel channel = ctx.channel();
+    ByteBuf someMessage = Unpooled.buffer();
+    //...
+    io.netty.channel.ChannelFuture future = channel.write(someMessage);
+    future.addListener((ChannelFuture f) -> {
+        if (f.isSuccess()) {
+            // operation success.
+            System.out.println("success.");
+        }else {
+            // operation fail
+            f.cause().printStackTrace();
+        }
+    });
+}
+```
+
+##### 第二种方法(6.4.2.2)代码实现:
+```
+public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
+    ctx.write(msg, promise);
+    promise.addListener((ChannelFuture f) -> {
+        if (f.isSuccess()) {
+            // operation success.
+            System.out.println("success.");
+        }else {
+            // operation fail
+            f.cause().printStackTrace();
+        }
+    });
+}
+```
 
 ## 6.5 如何理解ChannelHandler、ChannelPipeline和ChannelHandlerContext关系
 ChannelHandler、ChannelPipeline和ChannelHandlerContext是Netty3个非常重要的组件，博主写了几个例子，帮助读者进一步理解和使用这三个组件
