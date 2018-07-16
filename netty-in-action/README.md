@@ -920,11 +920,15 @@ public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise)
 ChannelHandler、ChannelPipeline和ChannelHandlerContext是Netty3个非常重要的组件，博主写了几个例子，帮助读者进一步理解和使用这三个组件
 
 ### 6.5.1 实现动态编排ChannelHandler
-实际开发中，往往在初始化ChannelPipeline时候，无法确定程序需要添加的所有ChannelHandler。所以，采用动态的添加ChannelHandler。下图展示了如何实现ChannelHandler的动态编排。源代[项目地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-small-demo)
+实际开发中，往往在初始化ChannelPipeline时候，无法确定程序需要添加的所有ChannelHandler。所以，采用动态的添加ChannelHandler。另一个子项目中给出动态编排ChannelHandler的具体代码。参见[项目地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-small-demo)
 
 
 ### 6.5.2 ctx.write(...)和channel.write(...)本质区别
+下图是一个ChannelPipeline链。分别由4个入站Handler和5个出站Handler。入站Handler和出站Handler彼此之间交错排列。蓝色箭头是事件在ChannelPipeline链上的传播方向。
 
+假设ChannelInboundHandler_3调用ctx.write(...)或channel.write(...)方法，分别会将出站写事件传播给序号为7或5的Handler。两个方法有着本质的不同，具体详述请参见6.3章节的第二点的论述观点。参见[子项目地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-small-demo)
+
+![](./docs/pics/channelWriter.png)
 
 # 附录
 - 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
