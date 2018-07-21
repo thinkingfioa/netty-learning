@@ -31,6 +31,8 @@ public class LoginRespHandler extends ChannelInboundHandlerAdapter {
                 LOGGER.info("user check pass. login resp sent.");
                 ctx.writeAndFlush(buildLoginResp());
             }
+        } else {
+            ctx.fireChannelRead(msg);
         }
     }
 
