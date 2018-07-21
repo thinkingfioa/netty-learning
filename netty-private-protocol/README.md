@@ -6,7 +6,7 @@
 2. 《Netty权威指南2》书中代码存在较多问题，无法运行。我经过研究，修改了书中代码，并成功运行。
 3. 成功运行基础上，加入了Kryo编码，与书本中提供的Marshalling编码进行对比。
 4. 实验表明，Kryo编码速度的确高于Marshlling编码速度。能够加快Netty的传输速度。
-5. 给出6种编码方式在Netty下的使用，并给出详细的案例。
+5. 给出5种编码方式在Netty下的使用，并给出详细的案例。分别是:Marshalling、Kryo、Protobuf、thrift和messagePack。
 6. 可以学习多种编码器在项目中如何使用，及他们的特性。
 
 GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol
@@ -18,23 +18,32 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 - 2. Kryo编码中使用writeClassAndObject()方法序列对象时，会先写入相关的Class信息。所以，不能讲消息的长度字段(msgLen)放在Header头中。
 - 3. 使用Netty时，不要阻塞I/O线程。同时，尽量不要使用sync同步方法，请使用异步Listening传递异步执行结果。
 
-
 # 1. 私有协议开发
 - 1. 业务场景: 先进行Tcp连接，然后拆分发送多个数据包，实现文件传输。
-- 2. 不同的业务场景需要定制化不同的私有协议，本例子讲给出一个私有化协议，讲述其利用Netty的Tcp协议进行传输。采用5种不同的编解码来实现通信编码，并进行比较。
-- 3. 项目实现的私有协议开发，允许发送超多4K字节的数据。具体多大数据，可通过配置文件配置大小
+- 2. 不同的业务场景需要定制化不同的私有协议，本例基于Netty实现一个私有化协议。实现过程中，采用5种不同的编解码(Marshalling、Kryo、Protobuf、thrift和messagePack)来实现通信编码，并比较它们的性能。
+- 3. 项目实现的私有协议开发，允许发送超多4K字节的数据。具体多大数据，可通过配置文件配置大小。见配置文件netty-private-protocol.properties中${pkg.max.len}
 - 4. Netty实际项目中，请不要试图阻塞I/O线程。
 
 ## 1.1 场景描述
-私有协议实现场景，客户端登录完成后，发起频道订阅，目前实现3个频道: 新闻、体育和娱乐。服务端根据客户端订阅的频道，将对应的频道文件拆分后，发送给客户端。客户端接收到完整的频道文件后，写入文件。
+私有协议实现场景: Client登录完成后，发起频道订阅，目前实现3个频道: 新闻、体育和娱乐。服务端根据客户端订阅的频道，将对应的频道文件拆分后，发送给客户端。客户端接收到完整的频道文件后，写入磁盘。
 
 ##### 注:
 
-- 1. netty-private-protocol的开发，关键在于理解如何使用Netty来满足自定义协议。所以关于落文件部分，本项目不再继续开发下去。
-- 2. 项目重点关注5种不同的编码方式的效率。所以，本项目将不会过多关注于业务开发。频道的文件将控制在4K左右，保证一次性发出。
+- 1. netty-private-protocol的开发，关键在于理解如何使用Netty来满足自定义协议。
+- 2. 项目会比较5种不同的编码方式的效率。频道的文件将控制在4K左右，保证一次性发出。
+- 3. 5种(Marshalling、Kryo、Protobuf、thrift和Avro)中Marshalling和Kryo采用基于Java的消息序列化。Protobuf是支持多种语言，拥有自己单独的消息序列化
+
+### 1.1.1 启动类
+|编码方式|启动类|
+|:---:|:---:|
+|Marshalling|NettyServerAndClientStart|
+|Kryo|NettyServerAndClientStart|
+|Protobuf|ProtobufServerAndClientStart|
+|thrift|
+|messagePack|
 
 
-### 1.1.1 时序图:
+### 1.1.2 时序图:
 
 ## 1.2 消息结构
 私有协议共有三个部分:Header + Body + Tail。不同的消息中Header和Tail字段部分将保持一致，Body部分不同的消息将有不同的实现
@@ -151,13 +160,13 @@ Client端和Server端在数据传输空闲期间，利用心跳机制来保持�
 # 2. 编解码
 配置文件中配置项目的编码工具，切换非常简单。
 
-|编码|codec值|
+|编码方式|启动类|
 |:---:|:---:|
-|Marshalling|(byte)1|
-|Kryo|(byte)2|
-|Protobuf|(byte)3|
-|thrift|(byte)4|
-|Avro|(byte)5|
+|Marshalling|NettyServerAndClientStart|
+|Kryo|NettyServerAndClientStart|
+|Protobuf|ProtobufServerAndClientStart|
+|thrift|
+|messagePack|
 
 TOTO：类图
 
@@ -195,6 +204,8 @@ TOTO：类图
 ### 2.2.2 Marshalling 编码讲解
  - 1. Marshalling编码对应于代码中的package org.lwl.netty.codec.other.marshalling;
  - 2. Marshalling主要用于对Object进行编码。对于基础的数据类型:List、Map、Integer等直接使用ByteBuf的writeXXX方法编码
+ - 3. 对象(Object)使用Marshalling编码
+ - 4. Marshalling编码的序列化包: org.lwl.netty.message.body.*
 
 ## 2.3 Kryo 编码
 
@@ -216,6 +227,7 @@ TOTO：类图
 
 - 1. writeClassAndObject(...)方法会写入class的信息。设计协议时，如果将长度域放在Header中，那么将会导致Kryo解码时，找不到对应class的解码器。
 - 2. 所以，协议调整为，在消息头Header前面添加4个字节(int型)的长度域。保证不会在更新长度域值是，覆盖了class信息，导致解码时找不到对应的解码器。
+- 3. Kryo编码的序列化包: org.lwl.netty.message.body.*
 
 ## 2.4 Protobuf 编码
 protobuf是Google开源的工具，有诸多非常优秀的特性:
@@ -223,6 +235,7 @@ protobuf是Google开源的工具，有诸多非常优秀的特性:
 - 1. 与平台无关，与语言无关，可扩展。支持的语言非常多[官方地址](https://github.com/google/protobuf)
 - 2. 性能优秀，速度是Xml的20-100倍
 - 3. 需要编写中间proto文件，这点对使用者不太友好
+- 4. protobuf需要依赖于proto文件生成序列化消息类。所以，提供自己独有的消息体，包地址: org.lwl.netty.message.protobuf.*
 
 ### 2.4.1 安装
 Protobuf是通过C++编写的。mac电脑，安装步骤如下:
@@ -251,6 +264,7 @@ Protobuf是通过C++编写的。mac电脑，安装步骤如下:
 ### 2.4.2 使用
 - 1. 编写proto，具体语法可[参考](https://blog.csdn.net/fangxiaoji/article/details/78826165)。大家注意一点是protobuf3.0版本语法与2.0好像差距蛮大的。
 - 2. 使用命令: protoc -I=proto文件所在的目录 --java_out=生成java文件存放地址。如netty-private-protocol子项目的命令是: protoc -I=../proto/ --java_out=../../java/ 名字.proto。可直接使用Resources/bin下的脚本: buildProto.sh
+- 3. 本项目的proto文件在: Resources/proto文件夹下
 
 ##### proto编写规则
 ```
@@ -274,6 +288,8 @@ message Message {
 由于protobuf与Java的数据类型存在较大不同点，所以对协议中的字段部分类型修改。
 
 - 1. protobuf不支持Java中的Short和Byte类型，用int代替。如Header中的域: flag和oneByte，还有map的value类型都是String
+- 2. 由于protobuf消息传输不同，所有的ChannelHandler都是单独写的
+- 3. 本文protobuf可支持传输多种类型的消息: 登录请求、登录响应、心跳请求，心跳响应等消息格式。
 
 ### 2.4.4 pom依赖
 ```
@@ -286,12 +302,23 @@ message Message {
 
 ## 2.5 thrift 编码
 
-## 2.6 Avro 编码
+### 2.5.4 pom 依赖
+
+
+## 2.6 messagePack 编码
+与Protobuf和Thrift相比，Avro序列化特点有:
+
+- 1. 支持动态模式，即可以不生成代码，避免了侵入性。
+- 2. Avro序列化由于不需要字段标别符来打标签，所以它序列化生成的数据小，性能相当优越。
+### 2.6.4 pom 依赖
+```java
+
+```
 
 # 3. 多种编码性能比较
 
 # 4. Netty相关知识补充
-- 1. 如果以前未接触过Netty，可以阅读专栏[地址]()
+- 1. 如果以前未接触过Netty，可以阅读专栏[地址](https://blog.csdn.net/column/details/22861.html)
 - 2. LengthFieldBasedFrameDecoder自定义长度解码器，[博客](https://blog.csdn.net/thinking_fioa/article/details/80573483)
 
 # 参考文档
