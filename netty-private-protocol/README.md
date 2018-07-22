@@ -179,7 +179,7 @@ TOTO：类图
 |Kryo|Y|N|N|N|N|
 |protobuf|Y|Y|Y|Y|Y|
 |thrift|Y|Y|Y|Y|Y|
-|Avro|Y|N|N|N|N|
+|messagePack|Y|Y|Y|Y|Y|
 
 
 ## 2.2 Marshalling 编码
@@ -310,6 +310,7 @@ message Message {
 
 - 1. 支持动态模式，即可以不生成代码，避免了侵入性。
 - 2. Avro序列化由于不需要字段标别符来打标签，所以它序列化生成的数据小，性能相当优越。
+
 ### 2.6.4 pom 依赖
 ```java
 
