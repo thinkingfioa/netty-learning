@@ -53,10 +53,10 @@ GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-p
 |Header|Body|Tail|
 
 ### 1.1.1 Header
-- 1. Header头中最重要的字段是:msgLen，表示整个消息长度，关系到Netty粘包粘包解码中maxFrameLength多个字段配置。
-- 2. Header头中定义了多种类型：int/long/String/short/byte/Map/Object。已证明协议编码支持多种类型数据。
-- 3. 使用protobuf编码时，由于protobuf不支持Java的short/byte类型，所以协议部分字段类型进行修改，见2.4.3节。其他编码器变
-- 4. Header属性解释如下:
+- Header头中最重要的字段是:msgLen，表示整个消息长度，关系到Netty粘包粘包解码中maxFrameLength多个字段配置。
+- Header头中定义了多种类型：int/long/String/short/byte/Map/Object。已证明协议编码支持多种类型数据。
+- 使用protobuf编码时，由于protobuf不支持Java的short/byte类型，所以协议部分字段类型进行修改，见2.4.3节。其他编码器变
+- Header属性解释如下:
 
 |属性|类型|描述|
 |:---:|:---:|:---:|
@@ -117,9 +117,9 @@ public class Header {
 TODO:: 提供时序图
 
 ### 1.1.3 Tail
-- 1. Tail是消息尾部字段描述。只有一个checkSum字段，防止消息字节流串改或消息出现错误。
-- 2. checkSum的值只涉及Header+Body部分。
-- 3. 自定义私有协议的checkSum只有8个bit
+- Tail是消息尾部字段描述。只有一个checkSum字段，防止消息字节流串改或消息出现错误。
+- checkSum的值只涉及Header+Body部分。
+- 自定义私有协议的checkSum只有8个bit
 
 ##### checkSum计算代码:
 ```java
@@ -138,18 +138,18 @@ Client端和Server端在数据传输空闲期间，利用心跳机制来保持�
 
 ### 1.2.1 心跳设计的思路
 
-- 1. Client端和Server端收到心跳消息，必须回复心跳应答消息。
-- 2. Client端和Server端都监听写空闲事件(WRITER_IDLE)和读空闲事件(READ_IDLE)。写空闲时，发送心跳给对方。读空闲时判断对方未应答心跳次数，如果超过指定次数，则关闭链路。
-- 3. Client端的心跳事件处理Handler类:HeartbeatClientHandler。Server端的心跳事件处理Handler类:HeartbeatServerHandler。
-- 4. 心跳请求和心跳应答分别对应于Body类: HeartbeatReqBody.class/HeartbeatRespBody.class
+1. Client端和Server端收到心跳消息，必须回复心跳应答消息。
+2. Client端和Server端都监听写空闲事件(WRITER_IDLE)和读空闲事件(READ_IDLE)。写空闲时，发送心跳给对方。读空闲时判断对方未应答心跳次数，如果超过指定次数，则关闭链路。
+3. Client端的心跳事件处理Handler类:HeartbeatClientHandler。Server端的心跳事件处理Handler类:HeartbeatServerHandler。
+4. 心跳请求和心跳应答分别对应于Body类: HeartbeatReqBody.class/HeartbeatRespBody.class
 
 ## 1.3 LengthFieldBasedFrameDecoder的使用
 协议中使用的自定义长度解码器是: LengthFieldBasedFrameDecoder。LengthFieldBasedFrameDecoder解码器自定义长度解决TCP粘包黏包问题。所以LengthFieldBasedFrameDecoder又称为: 自定义长度解码器。私有化协议中的参数是
 
-- 1. lengthFieldOffset = 0
-- 2. lengthFieldLength = 4
-- 3. lengthAdjustment = -4 = 数据包长度(msgLen) - lengthFieldOffset(0) - lengthFieldLength(4) - msgLen
-- 4. initialBytesToStrip = 0
+- lengthFieldOffset = 0
+- lengthFieldLength = 4
+- lengthAdjustment = -4 = 数据包长度(msgLen) - lengthFieldOffset(0) - lengthFieldLength(4) - msgLen
+- initialBytesToStrip = 0
 
 关于LengthFieldBasedFrameDecoder的理解，可参考博客[地址](https://blog.csdn.net/thinking_fioa/article/details/80573483)
 
@@ -202,10 +202,10 @@ TOTO：类图
 ```
 
 ### 2.2.2 Marshalling 编码讲解
- - 1. Marshalling编码对应于代码中的package org.lwl.netty.codec.other.marshalling;
- - 2. Marshalling主要用于对Object进行编码。对于基础的数据类型:List、Map、Integer等直接使用ByteBuf的writeXXX方法编码
- - 3. 对象(Object)使用Marshalling编码
- - 4. Marshalling编码的序列化包: org.lwl.netty.message.body.*
+1. Marshalling编码对应于代码中的package org.lwl.netty.codec.other.marshalling;
+2. Marshalling主要用于对Object进行编码。对于基础的数据类型:List、Map、Integer等直接使用ByteBuf的writeXXX方法编码
+3. 对象(Object)使用Marshalling编码
+4. Marshalling编码的序列化包: org.lwl.netty.message.body.*
 
 ## 2.3 Kryo 编码
 
@@ -225,25 +225,25 @@ TOTO：类图
 ```
 ### 2.3.2 Kryo注意事项
 
-- 1. writeClassAndObject(...)方法会写入class的信息。设计协议时，如果将长度域放在Header中，那么将会导致Kryo解码时，找不到对应class的解码器。
-- 2. 所以，协议调整为，在消息头Header前面添加4个字节(int型)的长度域。保证不会在更新长度域值是，覆盖了class信息，导致解码时找不到对应的解码器。
-- 3. Kryo编码的序列化包: org.lwl.netty.message.body.*
+1. writeClassAndObject(...)方法会写入class的信息。设计协议时，如果将长度域放在Header中，那么将会导致Kryo解码时，找不到对应class的解码器。
+2. 所以，协议调整为，在消息头Header前面添加4个字节(int型)的长度域。保证不会在更新长度域值是，覆盖了class信息，导致解码时找不到对应的解码器。
+3. Kryo编码的序列化包: org.lwl.netty.message.body.*
 
 ## 2.4 Protobuf 编码
 protobuf是Google开源的工具，有诸多非常优秀的特性:
 
-- 1. 与平台无关，与语言无关，可扩展。支持的语言非常多[官方地址](https://github.com/google/protobuf)
-- 2. 性能优秀，速度是Xml的20-100倍
-- 3. 需要编写中间proto文件，这点对使用者不太友好
-- 4. protobuf需要依赖于proto文件生成序列化消息类。所以，提供自己独有的消息体，包地址: org.lwl.netty.message.protobuf.*
+- 与平台无关，与语言无关，可扩展。支持的语言非常多[官方地址](https://github.com/google/protobuf)
+- 性能优秀，速度是Xml的20-100倍
+- 需要编写中间proto文件，这点对使用者不太友好
+- protobuf需要依赖于proto文件生成序列化消息类。所以，提供自己独有的消息体，包地址: org.lwl.netty.message.protobuf.*
 
 ### 2.4.1 安装
 Protobuf是通过C++编写的。mac电脑，安装步骤如下:
 
-- 1. 使用了brew安装automake和libtool。命令如下
-- 2. 下载版本: protobuf-java.3.6.0.tar.gz。[地址](https://github.com/google/protobuf/releases)。不要下载源码编译，我们可以直接下载releases。目前protobuf最新的是3.6.0版本
-- 3. 执行make和make install即可
-- 4. 验证安装是否成功: protoc --version
+1. 使用了brew安装automake和libtool。命令如下
+2. 下载版本: protobuf-java.3.6.0.tar.gz。[地址](https://github.com/google/protobuf/releases)。不要下载源码编译，我们可以直接下载releases。目前protobuf最新的是3.6.0版本
+3. 执行make和make install即可
+4. 验证安装是否成功: protoc --version
 
 ##### 代码:
 ```shell
@@ -262,9 +262,9 @@ Protobuf是通过C++编写的。mac电脑，安装步骤如下:
 ```
 
 ### 2.4.2 使用
-- 1. 编写proto，具体语法可[参考](https://blog.csdn.net/fangxiaoji/article/details/78826165)。大家注意一点是protobuf3.0版本语法与2.0好像差距蛮大的。
-- 2. 使用命令: protoc -I=proto文件所在的目录 --java_out=生成java文件存放地址。如netty-private-protocol子项目的命令是: protoc -I=../proto/ --java_out=../../java/ 名字.proto。可直接使用Resources/bin下的脚本: buildProto.sh
-- 3. 本项目的proto文件在: Resources/proto文件夹下
+1. 编写proto，具体语法可[参考](https://blog.csdn.net/fangxiaoji/article/details/78826165)。大家注意一点是protobuf3.0版本语法与2.0好像差距蛮大的。
+2. 使用命令: protoc -I=proto文件所在的目录 --java_out=生成java文件存放地址。如netty-private-protocol子项目的命令是: protoc -I=../proto/ --java_out=../../java/ 名字.proto。可直接使用Resources/bin下的脚本: buildProto.sh
+3. 本项目的proto文件在: Resources/proto文件夹下
 
 ##### proto编写规则
 ```
@@ -279,17 +279,17 @@ message Message {
 ```
 解释:
 
-- 1. syntax = "proto3"; ----- 申明句法的版本号。如果不指定，默认是:syntax="proto2"
-- 2. java_package ----- 生成的类包路径
-- 3. java_outer_classname ----- 生成的数据访问类的类名
-- 4. 每个field后面是标识号，必须是数值，如: string name = 1;
+- syntax = "proto3"; ----- 申明句法的版本号。如果不指定，默认是:syntax="proto2"
+- java_package ----- 生成的类包路径
+- java_outer_classname ----- 生成的数据访问类的类名
+- 每个field后面是标识号，必须是数值，如: string name = 1;
 
 ### 2.4.3 声明
 由于protobuf与Java的数据类型存在较大不同点，所以对协议中的字段部分类型修改。
 
-- 1. protobuf不支持Java中的Short和Byte类型，用int代替。如Header中的域: flag和oneByte，还有map的value类型都是String
-- 2. 由于protobuf消息传输不同，所有的ChannelHandler都是单独写的
-- 3. 本文protobuf可支持传输多种类型的消息: 登录请求、登录响应、心跳请求，心跳响应等消息格式。
+- protobuf不支持Java中的Short和Byte类型，用int代替。如Header中的域: flag和oneByte，还有map的value类型都是String
+- 由于protobuf消息传输不同，所有的ChannelHandler都是单独写的
+- 本文protobuf可支持传输多种类型的消息: 登录请求、登录响应、心跳请求，心跳响应等消息格式。
 
 ### 2.4.4 pom依赖
 ```

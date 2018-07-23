@@ -7,7 +7,7 @@ package org.lwl.netty;
  */
 
 
-public class DynamicHandlerStart {
+public class DynamicDemoStart {
     public static void main() {
 
     }
