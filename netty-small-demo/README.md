@@ -37,11 +37,14 @@ ChannelHandler动态编排项目，主要讲解了如何通过userEventTriggered
 1. 发送Client端SSL版本等信息。  ----- SslChannelHandler
 2. 发送Client端支持的对称加密方案。  ----- SymEncryptionChannelHandler
 3. 产生随机码作为对称加密密钥，使用服务端的公钥对随机码加密，发送给服务端。 ----- RandomCodeChannelHandler
-4. 发送加密后订阅产品消息。 ----- SubProductsChannelHandler
+4. 发送加密后登录消息消息。 ----- LoginChannelHandler
 
 ### 3.3 https单向认证序列图
+![](./docs/pics/dynamic-ssl.png)
 
 ### 3.4 运行结果图
+
+## 4. ctx.write(...)和channel.write(...)区别案例说明
 
 ## TODO LIST
 
