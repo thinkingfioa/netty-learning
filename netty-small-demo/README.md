@@ -25,6 +25,10 @@ Netty-Samll-Demo子项目，基于Netty的多个特性，实现多种案例。�
 ## 3. ChannelHandler动态编排
 Netty提供用户事件触发: userEventTriggered特性，实现ChannelHandler动态编排。案例代码Package: package org.lwl.netty.dynamic。如果想阅读源码，建议下载源码，导入idea中阅读。阅读过程中，欢迎交流
 
+1. 项目源码: [地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-small-demo/src/main/java/org/lwl/netty/dynamic)
+2. 项目包名: org.lwl.netty.dynamic
+3. 项目Main类: DynamicDemoStart
+
 ### 3.1 场景
 实际项目开发中，客户端存在这样两个问题:
 
@@ -46,6 +50,7 @@ ChannelHandler动态编排项目，主要讲解了如何通过userEventTriggered
 ### 3.4 项目讲解
 1. ChannelHandler动态编排中使用较为简单的编解码器，如果想深入学习Netty多种编解码方式，请看[netty-private-protocol子项目](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)。
 2. 消息采用简单的消息格式。项目主要想表明如果实现ChannelHandler动态编排机制，https单项认证部分只是一个简单的框架，点到为止。
+3. 
 
 ### 3.4 运行结果图
 
