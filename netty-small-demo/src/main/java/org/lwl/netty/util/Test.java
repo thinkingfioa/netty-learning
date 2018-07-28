@@ -1,8 +1,8 @@
-package org.lwl.netty.dynamic.codec;
+package org.lwl.netty.util;
 
 /**
  * @author thinking_fioa
- * @createTime 2018/7/23
+ * @createTime 2018/7/28
  * @description
  */
 

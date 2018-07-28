@@ -34,13 +34,18 @@ Netty提供用户事件触发: userEventTriggered特性，实现ChannelHandler�
 ### 3.2 项目介绍
 ChannelHandler动态编排项目，主要讲解了如何通过userEventTriggered特性，来实现动态向ChannelPipeline加入ChannelHandler。项目主要模拟https单向认证的过程，Server端一次性添加所有的ChannelHandler到ChannelPipeline上，Client端分下列步骤加入ChannelHandler
 
-1. 发送Client端SSL版本等信息。  ----- SslChannelHandler
-2. 发送Client端支持的对称加密方案。  ----- SymEncryptionChannelHandler
-3. 产生随机码作为对称加密密钥，使用服务端的公钥对随机码加密，发送给服务端。 ----- RandomCodeChannelHandler
-4. 发送加密后登录消息消息。 ----- LoginChannelHandler
+1. 发送Client端SSL版本等信息。  ----- SslHandler
+2. 发送Client端支持的对称加密方案。  ----- SymEncryptionHandler
+3. 产生随机码作为对称加密密钥，使用服务端的公钥对随机码加密，发送给服务端。 ----- RandomCodeHandler
+4. 发送加密后登录消息消息。 ----- LoginHandler
+5. 登录成功后加入心跳Handler ----- HeartbeatClientHandler
 
 ### 3.3 https单向认证序列图
 ![](./docs/pics/dynamic-ssl.png)
+
+### 3.4 项目讲解
+1. ChannelHandler动态编排中使用较为简单的编解码器，如果想深入学习Netty多种编解码方式，请看[netty-private-protocol子项目](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)。
+2. 消息采用简单的消息格式。项目主要想表明如果实现ChannelHandler动态编排机制，https单项认证部分只是一个简单的框架，点到为止。
 
 ### 3.4 运行结果图
 
