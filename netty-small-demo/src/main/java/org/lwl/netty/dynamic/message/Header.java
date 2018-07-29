@@ -36,6 +36,14 @@ public class Header {
         this.msgNum = msgNum;
     }
 
+    public DynamicMsgType getMsgType() {
+        return msgType;
+    }
+
+    public void setMsgType(DynamicMsgType msgType) {
+        this.msgType = msgType;
+    }
+
     public String getMsgTime() {
         return msgTime;
     }
