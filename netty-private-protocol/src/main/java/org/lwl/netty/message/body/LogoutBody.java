@@ -20,7 +20,7 @@ public class LogoutBody extends Body{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("LoginRespBody []");
+        sb.append("LogoutBody []");
         return sb.toString();
     }
 }

@@ -21,7 +21,6 @@ public final class DefaultBodyMslSerializer implements IBodyMslSerializer<Body> 
         return INSTANCE;
     }
 
-
     @Override
     public void serialize(ChannelHandlerContext ctx,  ByteBuf outByteBuf, Body body) {
 

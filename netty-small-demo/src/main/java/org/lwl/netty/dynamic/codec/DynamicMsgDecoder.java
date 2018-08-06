@@ -6,6 +6,7 @@ import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwl.netty.dynamic.DynamicConfig;
 
 /**
  * @author thinking_fioa
@@ -17,11 +18,11 @@ import org.apache.logging.log4j.Logger;
 public class DynamicMsgDecoder extends LengthFieldBasedFrameDecoder {
     private static final Logger LOGGER = LogManager.getLogger(DynamicMsgDecoder.class);
 
-    private static final int MAX_FRAMELENGTH = ProtocolConstant.getMaxFramelength();
-    private static final int LENGTH_FIELD_OFFSET = ProtocolConstant.getLengthFieldOffset();
-    private static final int LENGTHFIELD_LENGTH = ProtocolConstant.getLengthfieldLength();
-    private static final int LENGTH_ADJUSTMENT = ProtocolConstant.getLengthAdjustment();
-    private static final int INITIAL_BYTES_TO_STRIP = ProtocolConstant.getInitialBytesToStrip();
+    private static final int MAX_FRAMELENGTH = DynamicConfig.getMaxFramelength();
+    private static final int LENGTH_FIELD_OFFSET = DynamicConfig.getLengthFieldOffset();
+    private static final int LENGTHFIELD_LENGTH = DynamicConfig.getLengthfieldLength();
+    private static final int LENGTH_ADJUSTMENT = DynamicConfig.getLengthAdjustment();
+    private static final int INITIAL_BYTES_TO_STRIP = DynamicConfig.getInitialBytesToStrip();
 
     public DynamicMsgDecoder() {
         super(MAX_FRAMELENGTH, LENGTH_FIELD_OFFSET, LENGTHFIELD_LENGTH, LENGTH_ADJUSTMENT, INITIAL_BYTES_TO_STRIP);
