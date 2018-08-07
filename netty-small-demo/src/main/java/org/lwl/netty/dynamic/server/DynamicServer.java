@@ -8,18 +8,14 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwl.netty.core.CustomThreadFactory;
 import org.lwl.netty.dynamic.DynamicConfig;
-import org.lwl.netty.dynamic.DynamicMsgType;
 import org.lwl.netty.dynamic.client.handler.ClientInitHandler;
 import org.lwl.netty.dynamic.client.handler.DynamicTriggerHandler;
 import org.lwl.netty.dynamic.codec.DynamicMsgDecoder;
 import org.lwl.netty.dynamic.codec.DynamicMsgEncoder;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author thinking_fioa
