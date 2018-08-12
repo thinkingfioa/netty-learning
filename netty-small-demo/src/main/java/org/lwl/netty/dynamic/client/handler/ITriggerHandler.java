@@ -10,5 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 
 public interface ITriggerHandler {
-    void launch(ChannelHandlerContext ctx);
+    default void launch(ChannelHandlerContext ctx) {
+        //do nothing
+    }
 }

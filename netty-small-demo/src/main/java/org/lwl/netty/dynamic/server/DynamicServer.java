@@ -8,14 +8,16 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwl.netty.core.CustomThreadFactory;
 import org.lwl.netty.dynamic.DynamicConfig;
-import org.lwl.netty.dynamic.client.handler.ClientInitHandler;
-import org.lwl.netty.dynamic.client.handler.DynamicTriggerHandler;
 import org.lwl.netty.dynamic.codec.DynamicMsgDecoder;
 import org.lwl.netty.dynamic.codec.DynamicMsgEncoder;
+import org.lwl.netty.dynamic.server.handler.*;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author thinking_fioa
@@ -70,12 +72,14 @@ public class DynamicServer {
     private static class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         @Override
         protected void initChannel(SocketChannel ch) throws Exception {
-            //TODO add handler
             ch.pipeline().addLast(new DynamicMsgDecoder());
             ch.pipeline().addLast(new DynamicMsgEncoder());
-           //ch.pipeline().addLast(new IdleStateHandler(DynamicConfig.getHtInterval(), DynamicConfig.getHtInterval(), 0, TimeUnit.SECONDS));
-            ch.pipeline().addLast(new ClientInitHandler());
-            ch.pipeline().addLast(new DynamicTriggerHandler());
+            ch.pipeline().addLast(new IdleStateHandler(DynamicConfig.getHtInterval(), DynamicConfig.getHtInterval(), 0, TimeUnit.SECONDS));
+            ch.pipeline().addLast(new HeartbeatServerHandler());
+            ch.pipeline().addLast(new SslServerHandler());
+            ch.pipeline().addLast(new SymEncryptionServerHandler());
+            ch.pipeline().addLast(new LoginRespHandler());
+            ch.pipeline().addLast(new ExceptionHanlder());
         }
     }
 }

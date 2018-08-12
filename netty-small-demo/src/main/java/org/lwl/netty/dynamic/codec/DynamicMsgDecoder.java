@@ -37,7 +37,7 @@ public class DynamicMsgDecoder extends LengthFieldBasedFrameDecoder {
                 return null;
             }
             //TODO 解码方式
-
+            return null;
         } catch (Throwable cause) {
             LOGGER.error("Decode error.", cause);
             throw new EncoderException("Decode error.");

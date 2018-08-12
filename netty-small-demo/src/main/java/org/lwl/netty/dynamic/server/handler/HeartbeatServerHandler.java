@@ -1,4 +1,4 @@
-package org.lwl.netty.dynamic.client.handler;
+package org.lwl.netty.dynamic.server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -12,13 +12,13 @@ import org.lwl.netty.dynamic.message.DynamicMessage;
 
 /**
  * @author thinking_fioa
- * @createTime 2018/7/28
+ * @createTime 2018/8/12
  * @description
  */
 
 
-public class HeartbeatClientHandler extends ChannelInboundHandlerAdapter implements ITriggerHandler{
-    private static final Logger LOGGER = LogManager.getLogger(HeartbeatClientHandler.class);
+public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter{
+    private static final Logger LOGGER = LogManager.getLogger(HeartbeatServerHandler.class);
     private int lossConnectTime = 0;
 
     @Override
@@ -52,4 +52,5 @@ public class HeartbeatClientHandler extends ChannelInboundHandlerAdapter impleme
             ctx.fireChannelRead(msg);
         }
     }
+
 }

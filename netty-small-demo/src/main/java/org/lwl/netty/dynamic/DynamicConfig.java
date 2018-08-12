@@ -12,6 +12,10 @@ public class DynamicConfig {
         throw new UnsupportedOperationException("static class");
     }
 
+    public static int getHtMultiple() {
+        return 3;
+    }
+
     public static int getPort() {
         return 8989;
     }
@@ -21,23 +25,28 @@ public class DynamicConfig {
     }
 
     public static int getMaxFramelength() {
-
+        //TODO:
+        return -1;
     }
 
     public static int getLengthFieldOffset() {
-
+        //TODO:
+        return -1;
     }
 
     public static int getLengthfieldLength() {
-
+        //TODO:
+        return -1;
     }
 
     public static int getLengthAdjustment() {
-
+        //TODO:
+        return -1;
     }
 
     public static int getInitialBytesToStrip() {
-
+        //TODO:
+        return -1;
     }
 
 
