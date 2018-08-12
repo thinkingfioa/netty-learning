@@ -21,7 +21,8 @@ public class ClientInitHandler extends ChannelInboundHandlerAdapter{
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         LOGGER.info("active channel {}", ctx.channel().remoteAddress());
-        ctx.fireUserEventTriggered(DynamicTriggerEvent.);
+        // TODO:: 启动ssl
+//        ctx.fireUserEventTriggered(DynamicTriggerEvent.);
     }
 
     @Override
