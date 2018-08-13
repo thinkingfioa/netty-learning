@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.lwl.netty.dynamic.DynamicConfig;
 import org.lwl.netty.dynamic.DynamicMsgType;
 import org.lwl.netty.dynamic.message.DynamicMessage;
+import org.lwl.netty.dynamic.message.body.HeartbeatRespBody;
 
 /**
  * @author thinking_fioa
@@ -33,7 +34,8 @@ public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter{
                     return;
                 }
             } else if(event.state() == IdleState.WRITER_IDLE) {
-                //TODO Write heartbeat msg
+                LOGGER.warn("heartbeat timeout. lossCount {}", lossConnectTime);
+                ctx.writeAndFlush(buildHtRespMsg());
             }
         } else {
             ctx.fireUserEventTriggered(evt);
@@ -51,6 +53,12 @@ public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter{
         } else {
             ctx.fireChannelRead(msg);
         }
+    }
+
+    private DynamicMessage buildHtRespMsg() {
+        HeartbeatRespBody htRespBody = new HeartbeatRespBody();
+
+        return DynamicMessage.createMsgOfEncode(htRespBody);
     }
 
 }

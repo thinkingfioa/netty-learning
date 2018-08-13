@@ -12,6 +12,14 @@ public class DynamicConfig {
         throw new UnsupportedOperationException("static class");
     }
 
+    public static String getUserName() {
+        return "thinking";
+    }
+
+    public static String getPasswd() {
+        return "fioa";
+    }
+
     public static int getHtMultiple() {
         return 3;
     }
