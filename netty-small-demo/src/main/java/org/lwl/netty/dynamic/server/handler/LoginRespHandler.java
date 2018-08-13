@@ -24,7 +24,6 @@ public class LoginRespHandler extends ChannelInboundHandlerAdapter {
     private final String USERNAME = DynamicConfig.getUserName();
     private final String PASSWD = DynamicConfig.getPasswd();
 
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         DynamicMessage message = (DynamicMessage) msg;

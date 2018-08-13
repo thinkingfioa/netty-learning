@@ -37,10 +37,9 @@ public class DynamicClient {
     private static class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         @Override
         protected void initChannel(SocketChannel ch) throws Exception {
-            //TODO add handler
+            // 初始化只有4个Handler，其他的Handler动态加入到Pipeline
             ch.pipeline().addLast(new DynamicMsgDecoder());
             ch.pipeline().addLast(new DynamicMsgEncoder());
-            //ch.pipeline().addLast(new IdleStateHandler(DynamicConfig.getHtInterval(), DynamicConfig.getHtInterval(), 0, TimeUnit.SECONDS));
             ch.pipeline().addLast(new ClientInitHandler());
             ch.pipeline().addLast(new DynamicTriggerHandler());
         }

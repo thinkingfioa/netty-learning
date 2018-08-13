@@ -20,6 +20,14 @@ public class DynamicConfig {
         return "fioa";
     }
 
+    public static String getSslVersion() {
+        return "3.2.2";
+    }
+
+    public static String getSymEncryption() {
+        return "AES";
+    }
+
     public static int getHtMultiple() {
         return 3;
     }
