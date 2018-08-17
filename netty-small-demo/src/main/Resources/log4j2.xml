@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="OFF">
+    <properties>
+        <property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %C{1}.%M(%F:%L) - %msg%n</property>
+        <property name="log_home">~/logs/netty-small-demo</property>
+        <property name="file_name">netty-small-demo</property>
+        <property name="every_file_size">100M</property>
+        <property name="output_log_level">debug</property>
+        <property name="file_count">20</property>
+        <property name="error_file_count">3</property>
+    </properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${log_pattern}"/>
+        </Console>
+        <!-- RollingFile -->
+        <RollingFile name="RollingFile" fileName="${log_home}/${file_name}.log" filePattern="${log_home}/${file_name}-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="${log_pattern}"/>
+            <SizeBasedTriggeringPolicy size="${every_file_size}"/>
+            <DefaultRolloverStrategy max="${file_count}"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="trace" onMatch="DENY" onMismatch="DENY"/>
+            </Filters>
+        </RollingFile>
+        <!-- RollingRandomAccessFile -->
+        <RollingFile name="RollingFile1" fileName="${log_home}/${file_name}-error.log" filePattern="${log_home}/${file_name}-error-%d{yyyy-MM-dd}-%i.log">
+            <SizeBasedTriggeringPolicy size="${every_file_size}"/>
+            <DefaultRolloverStrategy max="${error_file_count}"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="${log_pattern}"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+
+        <!-- log4j2 asyn more fast-->
+        <AsyncLogger name="org.lwl" level ="${output_log_level}" additivity="false" includeLocation="true">
+            <appender-ref ref="RollingFile"/>
+            <appender-ref ref="RollingFile1"/>
+            <appender-ref ref="Console"/>
+        </AsyncLogger>
+
+        <!-- log4j2 Synchronous --> -->
+        <!-- <root level="${output_log_level}">
+            <appender-ref ref="RollingFile"/>
+            <appender-ref ref="RollingFile1"/>
+            <appender-ref ref="Console"/>
+        </root> -->
+    </Loggers>
+</Configuration>

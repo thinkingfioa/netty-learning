@@ -11,7 +11,8 @@ import org.lwl.netty.dynamic.server.DynamicServer;
 
 
 public class DynamicDemoStart {
-    public static void main() {
+
+    public static void main(String [] args) {
         // Dynamic服务端以单个线程启动
         new Thread(new Runnable() {
             @Override
