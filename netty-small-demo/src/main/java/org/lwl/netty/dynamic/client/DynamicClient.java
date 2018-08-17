@@ -9,6 +9,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwl.netty.core.CustomThreadFactory;
+import org.lwl.netty.dynamic.DynamicConfig;
 import org.lwl.netty.dynamic.client.handler.ClientInitHandler;
 import org.lwl.netty.dynamic.client.handler.DynamicTriggerHandler;
 import org.lwl.netty.dynamic.codec.DynamicMsgDecoder;
@@ -30,8 +31,16 @@ public class DynamicClient {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group).channel(NioSocketChannel.class)
                 .handler(new ChildChannelHandler());
+    }
 
+    public void start() {
+        connect(DynamicConfig.getServerIp(), DynamicConfig.getPort());
+    }
 
+    public void quit() {
+        if(null != group) {
+            group.shutdownGracefully();
+        }
     }
 
     private static class ChildChannelHandler extends ChannelInitializer<SocketChannel> {

@@ -32,6 +32,10 @@ public class DynamicConfig {
         return 3;
     }
 
+    public static String getServerIp() {
+        return "127.0.0.1";
+    }
+
     public static int getPort() {
         return 8989;
     }
@@ -41,28 +45,24 @@ public class DynamicConfig {
     }
 
     public static int getMaxFramelength() {
-        //TODO:
-        return -1;
+        // 4K
+        return 4 * 1024;
     }
 
     public static int getLengthFieldOffset() {
-        //TODO:
-        return -1;
+        return 0;
     }
 
     public static int getLengthfieldLength() {
-        //TODO:
-        return -1;
+        return 4;
     }
 
     public static int getLengthAdjustment() {
-        //TODO:
-        return -1;
+        return -4;
     }
 
     public static int getInitialBytesToStrip() {
-        //TODO:
-        return -1;
+        return 0;
     }
 
 

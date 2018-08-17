@@ -6,7 +6,17 @@ import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwl.netty.core.CommonUtil;
 import org.lwl.netty.dynamic.DynamicConfig;
+import org.lwl.netty.dynamic.DynamicMsgType;
+import org.lwl.netty.dynamic.codec.serialize.DynamicSerializerFactory;
+import org.lwl.netty.dynamic.codec.serialize.HeaderSerializer;
+import org.lwl.netty.dynamic.codec.serialize.IBodySerializer;
+import org.lwl.netty.dynamic.codec.serialize.TailSerializer;
+import org.lwl.netty.dynamic.message.Body;
+import org.lwl.netty.dynamic.message.DynamicMessage;
+import org.lwl.netty.dynamic.message.Header;
+import org.lwl.netty.dynamic.message.Tail;
 
 /**
  * @author thinking_fioa
@@ -36,8 +46,28 @@ public class DynamicMsgDecoder extends LengthFieldBasedFrameDecoder {
             if(null == frame) {
                 return null;
             }
-            //TODO 解码方式
-            return null;
+            int msgLen = inByteBuf.readInt();
+            // Header
+            Header header = HeaderSerializer.getInstance().deserialize(inByteBuf);
+            // Body
+            DynamicMsgType msgType = header.getMsgType();
+            IBodySerializer<? extends Body> bodySerializer = getBodySerializer(msgType);
+            Body body = bodySerializer.deserialize(inByteBuf);
+
+            int headBodyLen = inByteBuf.readerIndex();
+            // tail
+            Tail tail = TailSerializer.getInstance().deserialize(inByteBuf);
+
+            if(!checkSumRight(inByteBuf, headBodyLen, tail.getCheckSum())) {
+                // checkSum wrong
+                LOGGER.error("checkSum wrong. discard msg. msgType: {}", header.getMsgType());
+                return null;
+            }
+
+            DynamicMessage message = DynamicMessage.createMsgOfDecode(header, body, tail);
+            LOGGER.debug(" <-- read msgLen:{}, {}", msgLen, message);
+            return message;
+
         } catch (Throwable cause) {
             LOGGER.error("Decode error.", cause);
             throw new EncoderException("Decode error.");
@@ -46,5 +76,18 @@ public class DynamicMsgDecoder extends LengthFieldBasedFrameDecoder {
                 frame.release();
             }
         }
+    }
+
+    private IBodySerializer<? extends Body> getBodySerializer(DynamicMsgType msgType) {
+        return DynamicSerializerFactory.getBodySerializer(msgType);
+    }
+
+    private boolean checkSumRight(ByteBuf inByteBuf, int length, int sendCheckSum) {
+        int calCheckSum = CommonUtil.calCheckSum(inByteBuf, length);
+        if(calCheckSum == sendCheckSum){
+            return true;
+        }
+
+        return false;
     }
 }

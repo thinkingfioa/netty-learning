@@ -16,9 +16,6 @@ import org.lwl.netty.dynamic.message.DynamicMessage;
 import org.lwl.netty.dynamic.message.Header;
 import org.lwl.netty.dynamic.message.Tail;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author thinking_fioa
  * @createTime 2018/4/26
@@ -40,6 +37,7 @@ public class DynamicMsgEncoder extends MessageToByteEncoder<DynamicMessage> {
             return;
         }
         try {
+
             // 填写头协议
             fillInHeader(msg);
 

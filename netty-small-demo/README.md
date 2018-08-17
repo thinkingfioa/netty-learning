@@ -50,7 +50,9 @@ ChannelHandler动态编排项目，主要讲解了如何通过userEventTriggered
 ### 3.4 项目讲解
 1. ChannelHandler动态编排中使用较为简单的编解码器，如果想深入学习Netty多种编解码方式，请看[netty-private-protocol子项目](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)。
 2. 消息采用简单的消息格式。项目主要想表明如果实现ChannelHandler动态编排机制，https单项认证部分只是一个简单的框架，点到为止。
-3. 
+3. 项目使用Netty提供的LengthFieldBasedFrameDecoder来解决粘包粘包问题，每条消息头部添加4个字节的长度字段。可参考博客[]()来配置粘包粘包参数
+4. 项目的编解码使用较为简单的编解码，如果想了解多种netty编解码使用，可以参考博客[]()
+5. 
 
 ### 3.4 运行结果图
 
