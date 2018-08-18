@@ -51,11 +51,10 @@ public class DynamicMsgEncoder extends MessageToByteEncoder<DynamicMessage> {
             bodySerializer.serialize(outByteBuf, msg.getBody());
 
             // 更新Header消息中的长度域字段
-            int msgLen = outByteBuf.writerIndex() + Tail.byteSize();
+            int msgLen = outByteBuf.readableBytes() + Tail.byteSize();
             outByteBuf.setInt(0, msgLen);
             // Tail
             TailSerializer.getInstance().serialize( outByteBuf, msg.getTail());
-
 
             LOGGER.info("--> encode msgType:{}, msLen: {}", msg.getHeader().getMsgType(), outByteBuf.writerIndex());
         } catch(Throwable cause) {
@@ -68,16 +67,6 @@ public class DynamicMsgEncoder extends MessageToByteEncoder<DynamicMessage> {
         header.setMsgNum(msgNum++);
         header.setMsgType(dynamicMsg.getBody().msgType());
         header.setMsgTime(CommonUtil.nowTime());
-    }
-
-
-    private boolean checkSumRight(ByteBuf inByteBuf, int length, int sendCheckSum) {
-        int calCheckSum = CommonUtil.calCheckSum(inByteBuf, length);
-        if(calCheckSum == sendCheckSum){
-            return true;
-        }
-
-        return false;
     }
 
     private IBodySerializer<? extends Body> getBodySerializer(DynamicMsgType msgType) {

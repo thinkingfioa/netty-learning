@@ -16,13 +16,15 @@ import java.io.IOException;
 
 public class NettyServerAndClientStart {
 
-    public static void main(String [] args) throws IOException {
+    public static void main(String [] args) throws IOException, InterruptedException {
         ProtocolConfig.init();
         // 用线程启动
         // 启动 Server
         new Thread(() -> {
             new NettyServer().start();
         }).start();
+
+        Thread.sleep(60000);
 
         new Thread(() -> {
             new NettyClientAdapter(new NettyClient()).start();

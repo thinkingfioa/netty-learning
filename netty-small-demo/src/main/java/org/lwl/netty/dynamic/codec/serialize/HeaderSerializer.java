@@ -5,9 +5,6 @@ import org.lwl.netty.core.Decoder;
 import org.lwl.netty.core.Encoder;
 import org.lwl.netty.dynamic.DynamicMsgType;
 import org.lwl.netty.dynamic.message.Header;
-import org.lwl.netty.dynamic.message.Tail;
-import sun.rmi.runtime.Log;
-
 /**
  * @author thinking_fioa
  * @createTime 2018/7/29

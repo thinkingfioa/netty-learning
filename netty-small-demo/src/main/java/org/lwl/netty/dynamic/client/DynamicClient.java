@@ -1,7 +1,6 @@
 package org.lwl.netty.dynamic.client;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -32,7 +31,7 @@ public class DynamicClient {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group).channel(NioSocketChannel.class)
                 .handler(new ChildChannelHandler());
-        ChannelFuture cf = bootstrap.connect(ip, port).addListener((future) -> {
+        bootstrap.connect(ip, port).addListener((future) -> {
             if(future.isSuccess()) {
                 LOGGER.info("connect {}:{} success.", ip, port);
             } else {
@@ -58,7 +57,7 @@ public class DynamicClient {
             ch.pipeline().addLast(new DynamicMsgDecoder());
             ch.pipeline().addLast(new DynamicMsgEncoder());
             ch.pipeline().addLast(new ClientInitHandler());
-            ch.pipeline().addLast(new DynamicTriggerHandler());
+            ch.pipeline().addLast(DynamicTriggerHandler.class.getSimpleName(), new DynamicTriggerHandler());
         }
     }
 }

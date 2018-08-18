@@ -46,19 +46,19 @@ public class DynamicMsgDecoder extends LengthFieldBasedFrameDecoder {
             if(null == frame) {
                 return null;
             }
-            int msgLen = inByteBuf.readInt();
+            int msgLen = frame.readInt();
             // Header
-            Header header = HeaderSerializer.getInstance().deserialize(inByteBuf);
+            Header header = HeaderSerializer.getInstance().deserialize(frame);
             // Body
             DynamicMsgType msgType = header.getMsgType();
             IBodySerializer<? extends Body> bodySerializer = getBodySerializer(msgType);
-            Body body = bodySerializer.deserialize(inByteBuf);
+            Body body = bodySerializer.deserialize(frame);
 
-            int headBodyLen = inByteBuf.readerIndex();
+            int headBodyLen = frame.readerIndex();
             // tail
-            Tail tail = TailSerializer.getInstance().deserialize(inByteBuf);
+            Tail tail = TailSerializer.getInstance().deserialize(frame);
 
-            if(!checkSumRight(inByteBuf, headBodyLen, tail.getCheckSum())) {
+            if(!checkSumRight(frame, headBodyLen, tail.getCheckSum())) {
                 // checkSum wrong
                 LOGGER.error("checkSum wrong. discard msg. msgType: {}", header.getMsgType());
                 return null;

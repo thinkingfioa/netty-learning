@@ -15,8 +15,8 @@ import org.lwl.netty.dynamic.message.body.RandomCodeBody;
  */
 
 
-public class RandomCodeHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger LOGGER = LogManager.getLogger(RandomCodeHandler.class);
+public class RandomCodeServerHandler extends ChannelInboundHandlerAdapter {
+    private static final Logger LOGGER = LogManager.getLogger(RandomCodeServerHandler.class);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

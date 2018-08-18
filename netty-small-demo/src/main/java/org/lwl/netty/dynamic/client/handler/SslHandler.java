@@ -22,7 +22,6 @@ public class SslHandler extends ChannelInboundHandlerAdapter implements ITrigger
 
     private static final String SSL_VERSION = DynamicConfig.getSslVersion();
 
-
     @Override
     public void launch(ChannelHandlerContext ctx) {
         LOGGER.info("ssl sent.");

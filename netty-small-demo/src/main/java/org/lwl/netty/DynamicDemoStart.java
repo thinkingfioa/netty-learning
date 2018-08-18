@@ -12,7 +12,7 @@ import org.lwl.netty.dynamic.server.DynamicServer;
 
 public class DynamicDemoStart {
 
-    public static void main(String [] args) {
+    public static void main(String [] args) throws InterruptedException {
         // Dynamic服务端以单个线程启动
         new Thread(new Runnable() {
             @Override
@@ -20,6 +20,8 @@ public class DynamicDemoStart {
                 new DynamicServer().start();
             }
         }).start();
+
+        Thread.sleep(6000);
 
         // Dynamic客户端以单个线程启动
         new Thread(new Runnable() {

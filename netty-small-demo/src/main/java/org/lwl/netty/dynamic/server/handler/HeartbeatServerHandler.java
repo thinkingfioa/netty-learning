@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.lwl.netty.dynamic.DynamicConfig;
 import org.lwl.netty.dynamic.DynamicMsgType;
 import org.lwl.netty.dynamic.message.DynamicMessage;
-import org.lwl.netty.dynamic.message.body.HeartbeatRespBody;
+import org.lwl.netty.dynamic.message.body.HeartbeatReqBody;
 
 /**
  * @author thinking_fioa
@@ -26,8 +26,8 @@ public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter{
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if(evt instanceof IdleStateEvent) {
             IdleStateEvent event = (IdleStateEvent)evt;
-            lossConnectTime ++;
             if(event.state() == IdleState.READER_IDLE) {
+                lossConnectTime ++;
                 if(lossConnectTime > DynamicConfig.getHtMultiple()) {
                     LOGGER.error("heartbeat timeout. close channel {}", ctx.channel().remoteAddress());
                     ctx.close();
@@ -35,7 +35,7 @@ public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter{
                 }
             } else if(event.state() == IdleState.WRITER_IDLE) {
                 LOGGER.warn("heartbeat timeout. lossCount {}", lossConnectTime);
-                ctx.writeAndFlush(buildHtRespMsg());
+                ctx.writeAndFlush(buildHtReqMsg());
             }
         } else {
             ctx.fireUserEventTriggered(evt);
@@ -55,10 +55,10 @@ public class HeartbeatServerHandler extends ChannelInboundHandlerAdapter{
         }
     }
 
-    private DynamicMessage buildHtRespMsg() {
-        HeartbeatRespBody htRespBody = new HeartbeatRespBody();
+    private DynamicMessage buildHtReqMsg() {
+        HeartbeatReqBody htReqBody = new HeartbeatReqBody();
 
-        return DynamicMessage.createMsgOfEncode(htRespBody);
+        return DynamicMessage.createMsgOfEncode(htReqBody);
     }
 
 }

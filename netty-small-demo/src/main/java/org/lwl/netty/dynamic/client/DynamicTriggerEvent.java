@@ -1,7 +1,11 @@
 package org.lwl.netty.dynamic.client;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.timeout.IdleStateHandler;
+import org.lwl.netty.dynamic.DynamicConfig;
 import org.lwl.netty.dynamic.client.handler.*;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author thinking_fioa
@@ -18,7 +22,7 @@ public enum DynamicTriggerEvent {
         @Override
         protected ITriggerHandler trigger0(ChannelHandlerContext ctx, Class<?> baseClazz) {
             SslHandler sslHandler = new SslHandler();
-            ctx.pipeline().addBefore(baseClazz.getName(), getClazz().getName(), sslHandler);
+            ctx.pipeline().addBefore(baseClazz.getSimpleName(), getClazz().getSimpleName(), sslHandler);
             return sslHandler;
         }
     },
@@ -29,7 +33,7 @@ public enum DynamicTriggerEvent {
         @Override
         protected ITriggerHandler trigger0(ChannelHandlerContext ctx, Class<?> baseClazz) {
             SymEncryptionHandler symEncryptionHandler = new SymEncryptionHandler();
-            ctx.pipeline().addBefore(baseClazz.getName(), getClazz().getName(), symEncryptionHandler);
+            ctx.pipeline().addBefore(baseClazz.getSimpleName(), getClazz().getSimpleName(), symEncryptionHandler);
             return symEncryptionHandler;
         }
     },
@@ -40,19 +44,8 @@ public enum DynamicTriggerEvent {
         @Override
         protected ITriggerHandler trigger0(ChannelHandlerContext ctx, Class<?> baseClazz) {
             RandomCodeHandler randomCodeHandler = new RandomCodeHandler();
-            ctx.pipeline().addBefore(baseClazz.getName(), getClazz().getName(), randomCodeHandler);
+            ctx.pipeline().addBefore(baseClazz.getSimpleName(), getClazz().getSimpleName(), randomCodeHandler);
             return randomCodeHandler;
-        }
-    },
-    /**
-     * 登录事件. {@see LoginHandler}
-     */
-    LOGIN_EVENT(LoginHandler.class) {
-        @Override
-        protected ITriggerHandler trigger0(ChannelHandlerContext ctx, Class<?> baseClazz) {
-            LoginHandler loginHandler = new LoginHandler();
-            ctx.pipeline().addBefore(baseClazz.getName(), getClazz().getName(), loginHandler);
-            return loginHandler;
         }
     },
     /**
@@ -61,8 +54,10 @@ public enum DynamicTriggerEvent {
     HEARTBEAT_EVENT(HeartbeatClientHandler.class) {
         @Override
         protected ITriggerHandler trigger0(ChannelHandlerContext ctx, Class<?> baseClazz) {
+            ctx.channel().pipeline().addBefore(baseClazz.getSimpleName() ,IdleStateHandler.class.getSimpleName(), new IdleStateHandler(DynamicConfig.getHtInterval(), DynamicConfig.getHtInterval(), 0, TimeUnit.SECONDS));
+
             HeartbeatClientHandler htClientHandler = new HeartbeatClientHandler();
-            ctx.pipeline().addBefore(baseClazz.getName(), getClazz().getName(), htClientHandler);
+            ctx.pipeline().addBefore(baseClazz.getSimpleName(), getClazz().getSimpleName(), htClientHandler);
             return htClientHandler;
         }
     };
@@ -79,8 +74,13 @@ public enum DynamicTriggerEvent {
 
     protected  abstract ITriggerHandler trigger0(ChannelHandlerContext ctx, Class<?> baseClazz);
 
-    public Class<? extends ITriggerHandler> getClazz() {
+    public Class<?> getClazz() {
         return clazz;
+    }
+
+    @Override
+    public String toString() {
+        return clazz.getSimpleName();
     }
 
 }

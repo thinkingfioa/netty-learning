@@ -23,7 +23,8 @@ public class DynamicTriggerHandler extends ChannelInboundHandlerAdapter{
         if(evt instanceof DynamicTriggerEvent) {
             DynamicTriggerEvent triggerEvent = (DynamicTriggerEvent)evt;
             LOGGER.info("trigger DynamicTrigger {}", triggerEvent);
-            triggerEvent.trigger(ctx, DynamicTriggerEvent.class);
+
+            triggerEvent.trigger(ctx, DynamicTriggerHandler.class);
         } else {
             super.userEventTriggered(ctx, evt);
         }

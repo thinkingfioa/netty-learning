@@ -4,7 +4,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwl.netty.dynamic.client.DynamicTriggerEvent;
 import org.lwl.netty.dynamic.message.DynamicMessage;
 import org.lwl.netty.dynamic.message.body.RandomCodeBody;
 
@@ -24,7 +23,10 @@ public class RandomCodeHandler extends ChannelInboundHandlerAdapter implements I
     public void launch(ChannelHandlerContext ctx) {
         LOGGER.info("randomCode sent.");
         ctx.writeAndFlush(buildRandomCodeBody());
-        ctx.fireUserEventTriggered(DynamicTriggerEvent.LOGIN_EVENT);
+        // 发起登录请求
+        LoginHandler loginHandler = new LoginHandler();
+        ctx.pipeline().addBefore(DynamicTriggerHandler.class.getSimpleName(), LoginHandler.class.getSimpleName(), loginHandler);
+        loginHandler.launch(ctx);
     }
 
     private DynamicMessage buildRandomCodeBody() {

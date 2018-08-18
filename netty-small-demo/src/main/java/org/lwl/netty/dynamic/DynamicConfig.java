@@ -29,7 +29,7 @@ public class DynamicConfig {
     }
 
     public static int getHtMultiple() {
-        return 3;
+        return 6;
     }
 
     public static String getServerIp() {
