@@ -388,7 +388,7 @@ Netty的传输API重点关注3个重要组件: Channel、ChannelPipeline和Chann
 4. 提供用户自定义事件的通知 ---- fireUserEventTriggered。
 
 ##### 注:
-可以利用上面的第4点：用户自定义事件的通知。实现Pipeline动态编排ChannelHandler。可参考项目中如何实现。[动态编排Handler链](//TODO::动态编排Handler链)
+可以利用上面的第4点：用户自定义事件的通知。实现Pipeline动态编排ChannelHandler。可参考项目中如何实现。[动态编排Handler链](https://blog.csdn.net/thinking_fioa/article/details/81840259)
 
 ### 4.2.2 Channel
 下图是Channel的方法。
@@ -973,9 +973,54 @@ Netty提供的EventLoop结合了JDK的并发编程和Channel的事件，类层�
 1. Netty3中不保证多个线程不会在同一时刻访问出站事件 ----- 不同的线程掉用Channel.write()方法，同一个Channel可能同时触发出站事件。
 2. Netty4中所有的出站事件肯定是交由EventLoop绑定的线程异步处理，所以不会存在Netty3多个线程访问一个Channel的问题
 3. Netty3中exceptionCaught事件是一个入站事件，可能在Channel.write()出站事件发生时，发生异常，产生一个exceptonCaught入站事件，则会将异常交由I/O线程处理，存在上下文切换
-4. Metty4则保证Channel上所产生的所有I/O事件，都交由某个给定的EventLoop来处理
+4. Metty4则保证Channel上所产生的所有I/O事件，都交由某个指定的EventLoop来处理
 
 ## 7.3 任务调度
+调度一个任务以便稍后(延迟)执行或者周期性地执行
+
+### 7.3.1 JDK的任务调度API
+JDK提供Timer定时器和ScheduledExecutorService来实现调度功能。推荐使用ScheduledExecutorService。
+
+ScheduledExecutorService与Timer定时器比较:
+
+1. Timer执行周期任务严格依赖于系统时间。比如，每5秒执行一次定时任务，当前时间是:2018-08-22 09:00:00，如果将机器时间调成昨天时间2018-08-21。那么Timer定时任务将失效。而ScheduledExecutorService依然有效，其基于时间的延迟，与系统时间改变无关
+2. Timer是单线程，当执行多个任务时，任务1抛出异常并且为正常处理，Timer线程将退出。所有的任务都不再被调度。而ScheduledExecutorService则保证task1出现异常时，不影响task2的运行
+3. Timer是单线程，如果task1执行非常耗时，则会影响task2执行。而ScheduledExecutorService则可以是多线程处理
+
+### 7.3.2 使用EventLoop调度任务
+Netty提供的EventLoop能够帮助用户实现周期性任务调度任务。从图7-2中可以发现，EventLoop扩展了ScheduledExecutorService。
+
+## 7.4 实现细节
+
+### 7.4.1 线程管理
+Netty线程模型的卓越性能取决于对于当前执行的Thread的身份的确定，通过调用EventExecutor的inEventLoop(Thread)方法实现。EventLoop会做以下判断，以提交处理性能，减少线程切换代价
+
+1. 如果当前调用线程正是支持EventLoop的线程，那么提交的代码块将会被(直接)执行
+2. 否则，EventLoop将它放入到内部队列中，以便稍后执行
+3. 注意：每个EventLoop都有自己的任务队列，独立于其他的EventLoop
+
+下图是Netty线程模型的关键组成部分[通过阅读源码4.1.22发现，实现逻辑并非下图，待考究]
+![](./docs/pics/7-3.png)
+
+### 7.4.2 EventLoop线程的分配
+根据不同的传输实现，EventLoop的创建和分配方式也不同
+
+#### 7.4.2.1 异步传输
+异步传输通过尽可能少量的Thread来支持大量的Channel，而不是每个Channel分配一个Thread。少量的EventLoop可能会被多个Channel共享。
+
+下图3个固定大小的EventLoop(每个EventLoop都有一个Thread支撑)，支持多个Channel的所有事件和任务
+![](./docs/pics/7-4.png)
+
+1. EventLoopGroup负责为每个新创建的Channel分配一个EventLoop。当前实现采用顺序循环(round-robin)方式来进行分配
+2. 一旦一个Channel被分配给一个EventLoop，那么它的整个生命周期中都使用这个EventLoop
+3. 提醒：由于EventLoop与Channel的映射关系是1:n，所以当使用ThreadLocal时，请开发人员知晓其中利弊。
+
+#### 7.4.2.2 阻塞传输
+用于像OIO这样的其他传输设计，每个Channel都将被分配给一个EventLoop(以及它的Thread)，EventLoop与Channel的映射关系是1:1
+![](./docs/pics/7-5.png)
+
+# 第8章 引导
+
 
 # 附录
 1. [完整代码地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-in-action)
