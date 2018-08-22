@@ -70,6 +70,7 @@ ChannelHandler动态编排项目，主要讲解了如何通过userEventTriggered
 -  dom4j
 -  channel.writeAndFlush与ctx.writeAndFlush区别
 -  log4j2自定义日志级别
+-  websocket
 
 # 参考:
 1. [Https单向认证和双向认证](https://blog.csdn.net/duanbokan/article/details/50847612)
