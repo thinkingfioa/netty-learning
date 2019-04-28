@@ -36,10 +36,10 @@ TODO
 ## 1. 私有协议开发(netty-private-protocol)
 netty-private-protocol是一个利用Netty实现自定义的协议开发，具有非常高的普世参考价值。参考了《Netty权威指南2》中第12章节。并做以下改进:
 
-- 1.《Netty权威指南2》中第12章节，讲解了关于私有协议栈开发。平时开发中具有参考价值，但书本中代码存在较多问题，本人基于文中代码进行调试，成功运行。
-- 2.实现了基本私有协议栈开发，并成功运行。在此基础上，比较多种编码和解码的速度。
-- 3.代码中实现了使用了多种编码和解码逻辑。其中有: Marshalling、Kryo、Protobuf、Thrift和messagePack。通过子项目可以学习基于Netty，实现多种编解码器技术。
-- 4.[子项目文档地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)
+1.《Netty权威指南2》中第12章节，讲解了关于私有协议栈开发。平时开发中具有参考价值，但书本中代码存在较多问题，本人基于文中代码进行调试，成功运行。
+2.实现了基本私有协议栈开发，并成功运行。在此基础上，比较多种编码和解码的速度。
+3.代码中实现了使用了多种编码和解码逻辑。其中有: Marshalling、Kryo、Protobuf、Thrift和messagePack。通过子项目可以学习基于Netty，实现多种编解码器技术。
+4.[子项目文档地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-private-protocol)
 
 ## 2. Netty实战
 《Netty实战》是一本好书。讲解非常透彻，能帮助开发人员更好的理解和使用Netty。最近在读第二遍。推荐此书，讲的非常透彻。
