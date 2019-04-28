@@ -1,15 +1,17 @@
-# Netty-Small-Demo
+# Netty-Practice
 ```
 @author 鲁伟林
-子项目Netty-Small-Demo介绍诸多使用Netty的小案例。如: ChannelHandler动态编排、AttributeMap的使用或ChannelPrimise等诸多Netty提供的特性。
+项目Netty-Practice介绍Practice介绍诸多使用Netty的特性，并辅助案例帮助理解。
+对使用Netty框架作为开发的大有好处
 非常欢迎同学们fork或者留言，一起交流技术。
-本博客中涉及的完整代码：
-GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-small-demo。
-本人博客地址: https://blog.csdn.net/thinking_fioa
+
+代码地址：
+GitHub地址: https://github.com/thinkingfioa/netty-learning/tree/master/netty-practice
+博客地址: https://blog.csdn.net/thinking_fioa
 ```
 
 ## 项目的案例介绍
-Netty-Samll-Demo子项目，基于Netty的多个特性，实现多种案例。介绍如下:
+Netty-Practice子项目，基于Netty的多个特性，实现多种案例。介绍如下:
 
 |索引|案例|作用|
 |:---:|:---:|:---:|
@@ -25,7 +27,7 @@ Netty-Samll-Demo子项目，基于Netty的多个特性，实现多种案例。�
 ## 2. ChannelHandler动态编排
 Netty提供用户事件触发: userEventTriggered特性，实现ChannelHandler动态编排。案例代码Package: package org.lwl.netty.dynamic。如果想阅读源码，建议下载源码，导入idea中阅读。阅读过程中，欢迎交流
 
-1. 项目源码: [地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-small-demo/src/main/java/org/lwl/netty/dynamic)
+1. 项目源码: [地址](https://github.com/thinkingfioa/netty-learning/tree/master/netty-practice/src/main/java/org/lwl/netty/dynamic)
 2. 项目包名: org.lwl.netty.dynamic
 3. 项目Main类: DynamicDemoStart
 
@@ -57,7 +59,18 @@ ChannelHandler动态编排项目，主要讲解了如何通过userEventTriggered
 ### 2.5 运行结果图
 无，终端输出可见
 
-## 6. ctx.write(...)和channel.write(...)区别案例说明
+### 2.6 客户端ChannelHandler介绍
+
+1. ClientInitHandler ----- 客户端初始Handler，向Pipeline添加SslHandler
+2. SslHandler ----- 发送SSL版本信息。收到服务端回复后，向Pipeline添加SymEncryptionHandler
+3. SymEncryptionHandler ----- 发送对称加密方案。收到服务端回复后，向Pipeline添加RandomCodeHandler
+4. RandomCodeHandler ----- 发送随机码。同时向Pipeline添加LoginHandler
+5. LoginHandler ----- 发送登录请求。收到登录响应后，向Pipeline添加HeartbeatClientHandler
+6. HeartbeatClientHandler ----- tcp心跳读写事件处理
+7. DynamicTriggerHandler ----- 处理用户自定义添加ChannelHandler事件请求
+
+## 3. ctx.write(...)和channel.write(...)区别案例
+
 
 ## TODO LIST
 
